@@ -5,7 +5,8 @@
     android:orientation="vertical"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:background="@drawable/dialogbkg">
+    android:background="@drawable/dialogbkg"
+    tools:context=".ui.kasir.transaksi.TransaksiActivity">
 
     <ImageView
         android:layout_width="50dp"

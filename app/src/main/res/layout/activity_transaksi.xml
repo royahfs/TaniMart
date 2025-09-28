@@ -89,15 +89,6 @@
             android:paddingBottom="20dp"
             tools:listitem="@layout/item_product"/>
 
-        <!-- RecyclerView Tagihan -->
-<!--        <androidx.recyclerview.widget.RecyclerView-->
-<!--            android:id="@+id/rvTagihan"-->
-<!--            android:layout_width="match_parent"-->
-<!--            android:layout_height="150dp"-->
-<!--            android:background="@drawable/bg_recycler"-->
-<!--            android:padding="4dp"-->
-<!--            android:clipToPadding="false" />-->
-
         <!-- Bottom Tagihan -->
         <LinearLayout
             android:layout_width="match_parent"
@@ -109,6 +100,7 @@
             <ImageView
                 android:layout_width="50dp"
                 android:layout_height="wrap_content"
+                android:id="@+id/bottomSheetConnect"
                 android:src="@drawable/outline_remove_24"
                 android:layout_gravity="center|top"
                 android:scaleType="centerCrop"/>
@@ -129,13 +121,13 @@
     </LinearLayout>
 
 <!--     Navigation drawer -->
-    <com.google.android.material.navigation.NavigationView
-        android:id="@+id/nav_view"
-        android:layout_width="wrap_content"
-        android:layout_height="match_parent"
-        android:layout_gravity="start"
-        app:headerLayout="@layout/nav_header"
-        app:menu="@menu/nav_menu"
-        app:itemIconTint="@color/dark_teal_sage"
-        app:itemTextColor="@color/dark_teal_sage"/>
+<!--    <com.google.android.material.navigation.NavigationView-->
+<!--        android:id="@+id/nav_view"-->
+<!--        android:layout_width="wrap_content"-->
+<!--        android:layout_height="match_parent"-->
+<!--        android:layout_gravity="start"-->
+<!--        app:headerLayout="@layout/nav_header"-->
+<!--        app:menu="@menu/nav_menu"-->
+<!--        app:itemIconTint="@color/dark_teal_sage"-->
+<!--        app:itemTextColor="@color/dark_teal_sage"/>-->
 </androidx.drawerlayout.widget.DrawerLayout>
