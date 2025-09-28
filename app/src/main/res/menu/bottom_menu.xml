@@ -1,0 +1,25 @@
+<?xml version="1.0" encoding="utf-8"?>
+<menu xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto">
+
+    <item
+        android:id="@+id/home"
+        android:title="Home"
+        android:icon="@drawable/outline_home_24"/>
+
+    <item
+        android:id="@+id/profil"
+        android:title="Shorts"
+        android:icon="@drawable/outline_person_24"
+        />
+
+    <item
+        android:title=""/>
+
+    <item
+        android:id="@+id/logout"
+        android:title="Subscriptions"
+        android:icon="@drawable/outline_logout_24" />
+
+
+</menu>

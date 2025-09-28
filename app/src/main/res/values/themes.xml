@@ -1,0 +1,17 @@
+<resources xmlns:tools="http://schemas.android.com/tools">
+    <!-- Base application theme. -->
+    <style name="Base.Theme.TaniMart" parent="Theme.Material3.DayNight.NoActionBar">
+        <item name="colorPrimary">@color/dark_teal_sage</item>
+        <item name="colorPrimaryVariant">@color/dark_teal_sage</item>
+        <item name="colorOnPrimary">@color/white</item>
+
+        <!-- secondary brand color-->
+        <item name="colorSecondary">@color/beige</item>
+        <item name="colorOnSecondary">@color/black</item>
+
+        <!-- status bar color -->
+        <item name="android:statusBarColor">?attr/colorPrimaryVariant</item>
+
+    </style>
+    <style name="Theme.TaniMart" parent="Base.Theme.TaniMart" />
+</resources>

@@ -1,0 +1,29 @@
+{
+  "project_info": {
+    "project_number": "974982606401",
+    "project_id": "tanimart-cb96a",
+    "storage_bucket": "tanimart-cb96a.firebasestorage.app"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:974982606401:android:5fa2b5628f871bb5b3e0c0",
+        "android_client_info": {
+          "package_name": "com.example.tanimart"
+        }
+      },
+      "oauth_client": [],
+      "api_key": [
+        {
+          "current_key": "AIzaSyAT-nqHK7HCusLOMmswd-poLvevx53ZyMM"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": []
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}

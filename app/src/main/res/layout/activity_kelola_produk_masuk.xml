@@ -1,0 +1,220 @@
+<?xml version="1.0" encoding="utf-8"?>
+<androidx.constraintlayout.widget.ConstraintLayout
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:id="@+id/mainKelolaProduk"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    tools:context=".ui.common.inventory.KelolaProdukMasukActivity">
+
+    <!-- Toolbar -->
+    <androidx.appcompat.widget.Toolbar
+        android:id="@+id/toolbar_kelolaProduk"
+        android:layout_width="match_parent"
+        android:layout_height="?attr/actionBarSize"
+        android:background="#3C452A"
+        android:theme="@style/ThemeOverlay.AppCompat.Dark.ActionBar"
+        app:popupTheme="@style/Theme.AppCompat.Light"
+        app:layout_constraintTop_toTopOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:title="Kelola Produk Masuk"
+        app:titleTextColor="@color/white"
+        app:titleMarginStart="0dp"
+        app:navigationIconTint="@color/dark_teal_sage"/>
+
+    <!-- ScrollView untuk form + RecyclerView -->
+    <androidx.core.widget.NestedScrollView
+        android:id="@+id/nestedScrollView"
+        android:layout_width="match_parent"
+        android:layout_height="0dp"
+        android:fillViewport="true"
+        android:background="@color/dark_teal_sage"
+        app:layout_constraintTop_toBottomOf="@id/toolbar_kelolaProduk"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintEnd_toEndOf="parent">
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="vertical"
+            android:paddingBottom="16dp">
+
+            <!-- Card form tambah produk -->
+            <androidx.cardview.widget.CardView
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_margin="20dp"
+                android:elevation="10dp"
+                app:cardCornerRadius="30dp">
+
+                <LinearLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:background="@drawable/sage_border"
+                    android:orientation="vertical"
+                    android:padding="20dp">
+
+                    <TextView
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:text="Upload Data"
+                        android:textAlignment="center"
+                        android:textColor="@color/teal_sage"
+                        android:textSize="25sp"
+                        android:textStyle="bold"/>
+
+                    <ImageView
+                        android:id="@+id/uploadImage"
+                        android:layout_width="match_parent"
+                        android:layout_height="100dp"
+                        android:layout_marginTop="30dp"
+                        android:scaleType="centerInside"
+                        android:src="@drawable/upload" />
+
+                    <TextView
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_marginTop="15dp"
+                        android:text="Nama Produk"
+                        android:textColor="@color/dark_teal_sage"
+                        android:textSize="14sp" />
+                    <EditText
+                        android:id="@+id/uploadNB"
+                        android:layout_width="match_parent"
+                        android:layout_height="50dp"
+                        android:background="@drawable/sage_border"
+                        android:hint="Nama Produk"
+                        android:padding="10dp"
+                        android:textColor="@color/dark_teal_sage" />
+
+                    <TextView
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_marginTop="15dp"
+                        android:text="Harga Jual"
+                        android:textColor="@color/dark_teal_sage"
+                        android:textSize="14sp" />
+                    <EditText
+                        android:id="@+id/uploadHJ"
+                        android:layout_width="match_parent"
+                        android:layout_height="50dp"
+                        android:background="@drawable/sage_border"
+                        android:hint="Harga Jual"
+                        android:inputType="number"
+                        android:padding="10dp"
+                        android:textColor="@color/dark_teal_sage" />
+
+                    <!-- Merek -->
+                    <TextView
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_marginTop="15dp"
+                        android:text="Merek"
+                        android:textColor="@color/dark_teal_sage"
+                        android:textSize="14sp" />
+
+                    <TextView
+                        android:id="@+id/pilihMerek"
+                        android:layout_width="match_parent"
+                        android:layout_height="50dp"
+                        android:background="@drawable/sage_border"
+                        android:drawableEnd="@drawable/baseline_arrow_drop_down_24"
+                        android:gravity="center_vertical"
+                        android:padding="10dp"
+                        android:hint="Pilih Merek"
+                        android:focusable="true"
+                        android:clickable="true"/>
+
+                    <!-- Kategori -->
+                    <TextView
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_marginTop="15dp"
+                        android:text="Kategori"
+                        android:textSize="14sp"
+                        android:textColor="@color/dark_teal_sage" />
+
+                    <TextView
+                        android:id="@+id/pilihKategori"
+                        android:layout_width="match_parent"
+                        android:layout_height="50dp"
+                        android:background="@drawable/sage_border"
+                        android:drawableEnd="@drawable/baseline_arrow_drop_down_24"
+                        android:gravity="center_vertical"
+                        android:padding="10dp"
+                        android:hint="Pilih Kategori"
+                        android:focusable="true"
+                        android:clickable="true"/>
+
+                    <!-- Stok Toko -->
+                    <TextView
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_marginTop="15dp"
+                        android:text="Stok Barang Masuk"
+                        android:textSize="14sp"
+                        android:textColor="@color/dark_teal_sage" />
+
+                    <EditText
+                        android:id="@+id/uploadStokBarangMasuk"
+                        android:layout_width="match_parent"
+                        android:layout_height="50dp"
+                        android:background="@drawable/sage_border"
+                        android:hint="Stok Barang"
+                        android:inputType="number"
+                        android:padding="10dp"
+                        android:textColor="@color/dark_teal_sage" />
+
+                    <TextView
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_marginTop="15dp"
+                        android:text="Satuan Unit"
+                        android:textSize="14sp"
+                        android:textColor="@color/dark_teal_sage" />
+
+                    <!--satuan unit-->
+
+                    <TextView
+                        android:id="@+id/pilihSatuanUnit"
+                        android:layout_width="match_parent"
+                        android:layout_height="50dp"
+                        android:background="@drawable/sage_border"
+                        android:drawableEnd="@drawable/baseline_arrow_drop_down_24"
+                        android:gravity="center_vertical"
+                        android:padding="10dp"
+                        android:hint="Pcs"
+                        android:focusable="true"
+                        android:clickable="true"/>
+
+
+                    <androidx.appcompat.widget.AppCompatButton
+                        android:id="@+id/saveBtnKPM"
+                        android:layout_width="match_parent"
+                        android:layout_height="50dp"
+                        android:layout_marginTop="20dp"
+                        android:layout_marginBottom="20dp"
+                        android:background="@drawable/bg_button_login"
+                        android:text="Save"
+                        android:textColor="@color/white"
+                        android:textSize="16sp"
+                        android:textStyle="bold"/>
+                </LinearLayout>
+            </androidx.cardview.widget.CardView>
+
+            <!-- RecyclerView untuk daftar produk -->
+            <androidx.recyclerview.widget.RecyclerView
+                android:id="@+id/recyclerInventory"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginHorizontal="20dp"
+                android:layout_marginBottom="20dp"
+                android:nestedScrollingEnabled="false"
+                tools:listitem="@layout/item_inventory" />
+
+        </LinearLayout>
+    </androidx.core.widget.NestedScrollView>
+</androidx.constraintlayout.widget.ConstraintLayout>

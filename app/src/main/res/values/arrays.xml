@@ -1,0 +1,11 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string-array name="spinner_user_type">
+        <item>Admin</item>
+        <item>Kasir</item>
+        <item>Karyawan</item>
+    </string-array>
+    <string-array name="spinner_kategori">
+        <item>Umum</item>
+    </string-array>
+</resources>

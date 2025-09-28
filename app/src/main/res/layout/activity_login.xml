@@ -1,0 +1,129 @@
+<?xml version="1.0" encoding="utf-8"?>
+<androidx.constraintlayout.widget.ConstraintLayout
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:id="@+id/main"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    tools:context=".ui.common.login.LoginActivity"
+    >
+
+    <ImageView
+        android:id="@+id/image_top_elemen_1_login"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:scaleType="centerCrop"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent"
+        app:srcCompat="@drawable/vektor_top_log_1" />
+
+    <TextView
+        android:id="@+id/textView_top_elemen_1_login"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginStart="36dp"
+        android:layout_marginTop="72dp"
+        android:text="Hi Dear, \nPlease Login"
+        android:textColor="@color/white"
+        android:textSize="32sp"
+        android:textStyle="bold"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent" />
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="500dp"
+        android:orientation="vertical"
+        android:padding="32dp"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/image_top_elemen_1_login">
+
+        <TextView
+            android:id="@+id/textViewEmail_login"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:text="Email"
+            android:textSize="22sp"
+            android:textStyle="bold"
+            />
+
+        <EditText
+            android:id="@+id/etEmail_login"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:ems="10"
+            android:inputType="text"
+            android:hint="Masukkan Email Anda"
+            android:background="@drawable/edittext_background"
+            android:padding="12dp"
+            android:layout_marginTop="12dp"
+            android:textColor="#707070"
+            />
+        <TextView
+            android:id="@+id/textViewPassword_login"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:text="Password"
+            android:layout_marginTop="28dp"
+            android:textSize="22sp"
+            android:textStyle="bold"
+            />
+
+        <EditText
+            android:id="@+id/etPassword_login"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:ems="10"
+            android:inputType="textPassword"
+            android:hint="Masukkan Password Anda"
+            android:background="@drawable/edittext_background"
+            android:padding="12dp"
+            android:layout_marginTop="12dp"
+            android:textColor="#707070"
+            />
+        <TextView
+            android:id="@+id/textViewRole_login"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:text="User Type"
+            android:layout_marginTop="28dp"
+            android:textSize="22sp"
+            android:textStyle="bold"
+            />
+
+        <Spinner
+            android:id="@+id/spinnerUserType_login"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="12dp"
+            android:entries="@array/spinner_user_type"
+            android:minHeight="48dp"
+            android:padding="12dp"
+            android:dropDownWidth="wrap_content"
+            android:clipToOutline="true"
+            android:background="@drawable/spinner_background"/>
+
+        <androidx.appcompat.widget.AppCompatButton
+            android:id="@+id/login_button"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:text="Login"
+            android:layout_marginTop="28dp"
+            android:background="@drawable/bg_button_login"
+            android:textColor="@color/white"
+            android:textStyle="bold"
+            android:textSize="20sp" />
+
+        <TextView
+            android:id="@+id/redirectLoginToSignup"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:text="@string/signup"
+            android:textAlignment="textEnd"
+            android:layout_marginTop="8dp" />
+
+
+    </LinearLayout>
+</androidx.constraintlayout.widget.ConstraintLayout>
