@@ -111,4 +111,19 @@ public class TransaksiViewModel extends ViewModel {
         }
         produkList.setValue(hasil);
     }
+
+    public void hapusDariCart(Product produk) {
+        List<CartItem> current = cartList.getValue();
+        if (current == null) return;
+
+        for (CartItem item : new ArrayList<>(current)) { // clone biar aman pas remove
+            if (item.getProduct().getId().equals(produk.getId())) {
+                current.remove(item);
+                break;
+            }
+        }
+        cartList.setValue(current);
+        hitungTotal(current);
+    }
+
 }

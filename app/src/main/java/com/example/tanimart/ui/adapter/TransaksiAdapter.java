@@ -3,6 +3,7 @@ package com.example.tanimart.ui.adapter;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.ImageView;
 import android.widget.TextView;
 import androidx.annotation.NonNull;
 import androidx.recyclerview.widget.RecyclerView;
@@ -39,7 +40,7 @@ public class TransaksiAdapter extends RecyclerView.Adapter<TransaksiAdapter.View
         holder.title.setText(item.getProduct().getNamaProduk());
         holder.feeEachItem.setText("Rp" + item.getProduct().getHargaJual());
         holder.numberItemTxt.setText(String.valueOf(item.getQuantity()));
-
+        holder.trashBtn.setOnClickListener(v -> viewModel.hapusDariCart(item.getProduct()));
         holder.plusItem.setOnClickListener(v -> viewModel.tambahKeCart(item.getProduct()));
         holder.minusItem.setOnClickListener(v -> viewModel.kurangiDariCart(item.getProduct()));
     }
@@ -51,6 +52,7 @@ public class TransaksiAdapter extends RecyclerView.Adapter<TransaksiAdapter.View
 
     public static class ViewHolder extends RecyclerView.ViewHolder {
         TextView title, feeEachItem, plusItem, minusItem, numberItemTxt;
+        ImageView trashBtn;
 
         public ViewHolder(@NonNull View itemView) {
             super(itemView);
@@ -59,6 +61,8 @@ public class TransaksiAdapter extends RecyclerView.Adapter<TransaksiAdapter.View
             plusItem = itemView.findViewById(R.id.plusCartBtn);
             minusItem = itemView.findViewById(R.id.minusCartBtn);
             numberItemTxt = itemView.findViewById(R.id.numberItemTxt);
+            trashBtn = itemView.findViewById(R.id.imgTrashBtn);
+
         }
     }
 }
