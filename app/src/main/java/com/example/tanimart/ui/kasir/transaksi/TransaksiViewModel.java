@@ -1,23 +1,21 @@
 package com.example.tanimart.ui.kasir.transaksi;
 
 import android.util.Log;
-
 import androidx.lifecycle.LiveData;
 import androidx.lifecycle.MutableLiveData;
 import androidx.lifecycle.ViewModel;
-
+import com.example.tanimart.data.model.CartItem;
 import com.example.tanimart.data.model.Product;
 import com.google.firebase.firestore.DocumentSnapshot;
 import com.google.firebase.firestore.FirebaseFirestore;
 import com.google.firebase.firestore.QuerySnapshot;
-
 import java.util.ArrayList;
 import java.util.List;
 
 public class TransaksiViewModel extends ViewModel {
 
     private final MutableLiveData<List<Product>> produkList = new MutableLiveData<>(new ArrayList<>());
-    private final MutableLiveData<List<Product>> tagihanList = new MutableLiveData<>(new ArrayList<>());
+    private final MutableLiveData<List<CartItem>> cartList = new MutableLiveData<>(new ArrayList<>());
     private final MutableLiveData<Double> totalTagihan = new MutableLiveData<>(0.0);
 
     private final FirebaseFirestore db;
@@ -29,7 +27,6 @@ public class TransaksiViewModel extends ViewModel {
     }
 
     private void loadProduk() {
-        //  Ganti "produk" ke "inventory" sesuai koleksi Firestore kamu
         db.collection("inventory").addSnapshotListener((QuerySnapshot snapshots, com.google.firebase.firestore.FirebaseFirestoreException e) -> {
             if (e != null) {
                 Log.e("TransaksiViewModel", "Firestore error", e);
@@ -40,7 +37,6 @@ public class TransaksiViewModel extends ViewModel {
                 for (DocumentSnapshot doc : snapshots.getDocuments()) {
                     Product p = doc.toObject(Product.class);
                     if (p != null) {
-                        // pastikan id terisi
                         if (p.getId() == null || p.getId().isEmpty()) {
                             p.setId(doc.getId());
                         }
@@ -48,42 +44,59 @@ public class TransaksiViewModel extends ViewModel {
                     }
                 }
             }
-            Log.d("TransaksiViewModel", "Produk loaded: " + temp.size());
             allProdukCache = temp;
             produkList.setValue(new ArrayList<>(temp));
         });
     }
 
-    // Getter LiveData
     public LiveData<List<Product>> getProdukList() { return produkList; }
-    public LiveData<List<Product>> getTagihanList() { return tagihanList; }
+    public LiveData<List<CartItem>> getCartList() { return cartList; }
     public LiveData<Double> getTotalTagihan() { return totalTagihan; }
 
-    // Tambah / Hapus tagihan
-    public void tambahKeTagihan(Product produk) {
-        List<Product> current = tagihanList.getValue();
+    public void tambahKeCart(Product produk) {
+        List<CartItem> current = cartList.getValue();
         if (current == null) current = new ArrayList<>();
-        current.add(produk);
-        tagihanList.setValue(current);
+
+        boolean found = false;
+        for (CartItem item : current) {
+            if (item.getProduct().getId().equals(produk.getId())) {
+                item.setQuantity(item.getQuantity() + 1);
+                found = true;
+                break;
+            }
+        }
+        if (!found) {
+            current.add(new CartItem(produk, 1));
+        }
+        cartList.setValue(current);
         hitungTotal(current);
     }
 
-    public void hapusDariTagihan(Product produk) {
-        List<Product> current = tagihanList.getValue();
-        if (current != null) {
-            current.remove(produk);
-            tagihanList.setValue(current);
-            hitungTotal(current);
+    public void kurangiDariCart(Product produk) {
+        List<CartItem> current = cartList.getValue();
+        if (current == null) return;
+
+        for (CartItem item : current) {
+            if (item.getProduct().getId().equals(produk.getId())) {
+                int qty = item.getQuantity() - 1;
+                if (qty > 0) {
+                    item.setQuantity(qty);
+                } else {
+                    current.remove(item);
+                }
+                break;
+            }
         }
+        cartList.setValue(current);
+        hitungTotal(current);
     }
 
-    private void hitungTotal(List<Product> list) {
+    private void hitungTotal(List<CartItem> list) {
         double total = 0.0;
-        for (Product p : list) total += p.getHargaJual();
+        for (CartItem item : list) total += item.getSubtotal();
         totalTagihan.setValue(total);
     }
 
-    // SEARCH: filter dari cache allProdukCache
     public void cariProduk(String keyword) {
         if (keyword == null || keyword.trim().isEmpty()) {
             produkList.setValue(new ArrayList<>(allProdukCache));
@@ -93,26 +106,6 @@ public class TransaksiViewModel extends ViewModel {
         List<Product> hasil = new ArrayList<>();
         for (Product p : allProdukCache) {
             if (p.getNamaProduk() != null && p.getNamaProduk().toLowerCase().contains(k)) {
-                hasil.add(p);
-            }
-        }
-        Log.d("TransaksiViewModel", "Hasil pencarian \"" + keyword + "\": " + hasil.size());
-        produkList.setValue(hasil);
-    }
-
-    public void resetProduk() {
-        produkList.setValue(new ArrayList<>(allProdukCache));
-    }
-
-    // Optional: filter by kategori
-    public void filterByKategori(String kategori) {
-        if (kategori == null || kategori.equalsIgnoreCase("Semua")) {
-            resetProduk();
-            return;
-        }
-        List<Product> hasil = new ArrayList<>();
-        for (Product p : allProdukCache) {
-            if (p.getKategori() != null && p.getKategori().equalsIgnoreCase(kategori)) {
                 hasil.add(p);
             }
         }
