@@ -1,10 +1,14 @@
 package com.example.tanimart.ui.kasir.transaksi;
 
 import android.app.Dialog;
+import android.graphics.Color;
+import android.graphics.drawable.ColorDrawable;
 import android.os.Bundle;
 import android.text.Editable;
 import android.text.TextWatcher;
+import android.view.Gravity;
 import android.view.View;
+import android.view.ViewGroup;
 import android.widget.Button;
 import android.widget.EditText;
 import android.widget.ImageView;
@@ -20,9 +24,7 @@ import androidx.recyclerview.widget.RecyclerView;
 
 import com.example.tanimart.R;
 import com.example.tanimart.data.model.Product;
-import com.example.tanimart.databinding.ActivityTransaksiBinding;
 import com.example.tanimart.ui.adapter.ProductAdapter;
-import com.example.tanimart.ui.adapter.TagihanAdapter;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -33,7 +35,7 @@ public class TransaksiActivity extends AppCompatActivity {
     private ProductAdapter productAdapter;
     private TransaksiViewModel transaksiViewModel;
     private EditText searchProduk;
-    ActivityTransaksiBinding binding;
+    private ImageView btnMenu, btnCart, bottomSheetConnect;
 
     private List<Product> semuaProduk = new ArrayList<>();
 
@@ -41,11 +43,12 @@ public class TransaksiActivity extends AppCompatActivity {
     protected void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_transaksi);
-        binding = ActivityTransaksiBinding.inflate(getLayoutInflater());
 
-        // drawer layout
+        // DrawerLayout
         DrawerLayout drawerLayout = findViewById(R.id.drawer_layout_transaksi);
-        ImageView btnMenu = findViewById(R.id.btnMenu);
+        btnMenu = findViewById(R.id.btnMenu);
+        btnCart = findViewById(R.id.btnCart);
+        bottomSheetConnect = findViewById(R.id.bottomSheetConnect);
 
         btnMenu.setOnClickListener(v -> {
             if (!drawerLayout.isDrawerOpen(GravityCompat.START)) {
@@ -55,9 +58,10 @@ public class TransaksiActivity extends AppCompatActivity {
             }
         });
 
+        // ViewModel
         transaksiViewModel = new ViewModelProvider(this).get(TransaksiViewModel.class);
 
-        // daftar produk recycler
+        // RecyclerView produk utama
         rvProduk = findViewById(R.id.rvProduk);
         rvProduk.setLayoutManager(new LinearLayoutManager(this));
         productAdapter = new ProductAdapter(new ArrayList<>(), produk -> {
@@ -65,38 +69,25 @@ public class TransaksiActivity extends AppCompatActivity {
         });
         rvProduk.setAdapter(productAdapter);
 
-
-        // pencarian produk
+        // Search produk
         searchProduk = findViewById(R.id.etCariProduk);
         searchProduk.addTextChangedListener(new TextWatcher() {
-            @Override
-            public void beforeTextChanged(CharSequence s, int start, int count, int after) {}
-
-            @Override
-            public void onTextChanged(CharSequence s, int start, int before, int count) {
+            @Override public void beforeTextChanged(CharSequence s, int start, int count, int after) {}
+            @Override public void onTextChanged(CharSequence s, int start, int before, int count) {
                 filterProduk(s.toString());
             }
-
-            @Override
-            public void afterTextChanged(Editable s) {}
+            @Override public void afterTextChanged(Editable s) {}
         });
 
-        // observe produk
+        // Observe produk dari ViewModel
         transaksiViewModel.getProdukList().observe(this, produkList -> {
             semuaProduk.clear();
             semuaProduk.addAll(produkList);
             productAdapter.setProductList(produkList);
         });
 
-
-        //bottom sheets
-        binding.bottomSheetConnect.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                showBottomSheet();
-            }
-        });
-
+        // BottomSheet
+        bottomSheetConnect.setOnClickListener(v -> showBottomSheet());
     }
 
     private void showBottomSheet() {
@@ -104,11 +95,27 @@ public class TransaksiActivity extends AppCompatActivity {
         dialog.setContentView(R.layout.bottom_sheet_layout);
 
         ImageView cancelButton = dialog.findViewById(R.id.cancelButton);
-        RecyclerView recyclerView= dialog.findViewById(R.id.recyclerCart);
+        RecyclerView recyclerView = dialog.findViewById(R.id.recyclerCart);
         TextView totalItem = dialog.findViewById(R.id.totalItem);
         TextView angkaTotal = dialog.findViewById(R.id.angkaTotal);
         Button btnSimpan = dialog.findViewById(R.id.btnSimpan);
         Button btnBayar = dialog.findViewById(R.id.btnBayar);
+
+        recyclerView.setLayoutManager(new LinearLayoutManager(this));
+
+
+        cancelButton.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                dialog.dismiss();
+            }
+        });
+
+        dialog.show();
+        dialog.getWindow().setLayout(ViewGroup.LayoutParams.MATCH_PARENT,ViewGroup.LayoutParams.WRAP_CONTENT);
+        dialog.getWindow().setBackgroundDrawable(new ColorDrawable(Color.TRANSPARENT));
+        dialog.getWindow().getAttributes().windowAnimations = R.style.DialogAnimation;
+        dialog.getWindow().setGravity(Gravity.BOTTOM);
     }
 
     private void filterProduk(String keyword) {

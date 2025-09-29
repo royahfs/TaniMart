@@ -50,20 +50,24 @@
         </LinearLayout>
 
         <!-- TabLayout -->
+<!--        android:id="@+id/tabLayout"-->
         <com.google.android.material.tabs.TabLayout
-            android:id="@+id/tabLayout"
+
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             app:tabMode="fixed"
             app:tabGravity="fill">
 
+<!--            android:id="@+id/tabProduk"-->
             <com.google.android.material.tabs.TabItem
-                android:id="@+id/tabProduk"
+
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:text="Produk" />
+
+<!--            android:id="@+id/tabManual"-->
             <com.google.android.material.tabs.TabItem
-                android:id="@+id/tabManual"
+
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:text="Manual" />
@@ -116,18 +120,16 @@
                 android:textStyle="bold" />
         </LinearLayout>
 
-
-
     </LinearLayout>
 
 <!--     Navigation drawer -->
-<!--    <com.google.android.material.navigation.NavigationView-->
-<!--        android:id="@+id/nav_view"-->
-<!--        android:layout_width="wrap_content"-->
-<!--        android:layout_height="match_parent"-->
-<!--        android:layout_gravity="start"-->
-<!--        app:headerLayout="@layout/nav_header"-->
-<!--        app:menu="@menu/nav_menu"-->
-<!--        app:itemIconTint="@color/dark_teal_sage"-->
-<!--        app:itemTextColor="@color/dark_teal_sage"/>-->
+    <com.google.android.material.navigation.NavigationView
+        android:id="@+id/nav_view"
+        android:layout_width="wrap_content"
+        android:layout_height="match_parent"
+        android:layout_gravity="start"
+        app:headerLayout="@layout/nav_header"
+        app:menu="@menu/nav_menu"
+        app:itemIconTint="@color/dark_teal_sage"
+        app:itemTextColor="@color/dark_teal_sage"/>
 </androidx.drawerlayout.widget.DrawerLayout>
