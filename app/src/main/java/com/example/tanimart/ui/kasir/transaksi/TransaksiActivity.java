@@ -1,6 +1,7 @@
 package com.example.tanimart.ui.kasir.transaksi;
 
 import android.app.Dialog;
+import android.content.Intent;
 import android.graphics.Color;
 import android.graphics.drawable.ColorDrawable;
 import android.os.Bundle;
@@ -13,6 +14,7 @@ import android.widget.Button;
 import android.widget.EditText;
 import android.widget.ImageView;
 import android.widget.TextView;
+
 import androidx.annotation.Nullable;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.core.view.GravityCompat;
@@ -20,10 +22,12 @@ import androidx.drawerlayout.widget.DrawerLayout;
 import androidx.lifecycle.ViewModelProvider;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
-import com.example.tanimart.R;
 
+import com.example.tanimart.R;
 import com.example.tanimart.ui.adapter.ProductAdapter;
 import com.example.tanimart.ui.adapter.TransaksiAdapter;
+import com.example.tanimart.utils.CurrencyHelper; // ✅ pakai helper
+
 import java.util.ArrayList;
 
 public class TransaksiActivity extends AppCompatActivity {
@@ -73,9 +77,10 @@ public class TransaksiActivity extends AppCompatActivity {
             productAdapter.setProductList(produkList);
         });
 
+        // ✅ Format total tagihan pakai CurrencyHelper
         transaksiViewModel.getTotalTagihan().observe(this, total -> {
             TextView tvTagih = findViewById(R.id.tvTagih);
-            tvTagih.setText("Tagih = Rp" + total);
+            tvTagih.setText("Tagih = " + CurrencyHelper.formatRupiah(total));
         });
 
         bottomSheetConnect.setOnClickListener(v -> showBottomSheet());
@@ -92,20 +97,34 @@ public class TransaksiActivity extends AppCompatActivity {
         Button btnSimpan = dialog.findViewById(R.id.btnSimpan);
         Button btnBayar = dialog.findViewById(R.id.btnBayar);
 
+        // tombol cancel button
+        cancelButton.setOnClickListener(v -> dialog.dismiss());
+
+        // recycler view cart
         recyclerView.setLayoutManager(new LinearLayoutManager(this));
         TransaksiAdapter cartAdapter = new TransaksiAdapter(new ArrayList<>(), transaksiViewModel);
         recyclerView.setAdapter(cartAdapter);
 
+        // total item
         transaksiViewModel.getCartList().observe(this, cart -> {
             cartAdapter.setCartList(cart);
             totalItem.setText("Total (" + cart.size() + ")");
         });
 
+        // total harga pakai CurrencyHelper
         transaksiViewModel.getTotalTagihan().observe(this, total -> {
-            angkaTotal.setText("Rp" + total);
+            angkaTotal.setText(CurrencyHelper.formatRupiah(total));
         });
 
-        cancelButton.setOnClickListener(v -> dialog.dismiss());
+        // tombol bayar
+        btnBayar.setOnClickListener(v -> {
+            transaksiViewModel.getTotalTagihan().observe(this, total -> {
+                Intent intent = new Intent(TransaksiActivity.this, PembayaranActivity.class);
+                intent.putExtra("TOTAL_TAGIHAN", total); // kirim total
+                startActivity(intent);
+            });
+        });
+
 
         dialog.show();
         dialog.getWindow().setLayout(ViewGroup.LayoutParams.MATCH_PARENT, ViewGroup.LayoutParams.WRAP_CONTENT);

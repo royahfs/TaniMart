@@ -100,7 +100,9 @@
             android:id="@+id/bottom_transaksi"
             android:background="@drawable/dialogbkg"
             android:orientation="vertical"
-            android:layout_gravity="center">
+            android:layout_gravity="center"
+            android:elevation="12dp"
+            android:translationZ="8dp">
             <ImageView
                 android:layout_width="50dp"
                 android:layout_height="wrap_content"

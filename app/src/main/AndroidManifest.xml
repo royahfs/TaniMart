@@ -20,9 +20,15 @@
             android:exported="true">
         </activity>
         <activity
-            android:name=".ui.kasir.transaksi.TagihanActivity"
+            android:name=".ui.kasir.transaksi.PembayaranActivity"
             android:exported="true">
         </activity>
+        <activity
+            android:name=".ui.kasir.transaksi.pembayaran.PembayaranTunaiActivity"
+            android:exported="false" />
+        <activity
+            android:name=".ui.kasir.transaksi.pembayaran.DialogTransaksiBerhasilActivity"
+            android:exported="false" />
 
 <!--    Admin dan Karyawan-->
         <activity

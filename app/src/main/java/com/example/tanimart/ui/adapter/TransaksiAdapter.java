@@ -5,11 +5,15 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ImageView;
 import android.widget.TextView;
+
 import androidx.annotation.NonNull;
 import androidx.recyclerview.widget.RecyclerView;
+
 import com.example.tanimart.R;
 import com.example.tanimart.data.model.CartItem;
 import com.example.tanimart.ui.kasir.transaksi.TransaksiViewModel;
+import com.example.tanimart.utils.CurrencyHelper; // <--- tambahin import ini
+
 import java.util.List;
 
 public class TransaksiAdapter extends RecyclerView.Adapter<TransaksiAdapter.ViewHolder> {
@@ -37,9 +41,14 @@ public class TransaksiAdapter extends RecyclerView.Adapter<TransaksiAdapter.View
     @Override
     public void onBindViewHolder(@NonNull TransaksiAdapter.ViewHolder holder, int position) {
         CartItem item = cartList.get(position);
+
         holder.title.setText(item.getProduct().getNamaProduk());
-        holder.feeEachItem.setText("Rp" + item.getProduct().getHargaJual());
+
+        // Format harga jadi Rupiah
+        holder.feeEachItem.setText(CurrencyHelper.formatRupiah(item.getProduct().getHargaJual()));
+
         holder.numberItemTxt.setText(String.valueOf(item.getQuantity()));
+
         holder.trashBtn.setOnClickListener(v -> viewModel.hapusDariCart(item.getProduct()));
         holder.plusItem.setOnClickListener(v -> viewModel.tambahKeCart(item.getProduct()));
         holder.minusItem.setOnClickListener(v -> viewModel.kurangiDariCart(item.getProduct()));
@@ -62,7 +71,6 @@ public class TransaksiAdapter extends RecyclerView.Adapter<TransaksiAdapter.View
             minusItem = itemView.findViewById(R.id.minusCartBtn);
             numberItemTxt = itemView.findViewById(R.id.numberItemTxt);
             trashBtn = itemView.findViewById(R.id.imgTrashBtn);
-
         }
     }
 }

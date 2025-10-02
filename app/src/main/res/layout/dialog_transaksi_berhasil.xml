@@ -1,0 +1,238 @@
+<?xml version="1.0" encoding="utf-8"?>
+<androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:background="@drawable/bg_tampilan_resi"
+    android:padding="20dp"
+    android:id="@+id/dialogPembayaranBerhasil">
+
+    <!-- Icon centang -->
+    <ImageView
+        android:id="@+id/imgSuccess"
+        android:layout_width="80dp"
+        android:layout_height="80dp"
+        android:src="@drawable/success_transfer"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="@id/guidelineDtb1" />
+
+    <!-- Judul -->
+    <TextView
+        android:id="@+id/tvJudul"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="10dp"
+        android:text="Transaksi Berhasil"
+        android:textSize="18sp"
+        android:textStyle="bold"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@id/imgSuccess" />
+
+    <!-- Tanggal & Jam -->
+    <TextView
+        android:id="@+id/tvTanggal"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginBottom="10dp"
+        android:text="07-Maret-2025, 12:52"
+        android:textSize="14sp"
+        app:layout_constraintBottom_toTopOf="@id/guidelineDtb2"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@id/tvJudul" />
+
+    <!-- Detail Transaksi -->
+    <androidx.constraintlayout.widget.ConstraintLayout
+        android:id="@+id/layoutDetail"
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        android:layout_marginBottom="20dp"
+        app:layout_constraintTop_toBottomOf="@id/guidelineDtb2"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintEnd_toEndOf="parent">
+
+        <!-- Guideline kolom -->
+        <androidx.constraintlayout.widget.Guideline
+            android:id="@+id/guidelineCol1"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:orientation="vertical"
+            app:layout_constraintGuide_percent="0.05" />
+
+        <androidx.constraintlayout.widget.Guideline
+            android:id="@+id/guidelineCol2"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:orientation="vertical"
+            app:layout_constraintGuide_percent="0.35" />
+
+        <androidx.constraintlayout.widget.Guideline
+            android:id="@+id/guidelineCol3"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:orientation="vertical"
+            app:layout_constraintGuide_percent="0.65" />
+
+        <!-- Baris 1: Pembayaran -->
+        <TextView
+            android:id="@+id/tvPembayaran"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="Pembayaran"
+            android:textSize="14sp"
+            android:textStyle="bold"
+            app:layout_constraintStart_toStartOf="@id/guidelineCol1"
+            app:layout_constraintTop_toTopOf="parent"/>
+
+        <TextView
+            android:id="@+id/tvColonPembayaran"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text=":"
+            android:textSize="14sp"
+            android:textStyle="bold"
+            app:layout_constraintStart_toStartOf="@id/guidelineCol2"
+            app:layout_constraintTop_toTopOf="@id/tvPembayaran"/>
+
+        <TextView
+            android:id="@+id/tvMetode"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="Tunai"
+            android:textStyle="bold"
+            app:layout_constraintStart_toStartOf="@id/guidelineCol3"
+            app:layout_constraintTop_toTopOf="@id/tvPembayaran"/>
+
+        <!-- Baris 2: Total Tagihan -->
+        <TextView
+            android:id="@+id/tvTotal"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="Total Tagihan"
+            android:textSize="14sp"
+            android:textStyle="bold"
+            app:layout_constraintStart_toStartOf="@id/guidelineCol1"
+            app:layout_constraintTop_toBottomOf="@id/tvPembayaran"
+            android:layout_marginTop="8dp"/>
+
+        <TextView
+            android:id="@+id/tvColonTotal"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text=":"
+            android:textSize="14sp"
+            android:textStyle="bold"
+            app:layout_constraintStart_toStartOf="@id/guidelineCol2"
+            app:layout_constraintTop_toTopOf="@id/tvTotal"/>
+
+        <TextView
+            android:id="@+id/tvNominalTotal"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="Rp 85.000"
+            android:textStyle="bold"
+            app:layout_constraintStart_toStartOf="@id/guidelineCol3"
+            app:layout_constraintTop_toTopOf="@id/tvTotal"/>
+
+        <!-- Baris 3: Diterima -->
+        <TextView
+            android:id="@+id/tvDiterima"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="Diterima"
+            android:textSize="14sp"
+            android:textStyle="bold"
+            app:layout_constraintStart_toStartOf="@id/guidelineCol1"
+            app:layout_constraintTop_toBottomOf="@id/tvTotal"
+            android:layout_marginTop="8dp"/>
+
+        <TextView
+            android:id="@+id/tvColonDiterima"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text=":"
+            android:textSize="14sp"
+            android:textStyle="bold"
+            app:layout_constraintStart_toStartOf="@id/guidelineCol2"
+            app:layout_constraintTop_toTopOf="@id/tvDiterima"/>
+
+        <TextView
+            android:id="@+id/tvNominalDiterima"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="Rp 100.000"
+            android:textStyle="bold"
+            app:layout_constraintStart_toStartOf="@id/guidelineCol3"
+            app:layout_constraintTop_toTopOf="@id/tvDiterima"/>
+
+        <!-- Baris 4: Kembalian -->
+        <TextView
+            android:id="@+id/tvKembalian"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="Kembalian"
+            android:textSize="14sp"
+            android:textStyle="bold"
+            app:layout_constraintStart_toStartOf="@id/guidelineCol1"
+            app:layout_constraintTop_toBottomOf="@id/tvDiterima"
+            android:layout_marginTop="8dp"/>
+
+        <TextView
+            android:id="@+id/tvColonKembalian"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text=":"
+            android:textSize="14sp"
+            android:textStyle="bold"
+            app:layout_constraintStart_toStartOf="@id/guidelineCol2"
+            app:layout_constraintTop_toTopOf="@id/tvKembalian"/>
+
+        <TextView
+            android:id="@+id/tvNominalKembalian"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="Rp 15.000"
+            android:textStyle="bold"
+            app:layout_constraintStart_toStartOf="@id/guidelineCol3"
+            app:layout_constraintTop_toTopOf="@id/tvKembalian"/>
+
+    </androidx.constraintlayout.widget.ConstraintLayout>
+
+    <!-- Tombol Cetak Struk -->
+    <Button
+        android:id="@+id/btnCetakStruk"
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        android:backgroundTint="@color/teal_sage"
+        android:text="Cetak Struk"
+        android:textColor="@android:color/white"
+        app:layout_constraintBottom_toBottomOf="@id/guidelineDtb3"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@id/layoutDetail" />
+
+    <!-- Guideline Horizontal untuk area atas/bawah -->
+    <androidx.constraintlayout.widget.Guideline
+        android:id="@+id/guidelineDtb1"
+        android:orientation="horizontal"
+        app:layout_constraintGuide_percent="0.1"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"/>
+
+    <androidx.constraintlayout.widget.Guideline
+        android:id="@+id/guidelineDtb2"
+        android:orientation="horizontal"
+        app:layout_constraintGuide_percent="0.3"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"/>
+
+    <androidx.constraintlayout.widget.Guideline
+        android:id="@+id/guidelineDtb3"
+        android:orientation="horizontal"
+        app:layout_constraintGuide_percent="0.7"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"/>
+
+</androidx.constraintlayout.widget.ConstraintLayout>
