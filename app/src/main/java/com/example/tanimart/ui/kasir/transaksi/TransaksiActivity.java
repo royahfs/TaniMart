@@ -8,7 +8,6 @@ import android.os.Bundle;
 import android.text.Editable;
 import android.text.TextWatcher;
 import android.view.Gravity;
-import android.view.View;
 import android.view.ViewGroup;
 import android.widget.Button;
 import android.widget.EditText;
@@ -26,7 +25,7 @@ import androidx.recyclerview.widget.RecyclerView;
 import com.example.tanimart.R;
 import com.example.tanimart.ui.adapter.ProductAdapter;
 import com.example.tanimart.ui.adapter.TransaksiAdapter;
-import com.example.tanimart.utils.CurrencyHelper; // ✅ pakai helper
+import com.example.tanimart.utils.CurrencyHelper; // pakai helper
 
 import java.util.ArrayList;
 
@@ -36,6 +35,7 @@ public class TransaksiActivity extends AppCompatActivity {
     private TransaksiViewModel transaksiViewModel;
     private EditText searchProduk;
     private ImageView btnMenu, btnCart, bottomSheetConnect;
+    private TextView tvTagih;
 
     @Override
     protected void onCreate(@Nullable Bundle savedInstanceState) {
@@ -43,6 +43,7 @@ public class TransaksiActivity extends AppCompatActivity {
         setContentView(R.layout.activity_transaksi);
 
         DrawerLayout drawerLayout = findViewById(R.id.drawer_layout_transaksi);
+        tvTagih = findViewById(R.id.tvTagih);
         btnMenu = findViewById(R.id.btnMenu);
         btnCart = findViewById(R.id.btnCart);
         bottomSheetConnect = findViewById(R.id.bottomSheetConnect);
@@ -77,12 +78,13 @@ public class TransaksiActivity extends AppCompatActivity {
             productAdapter.setProductList(produkList);
         });
 
-        // ✅ Format total tagihan pakai CurrencyHelper
+        // Format total tagihan pakai CurrencyHelper
         transaksiViewModel.getTotalTagihan().observe(this, total -> {
             TextView tvTagih = findViewById(R.id.tvTagih);
             tvTagih.setText("Tagih = " + CurrencyHelper.formatRupiah(total));
         });
 
+        tvTagih.setOnClickListener(v -> showBottomSheet());
         bottomSheetConnect.setOnClickListener(v -> showBottomSheet());
     }
 
