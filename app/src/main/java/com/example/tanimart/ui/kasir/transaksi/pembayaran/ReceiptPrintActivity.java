@@ -26,7 +26,8 @@ public class ReceiptPrintActivity extends AppCompatActivity {
 
     // MAC address printer Bluetooth (isi sesuai device kamu)
     private static final String PRINTER_MAC = "00:11:22:33:44:55";
-
+    // Deklarasi formatter
+    private NumberFormat formatter;
     // UI References
     private TextView tvStoreName, tvStoreBranch, tvCashier, tvDate, tvInvoice, tvPayment;
     private TextView tvSubtotal, tvTotal, tvPay, tvChange;
@@ -71,6 +72,23 @@ public class ReceiptPrintActivity extends AppCompatActivity {
         tvPay = findViewById(R.id.tv_pay);
         tvChange = findViewById(R.id.tv_change);
         layoutItems = findViewById(R.id.layout_items);
+
+
+        formatter = NumberFormat.getNumberInstance(new Locale("id", "ID"));
+
+        String tanggal = getIntent().getStringExtra("TANGGAL");
+        double totalTagihan = getIntent().getDoubleExtra("TOTAL_TAGIHAN", 0.0);
+        double uangDiterima = getIntent().getDoubleExtra("UANG_DITERIMA", 0.0);
+        double kembalian = getIntent().getDoubleExtra("KEMBALIAN", 0.0);
+
+// update text di receipt_layout
+        tvDate.setText(tanggal);
+        tvTotal.setText("Total: Rp " + formatter.format(totalTagihan));
+        tvPay.setText("Bayar: Rp " + formatter.format(uangDiterima));
+        tvChange.setText("Kembali: Rp " + formatter.format(kembalian));
+
+
+
 
         // Tambah produk contoh
         addProduct("Beras Premium", 2, 50000);
@@ -166,6 +184,7 @@ public class ReceiptPrintActivity extends AppCompatActivity {
         tvTotal.setText(formatCurrency(qty * price));
 
         layoutItems.addView(itemView);
+
     }
 
     private String formatCurrency(double value) {

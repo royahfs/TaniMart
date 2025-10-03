@@ -59,8 +59,18 @@ public class DialogTransaksiBerhasilActivity extends AppCompatActivity {
 
         // Setup tombol untuk kembali ke halaman utama transaksi
         btnCetakStruk.setOnClickListener(v -> {
-            kembaliKeTransaksi();
+            // Kirim data transaksi ke ReceiptPrintActivity
+            Intent intent = new Intent(DialogTransaksiBerhasilActivity.this, ReceiptPrintActivity.class);
+            intent.putExtra("TANGGAL", tanggal);
+            intent.putExtra("TOTAL_TAGIHAN", totalTagihan);
+            intent.putExtra("UANG_DITERIMA", uangDiterima);
+            intent.putExtra("KEMBALIAN", kembalian);
+            startActivity(intent);
+
+            // Tutup dialog ini supaya gak numpuk
+            finish();
         });
+
 
     }
     @Override
