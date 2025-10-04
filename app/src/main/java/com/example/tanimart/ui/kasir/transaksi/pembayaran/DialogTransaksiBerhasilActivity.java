@@ -10,9 +10,12 @@ import androidx.appcompat.app.AppCompatActivity;
 
 import com.example.tanimart.R;
 import com.example.tanimart.ui.kasir.transaksi.TransaksiActivity;
+import com.example.tanimart.data.model.Product;
 
 import java.text.NumberFormat;
 import java.util.Locale;
+import java.util.ArrayList; // Untuk mengenali kelas ArrayList
+
 
 public class DialogTransaksiBerhasilActivity extends AppCompatActivity {
 
@@ -58,18 +61,29 @@ public class DialogTransaksiBerhasilActivity extends AppCompatActivity {
 
 
         // Setup tombol untuk kembali ke halaman utama transaksi
+        // ...
+        // Di dalam listener tombol Cetak Struk / Selesai
         btnCetakStruk.setOnClickListener(v -> {
-            // Kirim data transaksi ke ReceiptPrintActivity
+            // Ambil daftar produk yang sebelumnya sudah Anda teruskan ke dialog ini
+            ArrayList<Product> productList = getIntent().getParcelableArrayListExtra("CART_LIST");
+
             Intent intent = new Intent(DialogTransaksiBerhasilActivity.this, ReceiptPrintActivity.class);
-            intent.putExtra("TANGGAL", tanggal);
-            intent.putExtra("TOTAL_TAGIHAN", totalTagihan);
-            intent.putExtra("UANG_DITERIMA", uangDiterima);
-            intent.putExtra("KEMBALIAN", kembalian);
+
+            // Teruskan semua data yang dibutuhkan
+            intent.putExtra("TANGGAL", getIntent().getStringExtra("TANGGAL"));
+            intent.putExtra("TOTAL_TAGIHAN", getIntent().getDoubleExtra("TOTAL_TAGIHAN", 0.0));
+            intent.putExtra("UANG_DITERIMA", getIntent().getDoubleExtra("UANG_DITERIMA", 0.0));
+            intent.putExtra("KEMBALIAN", getIntent().getDoubleExtra("KEMBALIAN", 0.0));
+
+            // KIRIM DAFTAR PRODUK SEBENARNYA
+            intent.putParcelableArrayListExtra("CART_LIST", productList);
+
             startActivity(intent);
 
-            // Tutup dialog ini supaya gak numpuk
-            finish();
+            // Mungkin Anda ingin menutup dialog ini setelahnya
+            // finish();
         });
+
 
 
     }

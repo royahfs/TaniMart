@@ -23,11 +23,16 @@ import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
 import com.example.tanimart.R;
+// =================== IMPORT YANG DIPERBAIKI ===================
+// Ganti import yang salah dengan import kelas Product dari model Anda
+import com.example.tanimart.data.model.CartItem;
+import com.example.tanimart.data.model.Product; // Pastikan path ini sesuai
 import com.example.tanimart.ui.adapter.ProductAdapter;
 import com.example.tanimart.ui.adapter.TransaksiAdapter;
-import com.example.tanimart.utils.CurrencyHelper; // pakai helper
+import com.example.tanimart.utils.CurrencyHelper;
 
 import java.util.ArrayList;
+import java.util.List;
 
 public class TransaksiActivity extends AppCompatActivity {
 
@@ -80,6 +85,7 @@ public class TransaksiActivity extends AppCompatActivity {
 
         // Format total tagihan pakai CurrencyHelper
         transaksiViewModel.getTotalTagihan().observe(this, total -> {
+            // Inisialisasi TextView di sini untuk menghindari NullPointerException jika dipanggil sebelum onResume
             TextView tvTagih = findViewById(R.id.tvTagih);
             tvTagih.setText("Tagih = " + CurrencyHelper.formatRupiah(total));
         });
@@ -118,15 +124,38 @@ public class TransaksiActivity extends AppCompatActivity {
             angkaTotal.setText(CurrencyHelper.formatRupiah(total));
         });
 
-        // tombol bayar
-        btnBayar.setOnClickListener(v -> {
-            transaksiViewModel.getTotalTagihan().observe(this, total -> {
-                Intent intent = new Intent(TransaksiActivity.this, PembayaranActivity.class);
-                intent.putExtra("TOTAL_TAGIHAN", total); // kirim total
-                startActivity(intent);
-            });
-        });
 
+        // =================== BLOK TOMBOL BAYAR YANG DIPERBAIKI ===================
+        btnBayar.setOnClickListener(v -> {
+            // 1. Ambil nilai LiveData SAAT INI.
+            Double total = transaksiViewModel.getTotalTagihan().getValue();
+            // INI ADALAH TIPE DATA YANG BENAR DARI VIEWMODEL ANDA
+            List<CartItem> cartItemList = transaksiViewModel.getCartList().getValue();
+
+            // 2. Lakukan pengecekan untuk memastikan data tidak null dan keranjang tidak kosong
+            if (total != null && cartItemList != null && !cartItemList.isEmpty()) {
+
+                // 3. KONVERSI DARI List<CartItem> ke ArrayList<Product>
+                ArrayList<Product> productListToSend = new ArrayList<>();
+                for (com.example.tanimart.data.model.CartItem item : cartItemList) {
+                    Product product = item.getProduct(); // Asumsikan ada getter bernama getProduct()
+                    product.setQuantity(item.getQuantity()); // PENTING: Salin kuantitasnya!
+                    productListToSend.add(product);
+                }
+
+                Intent intent = new Intent(TransaksiActivity.this, com.example.tanimart.ui.kasir.transaksi.pembayaran.PembayaranTunaiActivity.class);
+
+                // 4. Kirim total tagihan
+                intent.putExtra("TOTAL_TAGIHAN", total);
+
+                // 5. KIRIM DAFTAR PRODUK YANG SUDAH DIKONVERSI
+                intent.putParcelableArrayListExtra("CART_LIST", productListToSend);
+
+                startActivity(intent);
+                dialog.dismiss(); // Tutup bottom sheet setelah berpindah halaman
+            }
+        });
+        // =================== AKHIR BLOK TOMBOL BAYAR ===================
 
         dialog.show();
         dialog.getWindow().setLayout(ViewGroup.LayoutParams.MATCH_PARENT, ViewGroup.LayoutParams.WRAP_CONTENT);

@@ -38,6 +38,8 @@
         <activity
             android:name=".ui.kasir.transaksi.pembayaran.DialogTransaksiBerhasilActivity"
             android:exported="false" />
+        <activity android:name=".ui.kasir.transaksi.pembayaran.ReceiptPrintActivity"
+            android:exported="false" />
 
 <!--    Admin dan Karyawan-->
         <activity

@@ -14,9 +14,13 @@ import androidx.appcompat.app.AppCompatActivity;
 import androidx.lifecycle.ViewModelProvider;
 
 import com.example.tanimart.R;
+// =================== IMPORT YANG DIPERBAIKI ===================
+// Hapus import yang salah dan ganti dengan import kelas Product dari model Anda
+import com.example.tanimart.data.model.Product; // Sesuaikan path jika berbeda
 
 import java.text.NumberFormat;
 import java.text.SimpleDateFormat;
+import java.util.ArrayList;
 import java.util.Date;
 import java.util.Locale;
 
@@ -28,6 +32,8 @@ public class PembayaranTunaiActivity extends AppCompatActivity {
     private PembayaranTunaiViewModel pembayaranTunaiViewModel;
     private double totalTagihan = 0.0;
     private NumberFormat formatter;
+    // Tipe data ArrayList<Product> sekarang sudah benar karena import di atas sudah diperbaiki
+    private ArrayList<Product> cartList;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -37,8 +43,10 @@ public class PembayaranTunaiActivity extends AppCompatActivity {
         // Formatter Rupiah
         formatter = NumberFormat.getNumberInstance(new Locale("id", "ID"));
 
-        // Ambil total tagihan dari intent
+        // Ambil total tagihan DAN cartList dari Intent.
+        // Baris ini sekarang akan berfungsi dengan benar.
         totalTagihan = getIntent().getDoubleExtra("TOTAL_TAGIHAN", 0.0);
+        cartList = getIntent().getParcelableArrayListExtra("CART_LIST");
 
         // Init UI
         etUangDiterima = findViewById(R.id.etUangDiterima);
@@ -101,22 +109,22 @@ public class PembayaranTunaiActivity extends AppCompatActivity {
             // Proses simpan transaksi
             pembayaranTunaiViewModel.prosesPembayaran(uangDiterima, totalTagihan, "Tunai", () -> {
                 Intent intent = new Intent(this, DialogTransaksiBerhasilActivity.class);
-                // --- BAGIAN PENTING UNTUK TANGGAL ---
-                // 1. Buat format tanggal yang diinginkan
-                SimpleDateFormat sdf = new SimpleDateFormat("dd MMMM yyyy, HH:mm:ss", new Locale("id", "ID"));
 
-                // 2. Dapatkan tanggal dan waktu saat ini, lalu format menjadi String
+                // Buat format tanggal dan waktu
+                SimpleDateFormat sdf = new SimpleDateFormat("dd MMMM yyyy, HH:mm:ss", new Locale("id", "ID"));
                 String tanggalHariIni = sdf.format(new Date());
 
-                // 3. Kirim tanggal sebagai extra di Intent
+                // Kirim semua data yang diperlukan ke dialog berhasil
                 intent.putExtra("TANGGAL", tanggalHariIni);
                 intent.putExtra("TOTAL_TAGIHAN", totalTagihan);
                 intent.putExtra("UANG_DITERIMA", uangDiterima);
                 intent.putExtra("KEMBALIAN", uangDiterima - totalTagihan);
 
+                // TERUSKAN KEMBALI DAFTAR PRODUK (CART_LIST)
+                intent.putParcelableArrayListExtra("CART_LIST", cartList);
+
                 startActivity(intent);
                 finish();
-                //Toast.makeText(this, "Pembayaran berhasil!", Toast.LENGTH_SHORT).show();
             });
         });
 

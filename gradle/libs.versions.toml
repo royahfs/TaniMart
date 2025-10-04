@@ -15,6 +15,7 @@ constraintlayout = "2.1.4"
 firebaseAuth = "24.0.1"
 firebaseDatabase = "22.0.0"
 firebaseFunctions = "22.0.0"
+playServicesAnalyticsImpl = "18.2.0"
 
 
 
@@ -40,6 +41,7 @@ constraintlayout = { group = "androidx.constraintlayout", name = "constraintlayo
 firebase-auth = { group = "com.google.firebase", name = "firebase-auth", version.ref = "firebaseAuth" }
 firebase-database = { group = "com.google.firebase", name = "firebase-database", version.ref = "firebaseDatabase" }
 firebase-functions = { group = "com.google.firebase", name = "firebase-functions", version.ref = "firebaseFunctions" }
+play-services-analytics-impl = { group = "com.google.android.gms", name = "play-services-analytics-impl", version.ref = "playServicesAnalyticsImpl" }
 
 [plugins]
 android-application = { id = "com.android.application", version.ref = "agp" }

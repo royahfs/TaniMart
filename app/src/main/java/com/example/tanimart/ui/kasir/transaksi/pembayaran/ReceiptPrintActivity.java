@@ -17,9 +17,11 @@ import androidx.core.content.ContextCompat;
 import androidx.lifecycle.ViewModelProvider;
 
 import com.example.tanimart.R;
+import com.example.tanimart.data.model.Product;
 
 import java.text.NumberFormat;
 import java.util.Locale;
+import java.util.ArrayList;
 
 public class ReceiptPrintActivity extends AppCompatActivity {
     private PrintViewModel viewModel;
@@ -67,7 +69,6 @@ public class ReceiptPrintActivity extends AppCompatActivity {
         tvDate = findViewById(R.id.tv_date);
         tvInvoice = findViewById(R.id.tv_invoice);
         tvPayment = findViewById(R.id.tv_payment);
-        tvSubtotal = findViewById(R.id.tv_subtotal);
         tvTotal = findViewById(R.id.tv_total);
         tvPay = findViewById(R.id.tv_pay);
         tvChange = findViewById(R.id.tv_change);
@@ -81,19 +82,20 @@ public class ReceiptPrintActivity extends AppCompatActivity {
         double uangDiterima = getIntent().getDoubleExtra("UANG_DITERIMA", 0.0);
         double kembalian = getIntent().getDoubleExtra("KEMBALIAN", 0.0);
 
-// update text di receipt_layout
+        // update text di receipt_layout
         tvDate.setText(tanggal);
         tvTotal.setText("Total: Rp " + formatter.format(totalTagihan));
         tvPay.setText("Bayar: Rp " + formatter.format(uangDiterima));
         tvChange.setText("Kembali: Rp " + formatter.format(kembalian));
 
-
-
-
-        // Tambah produk contoh
-        addProduct("Beras Premium", 2, 50000);
-        addProduct("Gula Pasir", 1, 25000);
-        addProduct("Minyak Goreng", 3, 20000);
+        // Ambil daftar produk dari intent
+        ArrayList<Product> productList = getIntent().getParcelableArrayListExtra("CART_LIST");
+        // Loop dan tambahkan produk ke layout
+        if (productList != null) {
+            for (Product product : productList) {
+                addProduct(product.getNamaProduk(), product.getQuantity(), product.getHargaJual());
+            }
+        }
 
         // Tombol koneksi printer
         btnConnect.setOnClickListener(v -> checkPermissionAndConnect());

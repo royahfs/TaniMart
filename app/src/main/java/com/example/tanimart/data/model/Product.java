@@ -1,6 +1,10 @@
 package com.example.tanimart.data.model;
 
-public class Product {
+import android.os.Parcel;
+import android.os.Parcelable;
+
+// 1. Pastikan Anda sudah menambahkan 'implements Parcelable'
+public class Product implements Parcelable {
     private String id;
     private String namaProduk;
     private double hargaJual;
@@ -11,8 +15,14 @@ public class Product {
     private String satuan;
     private String tanggal;
 
+    // Variabel ini tidak ada di file Anda, tapi PENTING untuk keranjang belanja
+    // Jika tidak ada, tambahkan ini. Jika sudah ada, biarkan saja.
+    private int quantity = 0;
+
+
     public Product() { } // wajib untuk Firestore
 
+    // Constructor lengkap Anda
     public Product(String id, String namaProduk, double hargaJual, String kategori,
                    String merek, String imageUrl, double stok, String satuan, String tanggal) {
         this.id = id;
@@ -26,7 +36,61 @@ public class Product {
         this.tanggal = tanggal;
     }
 
-    // Getter & Setter
+    // =================== MULAI KODE PARCELABLE ===================
+
+    // 2. Tambahkan Constructor yang membaca dari Parcel
+    protected Product(Parcel in) {
+        id = in.readString();
+        namaProduk = in.readString();
+        hargaJual = in.readDouble();
+        kategori = in.readString();
+        merek = in.readString();
+        imageUrl = in.readString();
+        stok = in.readDouble();
+        satuan = in.readString();
+        tanggal = in.readString();
+        quantity = in.readInt(); // Jangan lupa 'quantity'
+    }
+
+    // 3. Tambahkan CREATOR
+    public static final Creator<Product> CREATOR = new Creator<Product>() {
+        @Override
+        public Product createFromParcel(Parcel in) {
+            return new Product(in);
+        }
+
+        @Override
+        public Product[] newArray(int size) {
+            return new Product[size];
+        }
+    };
+
+    @Override
+    public int describeContents() {
+        return 0;
+    }
+
+    // 4. Tambahkan metode writeToParcel
+    @Override
+    public void writeToParcel(Parcel dest, int flags) {
+        dest.writeString(id);
+        dest.writeString(namaProduk);
+        dest.writeDouble(hargaJual);
+        dest.writeString(kategori);
+        dest.writeString(merek);
+        dest.writeString(imageUrl);
+        dest.writeDouble(stok);
+        dest.writeString(satuan);
+        dest.writeString(tanggal);
+        dest.writeInt(quantity); // Jangan lupa 'quantity'
+    }
+
+    // =================== SELESAI KODE PARCELABLE ===================
+
+
+    // =================== Getter & Setter ===================
+    // Pastikan semua getter dan setter ada, terutama untuk 'quantity'
+
     public String getId() { return id; }
     public void setId(String id) { this.id = id; }
 
@@ -53,4 +117,8 @@ public class Product {
 
     public String getTanggal() { return tanggal; }
     public void setTanggal(String tanggal) { this.tanggal = tanggal; }
+
+    // Getter & Setter untuk 'quantity'
+    public int getQuantity() { return quantity; }
+    public void setQuantity(int quantity) { this.quantity = quantity; }
 }

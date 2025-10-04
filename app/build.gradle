@@ -39,6 +39,7 @@ dependencies {
     implementation libs.firebase.database
     implementation libs.firebase.functions
     implementation(libs.firebase.firestore)
+    implementation libs.play.services.analytics.impl
 
 
     def lifecycle_version = "2.6.2"
