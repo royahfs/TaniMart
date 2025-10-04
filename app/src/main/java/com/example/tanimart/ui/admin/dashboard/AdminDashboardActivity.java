@@ -9,10 +9,10 @@ import androidx.appcompat.app.AppCompatActivity;
 import androidx.cardview.widget.CardView;
 
 import com.example.tanimart.R;
-import com.example.tanimart.ui.admin.adminReport.AdminReportActivity;
 import com.example.tanimart.ui.admin.usermanagement.PegawaiActivity;
 import com.example.tanimart.ui.common.inventory.DaftarProdukActivity;
 import com.example.tanimart.ui.common.inventory.InventoryActivity;
+import com.example.tanimart.ui.kasir.laporan.LaporanActivity;
 import com.example.tanimart.ui.kasir.transaksi.TransaksiActivity;
 ;
 
@@ -58,7 +58,7 @@ public class AdminDashboardActivity extends AppCompatActivity {
         laporanMenu.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                Intent intent = new Intent(AdminDashboardActivity.this, AdminReportActivity.class);
+                Intent intent = new Intent(AdminDashboardActivity.this, LaporanActivity.class);
                 startActivity(intent);
             }
         });

@@ -1,81 +1,82 @@
-package com.example.tanimart.ui.laporan;
+package com.example.tanimart.ui.kasir.laporan;
 
-import android.app.DatePickerDialog;
 import android.os.Bundle;
-import android.widget.ArrayAdapter;
+import android.view.View;
+import android.widget.AdapterView;
+import android.widget.Button;
 import android.widget.Spinner;
 import android.widget.TextView;
 
 import androidx.appcompat.app.AppCompatActivity;
+import androidx.core.util.Pair;
 import androidx.lifecycle.ViewModelProvider;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
 import com.example.tanimart.R;
 import com.example.tanimart.ui.adapter.LaporanTransaksiAdapter;
+import com.google.android.material.datepicker.MaterialDatePicker;
+import com.google.android.material.datepicker.MaterialPickerOnPositiveButtonClickListener;
 
-import java.text.SimpleDateFormat;
-import java.util.Calendar;
+import java.util.ArrayList;
 import java.util.Date;
-import java.util.Locale;
 
 public class LaporanActivity extends AppCompatActivity {
-
     private LaporanViewModel viewModel;
     private LaporanTransaksiAdapter adapter;
-    private Date startDate, endDate;
-    private TextView txtRingkasan, btnStartDate, btnEndDate;
+    private Button btnCustomDate;
+    private Spinner spinnerFilter;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_laporan);
 
-        RecyclerView recyclerView = findViewById(R.id.recyclerTransaksi);
-        txtRingkasan = findViewById(R.id.txtRingkasan);
-        btnStartDate = findViewById(R.id.btnStartDate);
-        btnEndDate = findViewById(R.id.btnEndDate);
-        Spinner metodeSpinner = findViewById(R.id.spinnerMetode);
-
-        adapter = new LaporanTransaksiAdapter();
-        recyclerView.setLayoutManager(new LinearLayoutManager(this));
-        recyclerView.setAdapter(adapter);
-
         viewModel = new ViewModelProvider(this).get(LaporanViewModel.class);
+        adapter = new LaporanTransaksiAdapter(new ArrayList<>());
 
-        viewModel.getTransaksiList().observe(this, list -> adapter.setData(list));
-        viewModel.getRingkasan().observe(this, txtRingkasan::setText);
+        RecyclerView recycler = findViewById(R.id.recyclerLaporan);
+        recycler.setLayoutManager(new LinearLayoutManager(this));
+        recycler.setAdapter(adapter);
 
-        // Spinner metode pembayaran
-        String[] metodeArray = {"Semua", "Tunai", "QRIS", "Transfer"};
-        metodeSpinner.setAdapter(new ArrayAdapter<>(this, android.R.layout.simple_spinner_dropdown_item, metodeArray));
+        spinnerFilter = findViewById(R.id.spinnerFilter);
+        btnCustomDate = findViewById(R.id.btnCustomDate);
 
-        SimpleDateFormat sdf = new SimpleDateFormat("dd-MM-yyyy HH:mm:ss", Locale.getDefault());
+        // Observers
+        viewModel.getTransaksiList().observe(this, list -> adapter.updateData(list));
+        viewModel.getTotalPendapatan().observe(this, val ->
+                ((TextView) findViewById(R.id.txtTotalPendapatan)).setText("Rp " + val));
+        viewModel.getJumlahTransaksi().observe(this, val ->
+                ((TextView) findViewById(R.id.txtJumlahTransaksi)).setText(String.valueOf(val)));
+        viewModel.getProdukTerjual().observe(this, val ->
+                ((TextView) findViewById(R.id.txtProdukTerjual)).setText(String.valueOf(val)));
 
-        btnStartDate.setOnClickListener(v -> {
-            Calendar c = Calendar.getInstance();
-            new DatePickerDialog(this, (view, year, month, dayOfMonth) -> {
-                c.set(year, month, dayOfMonth, 0, 0, 0);
-                startDate = c.getTime();
-                btnStartDate.setText(sdf.format(startDate));
-            }, c.get(Calendar.YEAR), c.get(Calendar.MONTH), c.get(Calendar.DAY_OF_MONTH)).show();
-        });
-
-        btnEndDate.setOnClickListener(v -> {
-            Calendar c = Calendar.getInstance();
-            new DatePickerDialog(this, (view, year, month, dayOfMonth) -> {
-                c.set(year, month, dayOfMonth, 23, 59, 59);
-                endDate = c.getTime();
-                btnEndDate.setText(sdf.format(endDate));
-            }, c.get(Calendar.YEAR), c.get(Calendar.MONTH), c.get(Calendar.DAY_OF_MONTH)).show();
-        });
-
-        // tombol filter (misalnya TextView dengan id btnFilter)
-        findViewById(R.id.btnFilter).setOnClickListener(v -> {
-            String metode = metodeSpinner.getSelectedItem().toString();
-            if (startDate != null && endDate != null) {
-                viewModel.loadTransaksi(startDate, endDate, metode);
+        // Spinner event
+        spinnerFilter.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
+            @Override public void onItemSelected(AdapterView<?> parent, View view, int position, long id) {
+                String filter = parent.getItemAtPosition(position).toString();
+                if (filter.equals("Custom")) {
+                    btnCustomDate.setVisibility(View.VISIBLE);
+                } else {
+                    btnCustomDate.setVisibility(View.GONE);
+                    viewModel.filterData(filter, null, null);
+                }
             }
+            @Override public void onNothingSelected(AdapterView<?> parent) {}
+        });
+
+        // Custom date range picker
+        btnCustomDate.setOnClickListener(v -> {
+            MaterialDatePicker.Builder<Pair<Long, Long>> builder = MaterialDatePicker.Builder.dateRangePicker();
+            builder.setTitleText("Pilih Rentang Tanggal");
+            MaterialDatePicker<Pair<Long, Long>> picker = builder.build();
+            picker.show(getSupportFragmentManager(), picker.toString());
+
+            picker.addOnPositiveButtonClickListener((MaterialPickerOnPositiveButtonClickListener<Pair<Long, Long>>) selection -> {
+                Date start = new Date(selection.first);
+                Date end = new Date(selection.second);
+                viewModel.filterData("Custom", start, end);
+            });
         });
     }
 }

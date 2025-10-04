@@ -40,6 +40,8 @@
             android:exported="false" />
         <activity android:name=".ui.kasir.transaksi.pembayaran.ReceiptPrintActivity"
             android:exported="false" />
+        <activity android:name=".ui.kasir.laporan.LaporanActivity"
+            android:exported="true" />
 
 <!--    Admin dan Karyawan-->
         <activity
