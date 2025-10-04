@@ -1,36 +1,32 @@
 package com.example.tanimart.data.model;
 
-import java.util.List;
+import com.google.firebase.Timestamp;
 
 public class Transaksi {
     private String idTransaksi;
-    private List<CartItem> items;
-    private double totalHarga;
-    private String tanggal;
-    private String kasir;
+    private int kembalian;
+    private String metode;
+    private Timestamp tanggal;
+    private double total;
+    private double uangDiterima;
 
-    public Transaksi() { }
-
-    public Transaksi(String idTransaksi, List<CartItem> items, double totalHarga, String tanggal, String kasir) {
-        this.idTransaksi = idTransaksi;
-        this.items = items;
-        this.totalHarga = totalHarga;
-        this.tanggal = tanggal;
-        this.kasir = kasir;
-    }
+    public Transaksi() {} // penting untuk Firestore
 
     public String getIdTransaksi() { return idTransaksi; }
     public void setIdTransaksi(String idTransaksi) { this.idTransaksi = idTransaksi; }
 
-    public List<CartItem> getItems() { return items; }
-    public void setItems(List<CartItem> items) { this.items = items; }
+    public int getKembalian() { return kembalian; }
+    public void setKembalian(int kembalian) { this.kembalian = kembalian; }
 
-    public double getTotalHarga() { return totalHarga; }
-    public void setTotalHarga(double totalHarga) { this.totalHarga = totalHarga; }
+    public String getMetode() { return metode; }
+    public void setMetode(String metode) { this.metode = metode; }
 
-    public String getTanggal() { return tanggal; }
-    public void setTanggal(String tanggal) { this.tanggal = tanggal; }
+    public Timestamp getTanggal() { return tanggal; }
+    public void setTanggal(Timestamp tanggal) { this.tanggal = tanggal; }
 
-    public String getKasir() { return kasir; }
-    public void setKasir(String kasir) { this.kasir = kasir; }
+    public double getTotal() { return total; }
+    public void setTotal(double total) { this.total = total; }
+
+    public double getUangDiterima() { return uangDiterima; }
+    public void setUangDiterima(double uangDiterima) { this.uangDiterima = uangDiterima; }
 }
