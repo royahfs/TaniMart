@@ -14,9 +14,7 @@ import androidx.appcompat.app.AppCompatActivity;
 import androidx.lifecycle.ViewModelProvider;
 
 import com.example.tanimart.R;
-// =================== IMPORT YANG DIPERBAIKI ===================
-// Hapus import yang salah dan ganti dengan import kelas Product dari model Anda
-import com.example.tanimart.data.model.Product; // Sesuaikan path jika berbeda
+import com.example.tanimart.data.model.Product;
 
 import java.text.NumberFormat;
 import java.text.SimpleDateFormat;

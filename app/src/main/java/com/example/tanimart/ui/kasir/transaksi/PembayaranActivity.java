@@ -28,7 +28,7 @@ public class PembayaranActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_pembayaran);
 
-        // --- Langkah 1: Ambil data dari Intent ---
+        //Ambil data dari Intent
         Intent intent = getIntent();
         totalTagihan = intent.getDoubleExtra("TOTAL_TAGIHAN", 0.0);
         // Pastikan Anda menggunakan ParcelableArrayListExtra untuk mengambil ArrayList<Product>
@@ -42,7 +42,7 @@ public class PembayaranActivity extends AppCompatActivity {
             return; // Hentikan eksekusi lebih lanjut
         }
 
-        // --- Langkah 2: Inisialisasi Komponen UI ---
+        //Inisialisasi Komponen UI
         btnBack = findViewById(R.id.btnBack);
         tvTotalTagihan = findViewById(R.id.tvTotalTagihan);
         tunaiPay = findViewById(R.id.tunaiPay);
@@ -50,7 +50,7 @@ public class PembayaranActivity extends AppCompatActivity {
         qrisPay = findViewById(R.id.qrisPay);
         debitPay = findViewById(R.id.debitPay);
 
-        // --- Langkah 3: Tampilkan Total Tagihan ---
+        //Tampilkan Total Tagihan
         // Format ke Rupiah dengan titik pemisah
         NumberFormat formatter = NumberFormat.getNumberInstance(new Locale("id", "ID"));
         String formattedTotal = formatter.format(totalTagihan);

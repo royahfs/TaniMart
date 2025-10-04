@@ -9,10 +9,17 @@ import androidx.lifecycle.ViewModel;
 import com.example.tanimart.data.model.CartItem;
 import com.google.firebase.firestore.FirebaseFirestore;
 
+import com.example.tanimart.data.model.Product;
+import com.google.firebase.firestore.DocumentReference;
+import com.google.firebase.firestore.FieldValue;
+import com.google.firebase.firestore.FirebaseFirestore;
+import com.google.firebase.firestore.WriteBatch;
+
 import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.ArrayList;
 
 public class PembayaranTunaiViewModel extends ViewModel {
 
