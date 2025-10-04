@@ -104,26 +104,29 @@ public class PembayaranTunaiActivity extends AppCompatActivity {
                 return;
             }
 
-            // Proses simpan transaksi
-            pembayaranTunaiViewModel.prosesPembayaran(uangDiterima, totalTagihan, "Tunai", () -> {
-                Intent intent = new Intent(this, DialogTransaksiBerhasilActivity.class);
+            // =================== INI BAGIAN YANG DIPERBAIKI ===================
+            // Panggil prosesPembayaran dengan menyertakan cartList
+            pembayaranTunaiViewModel.prosesPembayaran(
+                    uangDiterima,
+                    totalTagihan,
+                    "Tunai",
+                    cartList, // <-- Kirim daftar produk ke ViewModel
+                    () -> { // <-- Ini adalah lambda untuk callback onComplete
+                        // Kode ini hanya akan berjalan JIKA pengurangan stok di Firestore BERHASIL
+                        Intent intent = new Intent(this, DialogTransaksiBerhasilActivity.class);
 
-                // Buat format tanggal dan waktu
-                SimpleDateFormat sdf = new SimpleDateFormat("dd MMMM yyyy, HH:mm:ss", new Locale("id", "ID"));
-                String tanggalHariIni = sdf.format(new Date());
+                        SimpleDateFormat sdf = new SimpleDateFormat("dd MMMM yyyy, HH:mm:ss", new Locale("id", "ID"));
+                        String tanggalHariIni = sdf.format(new Date());
 
-                // Kirim semua data yang diperlukan ke dialog berhasil
-                intent.putExtra("TANGGAL", tanggalHariIni);
-                intent.putExtra("TOTAL_TAGIHAN", totalTagihan);
-                intent.putExtra("UANG_DITERIMA", uangDiterima);
-                intent.putExtra("KEMBALIAN", uangDiterima - totalTagihan);
+                        intent.putExtra("TANGGAL", tanggalHariIni);
+                        intent.putExtra("TOTAL_TAGIHAN", totalTagihan);
+                        intent.putExtra("UANG_DITERIMA", uangDiterima);
+                        intent.putExtra("KEMBALIAN", uangDiterima - totalTagihan);
+                        intent.putParcelableArrayListExtra("CART_LIST", cartList);
 
-                // TERUSKAN KEMBALI DAFTAR PRODUK (CART_LIST)
-                intent.putParcelableArrayListExtra("CART_LIST", cartList);
-
-                startActivity(intent);
-                finish();
-            });
+                        startActivity(intent);
+                        finish();
+                    });
         });
 
         // Tombol back
