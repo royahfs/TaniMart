@@ -14,11 +14,9 @@ import androidx.appcompat.app.AppCompatActivity;
 import androidx.lifecycle.ViewModelProvider;
 
 import com.example.tanimart.R;
-import com.example.tanimart.data.model.Product;
 
 import java.text.NumberFormat;
 import java.text.SimpleDateFormat;
-import java.util.ArrayList;
 import java.util.Date;
 import java.util.Locale;
 
@@ -30,8 +28,6 @@ public class PembayaranTunaiActivity extends AppCompatActivity {
     private PembayaranTunaiViewModel pembayaranTunaiViewModel;
     private double totalTagihan = 0.0;
     private NumberFormat formatter;
-    // Tipe data ArrayList<Product> sekarang sudah benar karena import di atas sudah diperbaiki
-    private ArrayList<Product> cartList;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -41,10 +37,8 @@ public class PembayaranTunaiActivity extends AppCompatActivity {
         // Formatter Rupiah
         formatter = NumberFormat.getNumberInstance(new Locale("id", "ID"));
 
-        // Ambil total tagihan DAN cartList dari Intent.
-        // Baris ini sekarang akan berfungsi dengan benar.
+        // Ambil total tagihan dari intent
         totalTagihan = getIntent().getDoubleExtra("TOTAL_TAGIHAN", 0.0);
-        cartList = getIntent().getParcelableArrayListExtra("CART_LIST");
 
         // Init UI
         etUangDiterima = findViewById(R.id.etUangDiterima);
@@ -104,29 +98,26 @@ public class PembayaranTunaiActivity extends AppCompatActivity {
                 return;
             }
 
-            // =================== INI BAGIAN YANG DIPERBAIKI ===================
-            // Panggil prosesPembayaran dengan menyertakan cartList
-            pembayaranTunaiViewModel.prosesPembayaran(
-                    uangDiterima,
-                    totalTagihan,
-                    "Tunai",
-                    cartList, // <-- Kirim daftar produk ke ViewModel
-                    () -> { // <-- Ini adalah lambda untuk callback onComplete
-                        // Kode ini hanya akan berjalan JIKA pengurangan stok di Firestore BERHASIL
-                        Intent intent = new Intent(this, DialogTransaksiBerhasilActivity.class);
+            // Proses simpan transaksi
+            pembayaranTunaiViewModel.prosesPembayaran(uangDiterima, totalTagihan, "Tunai", () -> {
+                Intent intent = new Intent(this, DialogTransaksiBerhasilActivity.class);
+                // --- BAGIAN PENTING UNTUK TANGGAL ---
+                // 1. Buat format tanggal yang diinginkan
+                SimpleDateFormat sdf = new SimpleDateFormat("dd MMMM yyyy, HH:mm:ss", new Locale("id", "ID"));
 
-                        SimpleDateFormat sdf = new SimpleDateFormat("dd MMMM yyyy, HH:mm:ss", new Locale("id", "ID"));
-                        String tanggalHariIni = sdf.format(new Date());
+                // 2. Dapatkan tanggal dan waktu saat ini, lalu format menjadi String
+                String tanggalHariIni = sdf.format(new Date());
 
-                        intent.putExtra("TANGGAL", tanggalHariIni);
-                        intent.putExtra("TOTAL_TAGIHAN", totalTagihan);
-                        intent.putExtra("UANG_DITERIMA", uangDiterima);
-                        intent.putExtra("KEMBALIAN", uangDiterima - totalTagihan);
-                        intent.putParcelableArrayListExtra("CART_LIST", cartList);
+                // 3. Kirim tanggal sebagai extra di Intent
+                intent.putExtra("TANGGAL", tanggalHariIni);
+                intent.putExtra("TOTAL_TAGIHAN", totalTagihan);
+                intent.putExtra("UANG_DITERIMA", uangDiterima);
+                intent.putExtra("KEMBALIAN", uangDiterima - totalTagihan);
 
-                        startActivity(intent);
-                        finish();
-                    });
+                startActivity(intent);
+                finish();
+                //Toast.makeText(this, "Pembayaran berhasil!", Toast.LENGTH_SHORT).show();
+            });
         });
 
         // Tombol back
