@@ -14,9 +14,15 @@ import androidx.appcompat.app.AppCompatActivity;
 import androidx.lifecycle.ViewModelProvider;
 
 import com.example.tanimart.R;
+// Tambahkan import ini
+import com.example.tanimart.data.model.Product;
+import com.example.tanimart.ui.kasir.transaksi.pembayaran.DialogTransaksiBerhasilActivity;
+
 
 import java.text.NumberFormat;
 import java.text.SimpleDateFormat;
+// Tambahkan import ini
+import java.util.ArrayList;
 import java.util.Date;
 import java.util.Locale;
 
@@ -28,6 +34,9 @@ public class PembayaranTunaiActivity extends AppCompatActivity {
     private PembayaranTunaiViewModel pembayaranTunaiViewModel;
     private double totalTagihan = 0.0;
     private NumberFormat formatter;
+    // Tambahkan variabel ini untuk menyimpan daftar barang belanjaan
+    private ArrayList<Product> cartList;
+
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -37,8 +46,18 @@ public class PembayaranTunaiActivity extends AppCompatActivity {
         // Formatter Rupiah
         formatter = NumberFormat.getNumberInstance(new Locale("id", "ID"));
 
-        // Ambil total tagihan dari intent
-        totalTagihan = getIntent().getDoubleExtra("TOTAL_TAGIHAN", 0.0);
+        // Ambil data dari intent
+        Intent intent = getIntent();
+        totalTagihan = intent.getDoubleExtra("TOTAL_TAGIHAN", 0.0);
+        // ========================= PERUBAHAN 1: Terima daftar barang =========================
+        // Terima ArrayList<Product> dari TransaksiActivity
+        cartList = intent.getParcelableArrayListExtra("CART_LIST");
+
+        // Pencegahan jika cartList tidak terkirim (null)
+        if (cartList == null) {
+            cartList = new ArrayList<>();
+        }
+        // ====================================================================================
 
         // Init UI
         etUangDiterima = findViewById(R.id.etUangDiterima);
@@ -100,7 +119,8 @@ public class PembayaranTunaiActivity extends AppCompatActivity {
 
             // Proses simpan transaksi
             pembayaranTunaiViewModel.prosesPembayaran(uangDiterima, totalTagihan, "Tunai", () -> {
-                Intent intent = new Intent(this, DialogTransaksiBerhasilActivity.class);
+                // Nama variabel diubah agar tidak bentrok dengan intent di atas
+                Intent successIntent = new Intent(this, DialogTransaksiBerhasilActivity.class);
                 // --- BAGIAN PENTING UNTUK TANGGAL ---
                 // 1. Buat format tanggal yang diinginkan
                 SimpleDateFormat sdf = new SimpleDateFormat("dd MMMM yyyy, HH:mm:ss", new Locale("id", "ID"));
@@ -108,15 +128,19 @@ public class PembayaranTunaiActivity extends AppCompatActivity {
                 // 2. Dapatkan tanggal dan waktu saat ini, lalu format menjadi String
                 String tanggalHariIni = sdf.format(new Date());
 
-                // 3. Kirim tanggal sebagai extra di Intent
-                intent.putExtra("TANGGAL", tanggalHariIni);
-                intent.putExtra("TOTAL_TAGIHAN", totalTagihan);
-                intent.putExtra("UANG_DITERIMA", uangDiterima);
-                intent.putExtra("KEMBALIAN", uangDiterima - totalTagihan);
+                // 3. Kirim data ke Nota
+                successIntent.putExtra("TANGGAL", tanggalHariIni);
+                successIntent.putExtra("TOTAL_TAGIHAN", totalTagihan);
+                successIntent.putExtra("UANG_DITERIMA", uangDiterima);
+                successIntent.putExtra("KEMBALIAN", uangDiterima - totalTagihan);
 
-                startActivity(intent);
+                // ================= PERUBAHAN 2: Teruskan daftar barang ke Nota =================
+                // Kirim juga daftar barang belanjaan ke DialogTransaksiBerhasilActivity
+                successIntent.putParcelableArrayListExtra("CART_LIST", cartList);
+                // ==============================================================================
+
+                startActivity(successIntent);
                 finish();
-                //Toast.makeText(this, "Pembayaran berhasil!", Toast.LENGTH_SHORT).show();
             });
         });
 

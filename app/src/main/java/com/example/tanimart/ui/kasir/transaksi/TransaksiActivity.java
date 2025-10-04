@@ -125,7 +125,6 @@ public class TransaksiActivity extends AppCompatActivity {
         });
 
 
-        // =================== BLOK TOMBOL BAYAR YANG DIPERBAIKI ===================
         btnBayar.setOnClickListener(v -> {
             // 1. Ambil nilai LiveData SAAT INI.
             Double total = transaksiViewModel.getTotalTagihan().getValue();

@@ -58,10 +58,7 @@ public class DialogTransaksiBerhasilActivity extends AppCompatActivity {
         if (tanggal != null) {
             tvTanggal.setText(tanggal);
         }
-
-
-        // Setup tombol untuk kembali ke halaman utama transaksi
-        // ...
+        
         // Di dalam listener tombol Cetak Struk / Selesai
         btnCetakStruk.setOnClickListener(v -> {
             // Ambil daftar produk yang sebelumnya sudah Anda teruskan ke dialog ini
