@@ -125,35 +125,32 @@ public class TransaksiActivity extends AppCompatActivity {
         });
 
 
+        // Misal di dalam onCreate TransaksiActivity.java
         btnBayar.setOnClickListener(v -> {
-            // 1. Ambil nilai LiveData SAAT INI.
+            // 🔽 kode perbaikan yang aku kasih
             Double total = transaksiViewModel.getTotalTagihan().getValue();
-            // INI ADALAH TIPE DATA YANG BENAR DARI VIEWMODEL ANDA
             List<CartItem> cartItemList = transaksiViewModel.getCartList().getValue();
 
-            // 2. Lakukan pengecekan untuk memastikan data tidak null dan keranjang tidak kosong
             if (total != null && cartItemList != null && !cartItemList.isEmpty()) {
 
-                // 3. KONVERSI DARI List<CartItem> ke ArrayList<Product>
                 ArrayList<Product> productListToSend = new ArrayList<>();
-                for (com.example.tanimart.data.model.CartItem item : cartItemList) {
-                    Product product = item.getProduct(); // Asumsikan ada getter bernama getProduct()
-                    product.setQuantity(item.getQuantity()); // PENTING: Salin kuantitasnya!
-                    productListToSend.add(product);
+                for (CartItem cartItem : cartItemList) {
+                    Product product = cartItem.getProduct();
+                    if (product != null) {
+                        product.setQuantity(cartItem.getQuantity()); // penting biar quantity ikut
+                        productListToSend.add(product);
+                    }
                 }
 
-                Intent intent = new Intent(TransaksiActivity.this, com.example.tanimart.ui.kasir.transaksi.pembayaran.PembayaranTunaiActivity.class);
-
-                // 4. Kirim total tagihan
+                Intent intent = new Intent(TransaksiActivity.this, PembayaranActivity.class);
                 intent.putExtra("TOTAL_TAGIHAN", total);
-
-                // 5. KIRIM DAFTAR PRODUK YANG SUDAH DIKONVERSI
                 intent.putParcelableArrayListExtra("CART_LIST", productListToSend);
-
                 startActivity(intent);
-                dialog.dismiss(); // Tutup bottom sheet setelah berpindah halaman
+
+                dialog.dismiss();
             }
         });
+
         // =================== AKHIR BLOK TOMBOL BAYAR ===================
 
         dialog.show();
