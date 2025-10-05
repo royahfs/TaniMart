@@ -10,8 +10,8 @@ import androidx.cardview.widget.CardView;
 
 import com.example.tanimart.R;
 import com.example.tanimart.ui.common.inventory.DaftarProdukActivity;
+import com.example.tanimart.ui.kasir.laporan.LaporanActivity;
 import com.example.tanimart.ui.kasir.transaksi.TransaksiActivity;
-import com.example.tanimart.ui.common.laporan.LaporanActivity;
 import com.example.tanimart.ui.common.profil.ProfilActivity;
 
 public class KasirDashboardActivity extends AppCompatActivity {

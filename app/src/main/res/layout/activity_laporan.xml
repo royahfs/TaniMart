@@ -115,14 +115,14 @@
         android:layout_height="wrap_content"
         android:orientation="horizontal"
         android:gravity="center_vertical"
-        android:layout_marginTop="12dp">
+        android:layout_marginTop="48dp">
 
         <Spinner
             android:id="@+id/spinnerFilter"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:entries="@array/filter_options"
-            android:layout_marginEnd="12dp"/>
+            android:layout_marginEnd="24dp"/>
 
         <Button
             android:id="@+id/btnCustomDate"
