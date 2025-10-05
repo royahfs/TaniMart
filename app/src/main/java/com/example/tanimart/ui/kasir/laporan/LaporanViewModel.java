@@ -67,19 +67,19 @@ public class LaporanViewModel extends ViewModel {
 
         query.get().addOnSuccessListener(queryDocumentSnapshots -> {
             List<Transaksi> list = new ArrayList<>();
-            int totalPendapatanVal = 0;
+            double totalPendapatanVal = 0.0;
             int jumlahTransaksiVal = 0;
             int produkTerjualVal = 0;
 
             for (DocumentSnapshot doc : queryDocumentSnapshots) {
                 Transaksi transaksi = doc.toObject(Transaksi.class);
                 if (transaksi != null) {
-                    Date tgl = transaksi.getTanggal().toDate(); // ✅ langsung dari Timestamp
+                    Date tgl = transaksi.getTanggal().toDate();
                     if (tgl != null && !tgl.before(startDate) && !tgl.after(endDate)) {
                         transaksi.setIdTransaksi(doc.getId());
                         list.add(transaksi);
 
-                        totalPendapatanVal += transaksi.getTotal(); // ✅ gunakan getTotal()
+                        totalPendapatanVal += transaksi.getTotal();
                         jumlahTransaksiVal++;
                         // produkTerjualVal += transaksi.getJumlahProduk(); // bisa aktifkan kalau ada field jumlahProduk
                     }
@@ -87,7 +87,7 @@ public class LaporanViewModel extends ViewModel {
             }
 
             transaksiLiveData.setValue(list);
-            totalPendapatan.setValue(totalPendapatanVal);
+            totalPendapatan.setValue((int) totalPendapatanVal);
             jumlahTransaksi.setValue(jumlahTransaksiVal);
             produkTerjual.setValue(produkTerjualVal);
         });

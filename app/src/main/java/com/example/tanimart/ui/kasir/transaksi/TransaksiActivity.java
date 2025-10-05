@@ -127,7 +127,6 @@ public class TransaksiActivity extends AppCompatActivity {
 
         // Misal di dalam onCreate TransaksiActivity.java
         btnBayar.setOnClickListener(v -> {
-            // 🔽 kode perbaikan yang aku kasih
             Double total = transaksiViewModel.getTotalTagihan().getValue();
             List<CartItem> cartItemList = transaksiViewModel.getCartList().getValue();
 

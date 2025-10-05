@@ -40,7 +40,7 @@ public class ProdukKeluarAdapter extends RecyclerView.Adapter<ProdukKeluarAdapte
     public void onBindViewHolder(@NonNull ViewHolder holder, int position) {
         ProdukKeluar item = produkKeluarList.get(position);
         holder.txtNamaProduk.setText(item.getNamaProduk());
-        holder.txtJumlah.setText("Jumlah: " + item.getJumlahKeluar());
+        holder.txtJumlah.setText("Jumlah Keluar: " + item.getJumlahKeluar());
 
         Timestamp ts = item.getTanggalKeluar();
         if (ts != null) {

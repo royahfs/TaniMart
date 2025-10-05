@@ -14,52 +14,51 @@ import androidx.appcompat.app.AppCompatActivity;
 import androidx.lifecycle.ViewModelProvider;
 
 import com.example.tanimart.R;
-// Tambahkan import ini
 import com.example.tanimart.data.model.Product;
+import com.example.tanimart.ui.common.inventory.DaftarProdukViewModel;
 import com.example.tanimart.ui.kasir.transaksi.pembayaran.DialogTransaksiBerhasilActivity;
-
 
 import java.text.NumberFormat;
 import java.text.SimpleDateFormat;
-// Tambahkan import ini
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.Locale;
+import com.google.firebase.firestore.FirebaseFirestore;
+import java.util.HashMap;
+import java.util.Map;
 
 public class PembayaranTunaiActivity extends AppCompatActivity {
 
     private EditText etUangDiterima;
     private TextView totalTagihanLabelTunai, tvKembalian;
     private Button btnUangPas, btnBayar;
-    private PembayaranTunaiViewModel pembayaranTunaiViewModel;
     private double totalTagihan = 0.0;
     private NumberFormat formatter;
-    // Tambahkan variabel ini untuk menyimpan daftar barang belanjaan
-    private ArrayList<Product> cartList;
 
+    private ArrayList<Product> cartList;
+    private DaftarProdukViewModel daftarProdukViewModel;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        setContentView(R.layout.pembayaran_tunai_activity);
+        setContentView(R.layout.activity_pembayaran_tunai);
 
-        // Formatter Rupiah
+        // --- SETUP AWAL ---
         formatter = NumberFormat.getNumberInstance(new Locale("id", "ID"));
+        daftarProdukViewModel = new ViewModelProvider(this).get(DaftarProdukViewModel.class);
 
-        // Ambil data dari intent
+        // --- AMBIL DATA DARI INTENT ---
         Intent intent = getIntent();
         totalTagihan = intent.getDoubleExtra("TOTAL_TAGIHAN", 0.0);
-        // ========================= PERUBAHAN 1: Terima daftar barang =========================
-        // Terima ArrayList<Product> dari TransaksiActivity
         cartList = intent.getParcelableArrayListExtra("CART_LIST");
-
-        // Pencegahan jika cartList tidak terkirim (null)
         if (cartList == null) {
             cartList = new ArrayList<>();
+            Toast.makeText(this, "Error: Keranjang tidak ditemukan", Toast.LENGTH_SHORT).show();
+            finish(); // Keluar jika tidak ada data keranjang
+            return;
         }
-        // ====================================================================================
 
-        // Init UI
+        // --- INISIALISASI UI ---
         etUangDiterima = findViewById(R.id.etUangDiterima);
         btnUangPas = findViewById(R.id.btnUangPas);
         totalTagihanLabelTunai = findViewById(R.id.totalTagihanLabelTunai);
@@ -67,43 +66,30 @@ public class PembayaranTunaiActivity extends AppCompatActivity {
         btnBayar = findViewById(R.id.btnBayar);
         ImageView btnBack = findViewById(R.id.btnBack);
 
-        // Tampilkan total tagihan (format rupiah)
-        String formattedTotal = formatter.format(totalTagihan);
-        totalTagihanLabelTunai.setText("Total: Rp" + formattedTotal);
+        totalTagihanLabelTunai.setText("Total: Rp" + formatter.format(totalTagihan));
 
-        // Init ViewModel
-        pembayaranTunaiViewModel = new ViewModelProvider(this).get(PembayaranTunaiViewModel.class);
+        // --- SETUP LISTENERS ---
+        btnUangPas.setOnClickListener(v -> etUangDiterima.setText(String.valueOf((int) totalTagihan)));
 
-        // Observasi LiveData dari ViewModel
-        pembayaranTunaiViewModel.getKembalian().observe(this, kembalian -> {
-            if (kembalian >= 0) {
-                tvKembalian.setText("Kembalian: Rp" + formatter.format(kembalian));
-            } else {
-                tvKembalian.setText("Belum cukup");
-            }
-        });
-
-        // Listener input uang diterima
         etUangDiterima.addTextChangedListener(new TextWatcher() {
             @Override public void beforeTextChanged(CharSequence s, int start, int count, int after) {}
             @Override public void onTextChanged(CharSequence s, int start, int before, int count) {
                 try {
                     double uang = Double.parseDouble(s.toString());
-                    pembayaranTunaiViewModel.hitungKembalian(uang, totalTagihan);
+                    double kembalian = uang - totalTagihan;
+                    tvKembalian.setText(kembalian >= 0 ? "Kembalian: Rp" + formatter.format(kembalian) : "Belum cukup");
                 } catch (NumberFormatException e) {
-                    pembayaranTunaiViewModel.hitungKembalian(0, totalTagihan);
+                    tvKembalian.setText("Belum cukup");
                 }
             }
             @Override public void afterTextChanged(Editable s) {}
         });
 
-        // Tombol uang pas
-        btnUangPas.setOnClickListener(v -> {
-            etUangDiterima.setText(String.valueOf((int) totalTagihan));
-        });
+        btnBack.setOnClickListener(v -> finish());
 
-        // Tombol Bayar
+        // --- LOGIKA UTAMA TOMBOL BAYAR ---
         btnBayar.setOnClickListener(v -> {
+            // 1. Validasi Input
             double uangDiterima;
             try {
                 uangDiterima = Double.parseDouble(etUangDiterima.getText().toString());
@@ -113,38 +99,48 @@ public class PembayaranTunaiActivity extends AppCompatActivity {
             }
 
             if (uangDiterima < totalTagihan) {
-                Toast.makeText(this, "Uang kurang!", Toast.LENGTH_SHORT).show();
+                Toast.makeText(this, "Uang yang diterima kurang!", Toast.LENGTH_SHORT).show();
                 return;
             }
 
-            // Proses simpan transaksi
-            pembayaranTunaiViewModel.prosesPembayaran(uangDiterima, totalTagihan, "Tunai", () -> {
-                // Nama variabel diubah agar tidak bentrok dengan intent di atas
-                Intent successIntent = new Intent(this, DialogTransaksiBerhasilActivity.class);
-                // --- BAGIAN PENTING UNTUK TANGGAL ---
-                // 1. Buat format tanggal yang diinginkan
-                SimpleDateFormat sdf = new SimpleDateFormat("dd MMMM yyyy, HH:mm:ss", new Locale("id", "ID"));
+            // 2. Proses Checkout (Update Stok & Catat Produk Keluar)
+            String idTransaksi = "TRX_" + System.currentTimeMillis();
+            daftarProdukViewModel.checkoutProdukList(cartList, idTransaksi);
 
-                // 2. Dapatkan tanggal dan waktu saat ini, lalu format menjadi String
-                String tanggalHariIni = sdf.format(new Date());
 
-                // 3. Kirim data ke Nota
-                successIntent.putExtra("TANGGAL", tanggalHariIni);
-                successIntent.putExtra("TOTAL_TAGIHAN", totalTagihan);
-                successIntent.putExtra("UANG_DITERIMA", uangDiterima);
-                successIntent.putExtra("KEMBALIAN", uangDiterima - totalTagihan);
+            FirebaseFirestore db = FirebaseFirestore.getInstance();
+            Map<String, Object> dataTransaksi = new HashMap<>();
+            dataTransaksi.put("idTransaksi", idTransaksi);
+            dataTransaksi.put("total", totalTagihan);
+            dataTransaksi.put("metode", "Tunai"); // Metode pembayaran untuk transaksi ini
+            dataTransaksi.put("uangDiterima", uangDiterima);
+            dataTransaksi.put("kembalian", uangDiterima - totalTagihan);
+            // Gunakan Timestamp server untuk konsistensi waktu
+            dataTransaksi.put("tanggal", com.google.firebase.firestore.FieldValue.serverTimestamp());
 
-                // ================= PERUBAHAN 2: Teruskan daftar barang ke Nota =================
-                // Kirim juga daftar barang belanjaan ke DialogTransaksiBerhasilActivity
-                successIntent.putParcelableArrayListExtra("CART_LIST", cartList);
-                // ==============================================================================
+            // simpan ke koleksi 'transaksi'
+            db.collection("transaksi").document(idTransaksi).set(dataTransaksi);
 
-                startActivity(successIntent);
-                finish();
-            });
+
+            // 3. Pindah ke Halaman Nota dengan Membawa Semua Data
+            Intent successIntent = new Intent(this, DialogTransaksiBerhasilActivity.class);
+
+            // Siapkan data tanggal untuk nota
+            SimpleDateFormat sdf = new SimpleDateFormat("dd MMMM yyyy, HH:mm:ss", new Locale("id", "ID"));
+            String tanggalHariIni = sdf.format(new Date());
+
+            // Kirim semua data yang dibutuhkan oleh nota
+            successIntent.putExtra("TANGGAL", tanggalHariIni);
+            successIntent.putExtra("ID_TRANSAKSI", idTransaksi);
+            successIntent.putExtra("TOTAL_TAGIHAN", totalTagihan);
+            successIntent.putExtra("UANG_DITERIMA", uangDiterima);
+            successIntent.putExtra("KEMBALIAN", uangDiterima - totalTagihan);
+            successIntent.putParcelableArrayListExtra("CART_LIST", cartList);
+
+            startActivity(successIntent);
+            finish(); // Tutup halaman ini setelah transaksi berhasil
         });
-
-        // Tombol back
-        btnBack.setOnClickListener(v -> finish());
     }
+
+    // Fungsi checkoutProduk() sudah tidak diperlukan lagi karena logikanya sudah menyatu di dalam OnClickListener
 }
