@@ -1,5 +1,7 @@
 package com.example.tanimart.ui.adapter;
 
+import android.util.Base64;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -66,16 +68,39 @@ public class InventoryAdapter extends RecyclerView.Adapter<InventoryAdapter.View
         holder.kategori.setText(item.getKategori());
         holder.merek.setText(item.getMerek());
 
-        // load gambar dengan Glide
-        if (item.getImageUrl() != null && !item.getImageUrl().isEmpty()) {
-            Glide.with(holder.itemView.getContext())
-                    .load(item.getImageUrl())
-                    .placeholder(R.drawable.upload) // gambar default saat loading
-                    .error(R.drawable.upload)       // gambar default kalau gagal load
-                    .into(holder.image);
+        // =================== BLOK GAMBAR YANG DIPERBAIKI ===================
+        // Cerdas memuat gambar: bisa dari URL (http) atau dari string Base64
+        String imageUrl = item.getImageUrl();
+        if (imageUrl != null && !imageUrl.isEmpty()) {
+            // Cek apakah ini Base64 (tidak dimulai dengan http) atau URL biasa
+            if (imageUrl.startsWith("http")) {
+                // Jika ini URL, muat seperti biasa (untuk data lama jika ada)
+                Glide.with(holder.itemView.getContext())
+                        .load(imageUrl)
+                        .placeholder(R.drawable.upload)
+                        .error(R.drawable.upload)
+                        .into(holder.image);
+            } else {
+                // Jika ini BUKAN URL, kita anggap ini adalah Base64
+                try {
+                    byte[] imageBytes = android.util.Base64.decode(imageUrl, android.util.Base64.DEFAULT);
+                    Glide.with(holder.itemView.getContext())
+                            .asBitmap()
+                            .load(imageBytes)
+                            .placeholder(R.drawable.upload)
+                            .error(R.drawable.upload)
+                            .into(holder.image);
+                } catch (IllegalArgumentException e) {
+                    // Ini terjadi jika string bukan Base64 yang valid
+                    android.util.Log.e("InventoryAdapter", "Gagal decode Base64: " + e.getMessage());
+                    holder.image.setImageResource(R.drawable.upload); // Tampilkan gambar error
+                }
+            }
         } else {
+            // Handle jika tidak ada gambar sama sekali
             holder.image.setImageResource(R.drawable.upload); // default jika url kosong
         }
+        // =================================================================
 
         // event klik item biasa
         holder.itemView.setOnClickListener(v -> listener.onItemClick(item));
