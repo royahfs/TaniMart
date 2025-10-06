@@ -23,6 +23,12 @@
         android:supportsRtl="true"
         android:theme="@style/Base.Theme.TaniMart">
 
+
+        <activity
+            android:name=".ui.common.inventory.DetailProdukActivity"
+            android:exported="true">
+        </activity>
+
 <!--    Admin dan Kasir-->
         <activity
             android:name=".ui.kasir.transaksi.TransaksiActivity"
@@ -58,7 +64,8 @@
         </activity>
         <activity
             android:name=".ui.common.inventory.KelolaProdukMasukActivity"
-            android:exported="true">
+            android:exported="true"
+            android:windowSoftInputMode="adjustResize">
         </activity>
         <activity
             android:name=".ui.common.inventory.ProdukKeluarActivity"
@@ -90,7 +97,8 @@
 <!--    Sign Up-->
         <activity
             android:name=".ui.common.signup.SignUpActivity"
-            android:exported="false">
+            android:exported="false"
+            android:windowSoftInputMode="adjustResize">
         </activity>
 
 

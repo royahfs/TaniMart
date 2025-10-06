@@ -41,7 +41,7 @@ public class KelolaProdukMasukActivity extends AppCompatActivity {
     private InventoryAdapter adapter;
     ImageView uploadImage;
     Button saveBtnKPM;
-    EditText uploadNB, uploadHJ, uploadStokBarangMasuk;
+    EditText uploadNB, uploadHJ, uploadStokBarangMasuk, deskripsiProduk;
     TextView pilihMerek, pilihKategori, pilihSatuanUnit;
     Toolbar toolbar;
     Uri uri;
@@ -91,6 +91,7 @@ public class KelolaProdukMasukActivity extends AppCompatActivity {
         pilihSatuanUnit = findViewById(R.id.pilihSatuanUnit);
         pilihMerek = findViewById(R.id.pilihMerek);
         pilihKategori = findViewById(R.id.pilihKategori);
+        deskripsiProduk = findViewById(R.id.deskripsiProduk);
 
         // isi default
         merekList.add("Umum");
@@ -259,10 +260,11 @@ public class KelolaProdukMasukActivity extends AppCompatActivity {
         String namaProduk = uploadNB.getText().toString().trim();
         String hargaStr = uploadHJ.getText().toString().trim();
         String stokStr = uploadStokBarangMasuk.getText().toString().trim();
+        String deskripsi = deskripsiProduk.getText().toString().trim();
 
         if (namaProduk.isEmpty() || hargaStr.isEmpty()
                 || selectedMerek.isEmpty() || selectedKategori.isEmpty() ||
-                stokStr.isEmpty() || selectedSatuan.isEmpty()) {
+                stokStr.isEmpty() || selectedSatuan.isEmpty() || deskripsi.isEmpty()) {
             Toast.makeText(this, "Semua field harus diisi", Toast.LENGTH_SHORT).show();
             return;
         }
@@ -295,7 +297,8 @@ public class KelolaProdukMasukActivity extends AppCompatActivity {
                 stok,
                 selectedSatuan,
                 tanggal,
-                imageUrl
+                imageUrl,
+                deskripsi
         );
 
         viewModel.addInventory(inventory);
@@ -305,6 +308,7 @@ public class KelolaProdukMasukActivity extends AppCompatActivity {
         uploadNB.setText("");
         uploadHJ.setText("");
         uploadStokBarangMasuk.setText("");
+        deskripsiProduk.setText("");
         pilihMerek.setText("Pilih Merek");
         pilihKategori.setText("Pilih Kategori");
         pilihSatuanUnit.setText("Pilih Satuan");

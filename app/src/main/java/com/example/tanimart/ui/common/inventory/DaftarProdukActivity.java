@@ -1,5 +1,6 @@
 package com.example.tanimart.ui.common.inventory;
 
+import android.content.Intent;
 import android.os.Bundle;
 import android.util.Log;
 import android.widget.Toast;
@@ -9,13 +10,13 @@ import androidx.appcompat.app.AppCompatActivity;
 import androidx.appcompat.widget.Toolbar;
 import androidx.lifecycle.ViewModelProvider;
 import androidx.recyclerview.widget.GridLayoutManager;
-// import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
 import com.example.tanimart.R;
 import com.example.tanimart.data.model.Inventory;
 import com.example.tanimart.data.model.Product;
 import com.example.tanimart.ui.adapter.DaftarProdukAdapter;
+import com.example.tanimart.ui.common.inventory.DetailProdukActivity;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -41,7 +42,6 @@ public class DaftarProdukActivity extends AppCompatActivity {
         toolbar.setNavigationOnClickListener(v -> onBackPressed());
 
 
-
         // Setup ViewModel
         daftarProdukViewModel = new ViewModelProvider(this).get(DaftarProdukViewModel.class);
 
@@ -50,10 +50,16 @@ public class DaftarProdukActivity extends AppCompatActivity {
         recyclerDaftarProduk = findViewById(R.id.recyclerDaftarProduk);
         // ini klo Grid
         recyclerDaftarProduk.setLayoutManager(new GridLayoutManager(this, 2));
+
+
         daftarProdukAdapter = new DaftarProdukAdapter(new ArrayList<>(), product -> {
-            // Aksi klik item
-            Toast.makeText(this, "Klik: " + product.getNamaProduk(), Toast.LENGTH_SHORT).show();
+            // Aksi klik item -> buka DetailProdukActivity
+            Intent intent = new Intent(DaftarProdukActivity.this, DetailProdukActivity.class);
+            intent.putExtra("id", product.getId()); // kirim hanya ID produk
+            startActivity(intent);
         });
+
+
         recyclerDaftarProduk.setAdapter(daftarProdukAdapter);
 
         // Observe

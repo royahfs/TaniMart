@@ -3,11 +3,12 @@ package com.example.tanimart.data.model;
 import android.os.Parcel;
 import android.os.Parcelable;
 
-// 1. Pastikan Anda sudah menambahkan 'implements Parcelable'
+//  Pastikan Anda sudah menambahkan 'implements Parcelable'
 public class Product implements Parcelable {
     private String id;
     private String namaProduk;
     private double hargaJual;
+    private String deskripsi;
     private String kategori;
     private String merek;
     private String imageUrl;
@@ -16,18 +17,18 @@ public class Product implements Parcelable {
     private String tanggal;
 
     // Variabel ini tidak ada di file Anda, tapi PENTING untuk keranjang belanja
-    // Jika tidak ada, tambahkan ini. Jika sudah ada, biarkan saja.
     private int quantity = 0;
 
 
     public Product() { } // wajib untuk Firestore
 
     // Constructor lengkap Anda
-    public Product(String id, String namaProduk, double hargaJual, String kategori,
+    public Product(String id, String namaProduk, double hargaJual,String deskripsi, String kategori,
                    String merek, String imageUrl, double stok, String satuan, String tanggal) {
         this.id = id;
         this.namaProduk = namaProduk;
         this.hargaJual = hargaJual;
+        this.deskripsi = deskripsi;
         this.kategori = kategori;
         this.merek = merek;
         this.imageUrl = imageUrl;
@@ -36,13 +37,12 @@ public class Product implements Parcelable {
         this.tanggal = tanggal;
     }
 
-    // =================== MULAI KODE PARCELABLE ===================
-
     // 2. Tambahkan Constructor yang membaca dari Parcel
     protected Product(Parcel in) {
         id = in.readString();
         namaProduk = in.readString();
         hargaJual = in.readDouble();
+        deskripsi = in.readString();
         kategori = in.readString();
         merek = in.readString();
         imageUrl = in.readString();
@@ -76,6 +76,7 @@ public class Product implements Parcelable {
         dest.writeString(id);
         dest.writeString(namaProduk);
         dest.writeDouble(hargaJual);
+        dest.writeString(deskripsi);
         dest.writeString(kategori);
         dest.writeString(merek);
         dest.writeString(imageUrl);
@@ -121,4 +122,8 @@ public class Product implements Parcelable {
     // Getter & Setter untuk 'quantity'
     public int getQuantity() { return quantity; }
     public void setQuantity(int quantity) { this.quantity = quantity; }
+
+    public String getDeskripsi() { return deskripsi; }
+    public void setDeskripsi(String deskripsi) { this.deskripsi = deskripsi; }
+
 }

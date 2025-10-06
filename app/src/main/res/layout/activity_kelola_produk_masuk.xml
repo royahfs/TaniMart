@@ -6,6 +6,7 @@
     android:id="@+id/mainKelolaProduk"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
+    android:gravity="center"
     tools:context=".ui.common.inventory.KelolaProdukMasukActivity">
 
     <!-- Toolbar -->
@@ -168,6 +169,7 @@
                         android:padding="10dp"
                         android:textColor="@color/dark_teal_sage" />
 
+                    <!--satuan unit-->
                     <TextView
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
@@ -175,8 +177,6 @@
                         android:text="Satuan Unit"
                         android:textSize="14sp"
                         android:textColor="@color/dark_teal_sage" />
-
-                    <!--satuan unit-->
 
                     <TextView
                         android:id="@+id/pilihSatuanUnit"
@@ -190,7 +190,25 @@
                         android:focusable="true"
                         android:clickable="true"/>
 
+                    <!-- deskripsi produk -->
+                    <TextView
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_marginTop="15dp"
+                        android:text="Deskripsi Produk"
+                        android:textSize="14sp"
+                        android:textColor="@color/dark_teal_sage" />
 
+                    <EditText
+                        android:id="@+id/deskripsiProduk"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:background="@drawable/sage_border"
+                        android:hint="Deskripsi Produk"
+                        android:inputType="textMultiLine"
+                        android:gravity="top|start"
+                        android:padding="10dp"
+                        android:textColor="@color/dark_teal_sage" />
 
                     <androidx.appcompat.widget.AppCompatButton
                         android:id="@+id/saveBtnKPM"

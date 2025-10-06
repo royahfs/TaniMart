@@ -10,12 +10,13 @@ public class Inventory {
     private String satuan;
     private String tanggal;
     private String imageUrl;    // URL gambar dari Firebase Storage
+    private String deskripsi;
 
     // konstruktor kosong (dibutuhkan Firebase)
     public Inventory() {}
 
     public Inventory(String id, String namaProduk, double hargaJual,
-                     String merek, String kategori, double stok, String satuan, String tanggal, String imageUrl) {
+                     String merek, String kategori, double stok, String satuan, String tanggal, String imageUrl, String deskripsi) {
         this.id = id;
         this.namaProduk = namaProduk;
         this.hargaJual = hargaJual;
@@ -25,6 +26,7 @@ public class Inventory {
         this.satuan = satuan;
         this.tanggal = tanggal;
         this.imageUrl = imageUrl;
+        this.deskripsi = deskripsi;
     }
 
     // getter & setter
@@ -56,4 +58,6 @@ public class Inventory {
 
     public String getImageUrl() { return imageUrl; }
     public void setImageUrl(String imageUrl) { this.imageUrl = imageUrl; }
+    public String getDeskripsi() { return deskripsi; }
+    public void setDeskripsi(String deskripsi) { this.deskripsi = deskripsi; }
 }
