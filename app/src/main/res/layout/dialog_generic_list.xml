@@ -1,0 +1,39 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="300dp"
+    android:layout_height="wrap_content"
+    android:orientation="vertical"
+    android:padding="16dp"
+    android:background="@drawable/dialogbkg">
+
+    <TextView
+        android:id="@+id/dialogTitle"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="Judul Dialog"
+        android:textSize="20sp"
+        android:textStyle="bold"
+        android:textColor="@color/black"
+        android:layout_marginBottom="16dp"/>
+
+    <ListView
+        android:id="@+id/genericListView"
+        android:layout_width="match_parent"
+        android:layout_height="250dp"
+        android:layout_weight="1"
+        android:divider="@android:color/darker_gray"
+        android:dividerHeight="0.5dp"/>
+
+    <TextView
+        android:id="@+id/btnTambahItem"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:text="+ Tambah Item Baru"
+        android:textColor="@color/dark_teal_sage"
+        android:textStyle="bold"
+        android:padding="12dp"
+        android:gravity="center"
+        android:layout_marginTop="16dp"
+        android:background="?attr/selectableItemBackground"/>
+
+</LinearLayout>

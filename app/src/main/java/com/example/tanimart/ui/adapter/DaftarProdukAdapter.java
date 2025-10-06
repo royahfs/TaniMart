@@ -18,6 +18,9 @@ import com.example.tanimart.data.model.Product;
 
 import java.util.ArrayList;
 import java.util.List;
+import android.util.Base64;
+import android.util.Log;
+
 
 public class DaftarProdukAdapter extends RecyclerView.Adapter<DaftarProdukAdapter.ViewHolder> implements Filterable {
 
@@ -50,6 +53,7 @@ public class DaftarProdukAdapter extends RecyclerView.Adapter<DaftarProdukAdapte
         return new ViewHolder(view);
     }
 
+
     @Override
     public void onBindViewHolder(@NonNull ViewHolder holder, int position) {
         Product item = daftarProdukList.get(position);
@@ -60,20 +64,45 @@ public class DaftarProdukAdapter extends RecyclerView.Adapter<DaftarProdukAdapte
         holder.merek.setText(item.getMerek());
         holder.stok.setText("Stok: " + item.getStok());
 
-        //load gambar dengan Glide
-        if (item.getImageUrl() != null && !item.getImageUrl().isEmpty()) {
-            Glide.with(holder.itemView.getContext())
-                    .load(item.getImageUrl())
-                    .placeholder(R.drawable.upload)
-                    .error(R.drawable.upload)
-                    .into(holder.image);
+        // Cerdas memuat gambar: bisa dari URL (http) atau dari string Base64
+        String imageUrl = item.getImageUrl();
+        if (imageUrl != null && !imageUrl.isEmpty()) {
+
+            // Cek apakah ini Base64 (tidak dimulai dengan http) atau URL biasa
+            if (imageUrl.startsWith("http")) {
+                // Jika ini URL, muat seperti biasa
+                Glide.with(holder.itemView.getContext())
+                        .load(imageUrl)
+                        .placeholder(R.drawable.upload)
+                        .error(R.drawable.upload)
+                        .into(holder.image);
+            } else {
+                // Jika ini BUKAN URL, kita anggap ini adalah Base64
+                try {
+                    // PENTING: Gunakan android.util.Base64
+                    byte[] imageBytes = android.util.Base64.decode(imageUrl, android.util.Base64.DEFAULT);
+                    Glide.with(holder.itemView.getContext())
+                            .asBitmap()
+                            .load(imageBytes)
+                            .placeholder(R.drawable.upload)
+                            .error(R.drawable.upload)
+                            .into(holder.image);
+                } catch (IllegalArgumentException e) {
+                    // Ini terjadi jika string bukan Base64 yang valid
+                    // PENTING: Gunakan android.util.Log
+                    android.util.Log.e("DaftarProdukAdapter", "Gagal decode Base64: " + e.getMessage());
+                    holder.image.setImageResource(R.drawable.upload); // Tampilkan gambar error
+                }
+            }
         } else {
+            // Handle jika tidak ada gambar sama sekali
             holder.image.setImageResource(R.drawable.upload); // default jika url kosong
         }
 
         // event klik item biasa
         holder.itemView.setOnClickListener(v -> listener.onItemClick(item));
     }
+
 
 
     @Override
