@@ -248,7 +248,13 @@ public class TransaksiActivity extends AppCompatActivity {
             }
         });
 
-        // =================== AKHIR BLOK TOMBOL BAYAR ===================
+        // button simpan
+        btnSimpan.setOnClickListener(v -> {
+            Intent intent = new Intent(TransaksiActivity.this, CartActivity.class);
+            startActivityForResult(intent, 100);
+            dialog.dismiss();
+        });
+
 
         dialog.show();
         dialog.getWindow().setLayout(ViewGroup.LayoutParams.MATCH_PARENT, ViewGroup.LayoutParams.WRAP_CONTENT);
@@ -256,6 +262,17 @@ public class TransaksiActivity extends AppCompatActivity {
         dialog.getWindow().getAttributes().windowAnimations = R.style.DialogAnimation;
         dialog.getWindow().setGravity(Gravity.BOTTOM);
     }
+
+    @Override
+    protected void onActivityResult(int requestCode, int resultCode, Intent data) {
+        super.onActivityResult(requestCode, resultCode, data);
+        if (requestCode == 100 && resultCode == RESULT_OK && data != null) {
+            String cartId = data.getStringExtra("SELECTED_CART_ID");
+            // buka kembali bottom sheet sesuai cart ID
+            showBottomSheet();
+        }
+    }
+
 
     @Override
     protected void onResume() {

@@ -26,10 +26,10 @@ public class KasirDashboardActivity extends AppCompatActivity {
         EdgeToEdge.enable(this);
         setContentView(R.layout.activity_kasir);
 
-        transaksiMenu = findViewById(R.id.cardTransaksi);
+        transaksiMenu = findViewById(R.id.cardInventory);
         infoProdukMenu = findViewById(R.id.cardInfoProduk);
         laporanMenu = findViewById(R.id.cardLaporan);
-        profilMenu = findViewById(R.id.cardProfil);
+        profilMenu = findViewById(R.id.cardKalkulator);
 
         transaksiMenu.setOnClickListener(new View.OnClickListener(){
             @Override

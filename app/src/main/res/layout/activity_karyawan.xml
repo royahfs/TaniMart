@@ -24,7 +24,7 @@
         android:padding="16dp">
 
         <androidx.cardview.widget.CardView
-            android:id="@+id/cardTransaksi"
+            android:id="@+id/cardInventory"
             android:layout_width="0dp"
             android:layout_height="100dp"
             android:layout_gravity="bottom"
@@ -72,7 +72,7 @@
             android:background="@drawable/box_karyawan"
             app:cardCornerRadius="15dp"
             app:layout_constraintEnd_toEndOf="@id/guideline6"
-            app:layout_constraintStart_toEndOf="@id/cardTransaksi"
+            app:layout_constraintStart_toEndOf="@id/cardInventory"
             app:layout_constraintTop_toTopOf="@id/guideline7"
             app:layout_constraintWidth_percent="0.35"
             android:useDefaultMargins="true"
@@ -102,7 +102,7 @@
         </androidx.cardview.widget.CardView>
 
         <androidx.cardview.widget.CardView
-            android:id="@+id/cardProfil"
+            android:id="@+id/cardKalkulator"
             android:layout_width="0dp"
             android:layout_height="100dp"
             android:layout_gravity="bottom"
@@ -112,7 +112,7 @@
             app:cardCornerRadius="15dp"
             app:layout_constraintEnd_toStartOf="@id/cardLaporan"
             app:layout_constraintStart_toStartOf="@id/guideline"
-            app:layout_constraintTop_toBottomOf="@id/cardTransaksi"
+            app:layout_constraintTop_toBottomOf="@id/cardInventory"
             app:layout_constraintWidth_percent="0.35"
             app:layout_constraintBottom_toBottomOf="@id/guideline8"
             android:useDefaultMargins="true"
@@ -151,7 +151,7 @@
             android:background="@drawable/box_karyawan"
             app:cardCornerRadius="15dp"
             app:layout_constraintEnd_toEndOf="@id/guideline6"
-            app:layout_constraintStart_toEndOf="@id/cardProfil"
+            app:layout_constraintStart_toEndOf="@id/cardKalkulator"
             app:layout_constraintTop_toBottomOf="@id/cardInfoProduk"
             app:layout_constraintWidth_percent="0.35"
             app:layout_constraintBottom_toBottomOf="@id/guideline8"
