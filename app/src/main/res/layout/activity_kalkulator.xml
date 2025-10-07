@@ -1,0 +1,48 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:background="#F9F9F9"
+    android:orientation="vertical"
+    android:padding="16dp"
+    tools:context=".ui.common.kalkulator.KalkulatorActivity">
+
+    <!-- Display -->
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="0dp"
+        android:layout_weight="1"
+        android:orientation="vertical"
+        android:gravity="end|bottom"
+        android:padding="8dp">
+
+        <TextView
+            android:id="@+id/input"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:textColor="#7E7E7E"
+            android:textSize="28sp"
+            android:ellipsize="start"
+            android:maxLines="1"
+            android:layout_gravity="end"/>
+
+        <TextView
+            android:id="@+id/output"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:textColor="#3C452A"
+            android:textSize="44sp"
+            android:layout_gravity="end"
+            android:textStyle="bold"/>
+    </LinearLayout>
+
+    <!-- Include tombol -->
+    <include
+        layout="@layout/buttons_kalkulator_layout"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content" />
+
+</LinearLayout>

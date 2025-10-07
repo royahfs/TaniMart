@@ -232,7 +232,7 @@
                 <ImageView
                     android:layout_width="50dp"
                     android:layout_height="50dp"
-                    android:src="@drawable/baseline_assignment_ind_24" />
+                    android:src="@drawable/baseline_calculate_24" />
 
                 <TextView
                     android:layout_width="wrap_content"
@@ -240,7 +240,7 @@
                     android:autoSizeMaxTextSize="10000dp"
                     android:autoSizeMinTextSize="1dp"
                     android:autoSizeTextType="uniform"
-                    android:text="Pegawai"
+                    android:text="Kalkulator"
                     android:textAlignment="center"
                     android:textColor="@color/dark_teal_sage"
                     android:textStyle="bold" />

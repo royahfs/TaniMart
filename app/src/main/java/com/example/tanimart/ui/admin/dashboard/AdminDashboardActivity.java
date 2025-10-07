@@ -12,6 +12,7 @@ import com.example.tanimart.R;
 import com.example.tanimart.ui.admin.usermanagement.PegawaiActivity;
 import com.example.tanimart.ui.common.inventory.DaftarProdukActivity;
 import com.example.tanimart.ui.common.inventory.InventoryActivity;
+import com.example.tanimart.ui.common.kalkulator.KalkulatorActivity;
 import com.example.tanimart.ui.common.profile.ProfileActivity;
 import com.example.tanimart.ui.common.profile.ProfileFragment;
 import com.example.tanimart.ui.kasir.laporan.LaporanActivity;
@@ -77,7 +78,7 @@ public class AdminDashboardActivity extends AppCompatActivity {
         pegawaiMenu.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                Intent intent = new Intent(AdminDashboardActivity.this, PegawaiActivity.class);
+                Intent intent = new Intent(AdminDashboardActivity.this, KalkulatorActivity.class);
                 startActivity(intent);
             }
         });
