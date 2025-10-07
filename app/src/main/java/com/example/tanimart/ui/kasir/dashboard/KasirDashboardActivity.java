@@ -12,7 +12,7 @@ import com.example.tanimart.R;
 import com.example.tanimart.ui.common.inventory.DaftarProdukActivity;
 import com.example.tanimart.ui.kasir.laporan.LaporanActivity;
 import com.example.tanimart.ui.kasir.transaksi.TransaksiActivity;
-import com.example.tanimart.ui.common.profil.ProfilActivity;
+import com.example.tanimart.ui.common.profile.ProfileActivity;
 
 public class KasirDashboardActivity extends AppCompatActivity {
     CardView transaksiMenu;
@@ -58,7 +58,7 @@ public class KasirDashboardActivity extends AppCompatActivity {
         profilMenu.setOnClickListener(new View.OnClickListener(){
             @Override
             public void onClick(View v) {
-                Intent intent = new Intent(KasirDashboardActivity.this, ProfilActivity.class);
+                Intent intent = new Intent(KasirDashboardActivity.this, ProfileActivity.class);
                 startActivity(intent);
             }
         });

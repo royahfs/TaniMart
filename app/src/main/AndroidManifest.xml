@@ -28,6 +28,14 @@
             android:name=".ui.common.inventory.DetailProdukActivity"
             android:exported="true">
         </activity>
+        <activity
+            android:name=".ui.common.profile.ProfileActivity"
+            android:exported="false" >
+        </activity>
+        <activity
+            android:name=".ui.common.profile.EditProfileActivity"
+            android:exported="false">
+        </activity>
 
 <!--    Admin dan Kasir-->
         <activity
