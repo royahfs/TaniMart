@@ -2,7 +2,9 @@ package com.example.tanimart.ui.common.inventory;
 
 import android.app.AlertDialog;
 import android.app.Dialog;
+import android.content.Context;
 import android.content.Intent;
+import android.content.SharedPreferences;
 import android.graphics.Bitmap;
 import android.net.Uri;
 import android.os.Bundle;
@@ -34,10 +36,15 @@ import androidx.recyclerview.widget.RecyclerView;
 import com.example.tanimart.R;
 import com.example.tanimart.data.model.Inventory;
 import com.example.tanimart.ui.adapter.InventoryAdapter;
+import com.google.firebase.firestore.CollectionReference;
+import com.google.firebase.firestore.DocumentSnapshot;
+import com.google.firebase.firestore.FirebaseFirestore;
 
 import java.io.ByteArrayOutputStream;
 import java.io.IOException;
 import java.util.ArrayList;
+import java.util.HashSet;
+import java.util.Set;
 
 public class KelolaProdukMasukActivity extends AppCompatActivity {
     // Definisikan TAG untuk logging
@@ -72,6 +79,9 @@ public class KelolaProdukMasukActivity extends AppCompatActivity {
             v.setPadding(systemBars.left, systemBars.top, systemBars.right, systemBars.bottom);
             return insets;
         });
+
+        FirebaseFirestore db = FirebaseFirestore.getInstance();
+        CollectionReference kategoriRef = db.collection("kategori_produk");
 
         OnBackPressedCallback callback = new OnBackPressedCallback(true) {
             @Override
@@ -122,18 +132,47 @@ public class KelolaProdukMasukActivity extends AppCompatActivity {
     }
 
     private void populateDefaultLists() {
+        // merek & satuan tetap statis
+        merekList.clear();
         merekList.add("Umum");
         merekList.add("Pupuk");
 
-        kategoriList.add("Pupuk");
-        kategoriList.add("Pupuk Subsidi");
-        kategoriList.add("Bibit");
-        kategoriList.add("Peralatan");
-
+        satuanList.clear();
         satuanList.add("Pcs");
         satuanList.add("Kg");
         satuanList.add("Liter");
+
+        // Ambil kategori dari Firestore (realtime sekali ambil)
+        FirebaseFirestore db = FirebaseFirestore.getInstance();
+        db.collection("kategori_produk").get()
+                .addOnSuccessListener(queryDocumentSnapshots -> {
+                    kategoriList.clear();
+                    if (queryDocumentSnapshots != null) {
+                        for (DocumentSnapshot doc : queryDocumentSnapshots.getDocuments()) {
+                            String nama = doc.getString("nama");
+                            if (nama != null) kategoriList.add(nama);
+                        }
+                    }
+                    // tidak perlu kategoriAdapter.notify... karena showDialog() membuat adapter baru saat dipanggil
+                    // jika kamu ingin langsung men-set default text, bisa:
+                    if (!kategoriList.isEmpty() && (selectedKategori == null || selectedKategori.isEmpty())) {
+                        // tidak otomatis memilih apa-apa; kalau mau set default:
+                        // selectedKategori = kategoriList.get(0);
+                        // pilihKategori.setText(selectedKategori);
+                    }
+                })
+                .addOnFailureListener(e -> {
+                    // fallback kalau gagal, isi default
+                    if (kategoriList.isEmpty()) {
+                        kategoriList.add("Pupuk");
+                        kategoriList.add("Bibit");
+                        kategoriList.add("Peralatan");
+                    }
+                });
     }
+
+
+
 
     private void setupRecyclerView() {
         recyclerView.setLayoutManager(new LinearLayoutManager(this));
@@ -167,11 +206,6 @@ public class KelolaProdukMasukActivity extends AppCompatActivity {
 
         saveBtnKPM.setOnClickListener(view -> saveData());
     }
-
-    // =========================================================================
-    //         BAGIAN UTAMA YANG DIPERBAIKI: ALUR PENYIMPANAN BASE64
-    // =========================================================================
-
     public void saveData() {
         String namaProduk = uploadNB.getText().toString().trim();
         String hargaStr = uploadHJ.getText().toString().trim();
@@ -309,6 +343,17 @@ public class KelolaProdukMasukActivity extends AppCompatActivity {
                         if (!newItem.isEmpty() && !dataList.contains(newItem)) {
                             dataList.add(newItem);
                             arrayAdapter.notifyDataSetChanged();
+
+                            // Tambahkan ke Firestore agar sinkron dengan KategoriProdukActivity
+                            if (title.equals("Pilih Kategori")) {
+                                FirebaseFirestore.getInstance()
+                                        .collection("kategori_produk")
+                                        .add(new java.util.HashMap<String, Object>() {{
+                                            put("nama", newItem);
+                                        }})
+                                        .addOnSuccessListener(ref -> Log.d("Firestore", "Kategori disimpan"))
+                                        .addOnFailureListener(e -> Log.e("Firestore", "Gagal simpan kategori", e));
+                            }
                         }
                     })
                     .setNegativeButton("Batal", null)

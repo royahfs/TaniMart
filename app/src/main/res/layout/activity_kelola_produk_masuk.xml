@@ -208,7 +208,9 @@
                         android:inputType="textMultiLine"
                         android:gravity="top|start"
                         android:padding="10dp"
-                        android:textColor="@color/dark_teal_sage" />
+                        android:textColor="@color/dark_teal_sage"
+                        android:minHeight="48dp" />
+
 
                     <androidx.appcompat.widget.AppCompatButton
                         android:id="@+id/saveBtnKPM"

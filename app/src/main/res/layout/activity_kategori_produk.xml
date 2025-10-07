@@ -1,0 +1,76 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:id="@+id/mainKategoriProduk"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:orientation="vertical"
+    android:background="#F9F9F9">
+
+    <!-- Toolbar Modern -->
+    <androidx.appcompat.widget.Toolbar
+        android:id="@+id/toolbar_kategoriProduk"
+        android:layout_width="match_parent"
+        android:layout_height="?attr/actionBarSize"
+        android:backgroundTint="@color/dark_teal_sage"
+        android:background="@color/dark_teal_sage"
+        app:titleTextColor="@android:color/white"
+        app:navigationIcon="@drawable/ic_arrow_back"
+        android:elevation="4dp"
+        android:theme="@style/ThemeOverlay.AppCompat.Dark.ActionBar" />
+
+    <!-- Konten -->
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="horizontal"
+        android:padding="16dp"
+        android:gravity="center_vertical">
+
+        <EditText
+            android:id="@+id/inputKategori"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_weight="1"
+            android:hint="Tambah kategori baru"
+            android:backgroundTint="#3C452A"
+            android:inputType="textCapWords"
+            android:padding="8dp"
+            android:textColor="#000"
+            android:textColorHint="#888" />
+
+        <Button
+            android:id="@+id/btnTambahKategori"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="Tambah"
+            android:textColor="@android:color/white"
+            android:backgroundTint="#3C452A"
+            android:layout_marginStart="8dp" />
+    </LinearLayout>
+
+    <View
+        android:layout_width="match_parent"
+        android:layout_height="1dp"
+        android:background="#DDD" />
+
+    <TextView
+        android:id="@+id/tvDaftarKategori"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="Daftar Kategori"
+        android:textStyle="bold"
+        android:textColor="#3C452A"
+        android:textSize="16sp"
+        android:layout_marginStart="16dp"
+        android:layout_marginTop="12dp" />
+
+    <ListView
+        android:id="@+id/listKategori"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:divider="@android:color/darker_gray"
+        android:dividerHeight="1dp"
+        android:padding="8dp"
+        android:layout_marginTop="4dp" />
+</LinearLayout>

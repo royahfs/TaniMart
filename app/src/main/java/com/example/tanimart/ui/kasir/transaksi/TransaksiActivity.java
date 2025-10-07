@@ -8,6 +8,7 @@ import android.os.Bundle;
 import android.text.Editable;
 import android.text.TextWatcher;
 import android.view.Gravity;
+import android.view.View;
 import android.view.ViewGroup;
 import android.widget.Button;
 import android.widget.EditText;
@@ -22,15 +23,21 @@ import androidx.lifecycle.ViewModelProvider;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
+import com.bumptech.glide.Glide;
 import com.example.tanimart.R;
 // =================== IMPORT YANG DIPERBAIKI ===================
 // Ganti import yang salah dengan import kelas Product dari model Anda
 import com.example.tanimart.data.model.CartItem;
 import com.example.tanimart.data.model.Product; // Pastikan path ini sesuai
+import com.example.tanimart.data.repository.UserRepository;
 import com.example.tanimart.ui.adapter.ProductAdapter;
 import com.example.tanimart.ui.adapter.TransaksiAdapter;
 import com.example.tanimart.utils.CurrencyHelper;
+import com.example.tanimart.utils.PrefsUtil;
+import com.google.android.material.navigation.NavigationView;
+import com.google.firebase.auth.FirebaseAuth;
 
+import java.io.File;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -52,6 +59,37 @@ public class TransaksiActivity extends AppCompatActivity {
         btnMenu = findViewById(R.id.btnMenu);
         btnCart = findViewById(R.id.btnCart);
         bottomSheetConnect = findViewById(R.id.bottomSheetConnect);
+
+        NavigationView navView = findViewById(R.id.nav_view);
+        View headerView = navView.getHeaderView(0);
+
+        // Ambil elemen dari nav_header
+        ImageView imgProfileHeader = headerView.findViewById(R.id.imgProfileHeader);
+        TextView tvNameHeader = headerView.findViewById(R.id.tvNameHeader);
+        TextView tvEmailHeader = headerView.findViewById(R.id.tvEmailHeader);
+
+        // Load user dari Firestore
+        UserRepository userRepo = new UserRepository();
+        String uid = FirebaseAuth.getInstance().getCurrentUser().getUid();
+
+        userRepo.getUser(uid, user -> {
+            if (user != null) {
+                tvNameHeader.setText(user.getName());
+                tvEmailHeader.setText(user.getEmail());
+
+                // Coba ambil foto dari penyimpanan lokal (PrefsUtil)
+                String localPath = PrefsUtil.getPhotoPath(this, uid);
+                if (localPath != null && new File(localPath).exists()) {
+                    Glide.with(this)
+                            .load(new File(localPath))
+                            .centerCrop()
+                            .placeholder(R.drawable.profile_1)
+                            .into(imgProfileHeader);
+                } else {
+                    imgProfileHeader.setImageResource(R.drawable.profile_1);
+                }
+            }
+        });
 
         btnMenu.setOnClickListener(v -> {
             if (!drawerLayout.isDrawerOpen(GravityCompat.START)) {
@@ -158,4 +196,35 @@ public class TransaksiActivity extends AppCompatActivity {
         dialog.getWindow().getAttributes().windowAnimations = R.style.DialogAnimation;
         dialog.getWindow().setGravity(Gravity.BOTTOM);
     }
+
+    @Override
+    protected void onResume() {
+        super.onResume();
+
+        // Panggil ulang data user setiap kali activity kembali aktif
+        NavigationView navView = findViewById(R.id.nav_view);
+        View headerView = navView.getHeaderView(0);
+
+        ImageView imgProfileHeader = headerView.findViewById(R.id.imgProfileHeader);
+        TextView tvNameHeader = headerView.findViewById(R.id.tvNameHeader);
+        TextView tvEmailHeader = headerView.findViewById(R.id.tvEmailHeader);
+
+        String uid = FirebaseAuth.getInstance().getCurrentUser().getUid();
+        UserRepository repo = new UserRepository();
+
+        repo.getUser(uid, user -> {
+            if (user != null) {
+                tvNameHeader.setText(user.getName());
+                tvEmailHeader.setText(user.getEmail());
+
+                String localPath = PrefsUtil.getPhotoPath(this, uid);
+                if (localPath != null && new File(localPath).exists()) {
+                    Glide.with(this).load(new File(localPath)).into(imgProfileHeader);
+                } else {
+                    imgProfileHeader.setImageResource(R.drawable.profile_1);
+                }
+            }
+        });
+    }
+
 }

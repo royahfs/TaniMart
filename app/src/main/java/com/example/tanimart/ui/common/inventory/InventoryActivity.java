@@ -19,6 +19,8 @@ import androidx.core.view.ViewCompat;
 import androidx.core.view.WindowInsetsCompat;
 
 import com.example.tanimart.R;
+import com.example.tanimart.ui.common.profile.EditProfileActivity;
+import com.example.tanimart.ui.common.SplashActivity;
 
 public class InventoryActivity extends AppCompatActivity {
 //    private InventoryViewModel viewModel;
@@ -120,10 +122,23 @@ public class InventoryActivity extends AppCompatActivity {
     public boolean onOptionsItemSelected(MenuItem item) {
         int id = item.getItemId();
         if (id == R.id.logout) {
-            Toast.makeText(this, "Logout", Toast.LENGTH_SHORT).show();
+            Intent intent = new Intent(InventoryActivity.this, SplashActivity.class);
+
+            // 2. Tambahkan Flag untuk membersihkan semua Activity sebelumnya
+            intent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK | Intent.FLAG_ACTIVITY_CLEAR_TASK);
+
+            // 3. Mulai Activity baru
+            startActivity(intent);
+
+            // Tampilkan pesan bahwa logout berhasil
+            Toast.makeText(this, "Berhasil logout", Toast.LENGTH_SHORT).show();
+
+            return true; // Tandakan event sudah ditangani
         }
         if (id == R.id.settings) {
-            Toast.makeText(this, "Go to settings", Toast.LENGTH_SHORT).show();
+            Intent intent = new Intent(InventoryActivity.this, EditProfileActivity.class);
+            startActivity(intent);
+            return true;
         }
         if (item.getItemId() == android.R.id.home) {
             finish();
