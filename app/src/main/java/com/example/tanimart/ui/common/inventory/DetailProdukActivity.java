@@ -88,7 +88,7 @@ public class DetailProdukActivity extends AppCompatActivity {
                         // Handle jika tidak ada gambar sama sekali
                         pic.setImageResource(R.drawable.upload);
                     }
-                    // =========================================================================
+
 
                     addBtn.setOnClickListener(v ->
                             Toast.makeText(this, product.getNamaProduk() + " ditambahkan ke keranjang!", Toast.LENGTH_SHORT).show()

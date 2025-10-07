@@ -52,7 +52,7 @@
         <!-- TabLayout -->
 <!--        android:id="@+id/tabLayout"-->
         <com.google.android.material.tabs.TabLayout
-
+            android:id="@+id/tabLayout"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             app:tabMode="fixed"
@@ -60,14 +60,14 @@
 
 <!--            android:id="@+id/tabProduk"-->
             <com.google.android.material.tabs.TabItem
-
+                android:id="@+id/tabProduk"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:text="Produk" />
 
 <!--            android:id="@+id/tabManual"-->
             <com.google.android.material.tabs.TabItem
-
+                android:id="@+id/tabManual"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:text="Manual" />

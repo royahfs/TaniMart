@@ -17,8 +17,10 @@ import com.bumptech.glide.Glide;
 import com.example.tanimart.R;
 import com.example.tanimart.data.model.Inventory;
 
+import java.text.NumberFormat;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Locale;
 
 public class InventoryAdapter extends RecyclerView.Adapter<InventoryAdapter.ViewHolder> implements Filterable {
     private List<Inventory> inventoryList;
@@ -64,12 +66,11 @@ public class InventoryAdapter extends RecyclerView.Adapter<InventoryAdapter.View
 
         // set text
         holder.nama.setText(item.getNamaProduk());
-        holder.harga.setText("Rp " + item.getHargaJual());
+        holder.harga.setText(formatRupiah(item.getHargaJual()));
         holder.kategori.setText(item.getKategori());
         holder.merek.setText(item.getMerek());
 
-        // =================== BLOK GAMBAR YANG DIPERBAIKI ===================
-        // Cerdas memuat gambar: bisa dari URL (http) atau dari string Base64
+        // memuat gambar: bisa dari URL (http) atau dari string Base64
         String imageUrl = item.getImageUrl();
         if (imageUrl != null && !imageUrl.isEmpty()) {
             // Cek apakah ini Base64 (tidak dimulai dengan http) atau URL biasa
@@ -100,7 +101,6 @@ public class InventoryAdapter extends RecyclerView.Adapter<InventoryAdapter.View
             // Handle jika tidak ada gambar sama sekali
             holder.image.setImageResource(R.drawable.upload); // default jika url kosong
         }
-        // =================================================================
 
         // event klik item biasa
         holder.itemView.setOnClickListener(v -> listener.onItemClick(item));
@@ -144,6 +144,14 @@ public class InventoryAdapter extends RecyclerView.Adapter<InventoryAdapter.View
     @Override
     public int getItemCount() {
         return inventoryList.size();
+    }
+
+    private String formatRupiah(double number) {
+        Locale localeID = new Locale("in", "ID");
+        NumberFormat formatRupiah = NumberFormat.getCurrencyInstance(localeID);
+        formatRupiah.setMaximumFractionDigits(0);
+        formatRupiah.setMinimumFractionDigits(0);
+        return formatRupiah.format(number).replace("Rp", "Rp ");
     }
 
     // ====== ViewHolder ======

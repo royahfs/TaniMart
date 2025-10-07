@@ -16,8 +16,11 @@ import com.example.tanimart.R;
 import com.example.tanimart.data.model.Inventory;
 import com.example.tanimart.data.model.Product;
 
+import java.text.NumberFormat;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Locale;
+
 import android.util.Base64;
 import android.util.Log;
 
@@ -60,7 +63,7 @@ public class DaftarProdukAdapter extends RecyclerView.Adapter<DaftarProdukAdapte
 
         // set text
         holder.nama.setText(item.getNamaProduk());
-        holder.harga.setText("Rp " + item.getHargaJual());
+        holder.harga.setText(formatRupiah(item.getHargaJual()));
         holder.merek.setText(item.getMerek());
         holder.stok.setText("Stok: " + item.getStok());
 
@@ -143,8 +146,15 @@ public class DaftarProdukAdapter extends RecyclerView.Adapter<DaftarProdukAdapte
         return daftarProdukList != null ? daftarProdukList.size() : 0;
     }
 
-    // ViewHolder
+    private String formatRupiah(double number) {
+        Locale localeID = new Locale("in", "ID");
+        NumberFormat formatRupiah = NumberFormat.getCurrencyInstance(localeID);
+        formatRupiah.setMaximumFractionDigits(0);
+        formatRupiah.setMinimumFractionDigits(0);
+        return formatRupiah.format(number).replace("Rp", "Rp ");
+    }
 
+    // ViewHolder
     public static class ViewHolder extends RecyclerView.ViewHolder {
         ImageView image;
         TextView nama, harga, stok, merek;
