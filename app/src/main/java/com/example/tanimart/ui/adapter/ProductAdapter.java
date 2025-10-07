@@ -56,8 +56,7 @@ public class ProductAdapter extends RecyclerView.Adapter<ProductAdapter.ViewHold
         holder.kategori.setText(item.getKategori());
         holder.merek.setText(item.getMerek());
 
-        // =================== BLOK GAMBAR YANG SUDAH DIPERBAIKI ===================
-        // Cerdas memuat gambar: bisa dari URL (http) atau dari string Base64
+
         String imageUrl = item.getImageUrl();
         if (imageUrl != null && !imageUrl.isEmpty()) {
 
@@ -90,7 +89,6 @@ public class ProductAdapter extends RecyclerView.Adapter<ProductAdapter.ViewHold
             // Handle jika tidak ada gambar sama sekali
             holder.image.setImageResource(R.drawable.upload);
         }
-        // =========================================================================
 
         holder.itemView.setOnClickListener(v -> listener.onItemClick(item));
     }
