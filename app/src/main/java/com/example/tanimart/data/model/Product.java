@@ -86,7 +86,6 @@ public class Product implements Parcelable {
         dest.writeInt(quantity); // Jangan lupa 'quantity'
     }
 
-    // =================== SELESAI KODE PARCELABLE ===================
 
 
     // =================== Getter & Setter ===================

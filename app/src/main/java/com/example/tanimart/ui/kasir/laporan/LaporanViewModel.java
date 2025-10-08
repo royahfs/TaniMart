@@ -1,5 +1,7 @@
 package com.example.tanimart.ui.kasir.laporan;
 
+import android.util.Log;
+
 import androidx.lifecycle.LiveData;
 import androidx.lifecycle.MutableLiveData;
 import androidx.lifecycle.ViewModel;
@@ -28,34 +30,54 @@ public class LaporanViewModel extends ViewModel {
     public LiveData<Integer> getJumlahTransaksi() { return jumlahTransaksi; }
     public LiveData<Integer> getProdukTerjual() { return produkTerjual; }
 
+    // --- PERBAIKAN UTAMA ADA DI SINI ---
+    public LaporanViewModel() {
+        // Panggil filterData dengan "Harian" sebagai default saat ViewModel dibuat.
+        // Argumen startDate dan endDate bisa null karena akan di-generate di dalam method.
+        filterData("Harian", null, null);
+    }
+    // ------------------------------------
+
     // filter data berdasarkan pilihan
     public void filterData(String type, Date startDate, Date endDate) {
         Calendar cal = Calendar.getInstance();
 
+        // Buat variabel baru untuk menampung tanggal yang sudah dihitung
+        Date finalStartDate = startDate;
+        Date finalEndDate = endDate;
+
         switch (type) {
             case "Harian":
-                startDate = getStartOfDay(new Date());
-                endDate = getEndOfDay(new Date());
+                finalStartDate = getStartOfDay(new Date());
+                finalEndDate = getEndOfDay(new Date());
                 break;
             case "Mingguan":
                 cal.set(Calendar.DAY_OF_WEEK, cal.getFirstDayOfWeek());
-                startDate = getStartOfDay(cal.getTime());
+                finalStartDate = getStartOfDay(cal.getTime());
                 cal.add(Calendar.DAY_OF_WEEK, 6);
-                endDate = getEndOfDay(cal.getTime());
+                finalEndDate = getEndOfDay(cal.getTime());
                 break;
             case "Bulanan":
                 cal.set(Calendar.DAY_OF_MONTH, 1);
-                startDate = getStartOfDay(cal.getTime());
-                cal.add(Calendar.MONTH, 1);
-                cal.add(Calendar.DAY_OF_MONTH, -1);
-                endDate = getEndOfDay(cal.getTime());
+                finalStartDate = getStartOfDay(cal.getTime());
+                cal.set(Calendar.DAY_OF_MONTH, cal.getActualMaximum(Calendar.DAY_OF_MONTH));
+                finalEndDate = getEndOfDay(cal.getTime());
                 break;
             case "Custom":
-                // startDate & endDate sudah dikirim dari activity
+                // Pastikan startDate dan endDate tidak null untuk mode custom
+                if (finalStartDate != null && finalEndDate != null) {
+                    finalStartDate = getStartOfDay(finalStartDate);
+                    finalEndDate = getEndOfDay(finalEndDate);
+                }
                 break;
         }
 
-        loadTransaksi(startDate, endDate, "Semua");
+        // Pastikan tanggal tidak null sebelum memuat data
+        if (finalStartDate != null && finalEndDate != null) {
+            loadTransaksi(finalStartDate, finalEndDate, "Semua");
+        } else {
+            Log.e("LaporanViewModel", "Tanggal start atau end tidak valid untuk filter tipe: " + type);
+        }
     }
 
     // ambil data dari firestore sesuai rentang tanggal
@@ -69,27 +91,35 @@ public class LaporanViewModel extends ViewModel {
             List<Transaksi> list = new ArrayList<>();
             double totalPendapatanVal = 0.0;
             int jumlahTransaksiVal = 0;
+            // produkTerjualVal tidak bisa dihitung karena tidak ada 'items' di model Transaksi
             int produkTerjualVal = 0;
 
             for (DocumentSnapshot doc : queryDocumentSnapshots) {
                 Transaksi transaksi = doc.toObject(Transaksi.class);
-                if (transaksi != null) {
+
+                if (transaksi != null && transaksi.getTanggal() != null) {
                     Date tgl = transaksi.getTanggal().toDate();
-                    if (tgl != null && !tgl.before(startDate) && !tgl.after(endDate)) {
+
+                    if (!tgl.before(startDate) && !tgl.after(endDate)) {
                         transaksi.setIdTransaksi(doc.getId());
                         list.add(transaksi);
 
+                        // Gunakan method getTotal() dari model Transaksi.java
                         totalPendapatanVal += transaksi.getTotal();
                         jumlahTransaksiVal++;
-                        // produkTerjualVal += transaksi.getJumlahProduk(); // bisa aktifkan kalau ada field jumlahProduk
                     }
+                } else {
+                    Log.w("LaporanViewModel", "Transaksi dengan ID: " + doc.getId() + " tidak valid atau tidak memiliki tanggal.");
                 }
             }
+
 
             transaksiLiveData.setValue(list);
             totalPendapatan.setValue((int) totalPendapatanVal);
             jumlahTransaksi.setValue(jumlahTransaksiVal);
-            produkTerjual.setValue(produkTerjualVal);
+            produkTerjual.setValue(produkTerjualVal); // Akan selalu 0
+        }) .addOnFailureListener(e -> {
+            Log.e("LaporanViewModel", "Gagal memuat transaksi", e);
         });
     }
 

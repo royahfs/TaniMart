@@ -15,6 +15,7 @@ import android.widget.EditText;
 import android.widget.ImageView;
 import android.widget.TextView;
 import android.widget.Toast;
+import android.util.Log;
 
 import androidx.annotation.Nullable;
 import androidx.appcompat.app.AppCompatActivity;
@@ -104,6 +105,49 @@ public class TransaksiActivity extends AppCompatActivity {
                 drawerLayout.closeDrawer(GravityCompat.START);
             }
         });
+
+        // Di dalam file TransaksiActivity.java
+
+// ... (kode lainnya tetap sama)
+
+        btnCart.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                Log.d("TransaksiActivity", "Tombol Keranjang (btnCart) diklik!");
+
+                // 1. Ambil data TERKINI dari ViewModel
+                Double totalTagihan = transaksiViewModel.getTotalTagihan().getValue();
+                List<CartItem> cartItemList = transaksiViewModel.getCartList().getValue();
+
+                // 2. Lakukan validasi data
+                if (totalTagihan == null || cartItemList == null || cartItemList.isEmpty()) {
+                    Toast.makeText(TransaksiActivity.this, "Keranjang Anda masih kosong!", Toast.LENGTH_SHORT).show();
+                    return; // Hentikan eksekusi jika keranjang kosong
+                }
+
+                // 3. Konversi List<CartItem> menjadi ArrayList<Product>
+                // Ini PENTING karena CartActivity mengharapkan ArrayList<Product> yang Serializable
+                ArrayList<Product> produkUntukDikirim = new ArrayList<>();
+                for (CartItem item : cartItemList) {
+                    Product produk = item.getProduct();
+                    if (produk != null) {
+                        produk.setQuantity(item.getQuantity()); // Pastikan kuantitas terbaru ikut terbawa
+                        produkUntukDikirim.add(produk);
+                    }
+                }
+
+                Toast.makeText(TransaksiActivity.this, "Membuka keranjang...", Toast.LENGTH_SHORT).show();
+
+                // 4. Buat Intent dan kirimkan data yang sudah valid
+                Intent intent = new Intent(TransaksiActivity.this, CartActivity.class);
+                intent.putExtra("EXTRA_KERANJANG", produkUntukDikirim); // Kirim ArrayList<Product>
+                intent.putExtra("EXTRA_TOTAL", totalTagihan); // Kirim total tagihan
+
+                startActivity(intent); // Cukup panggil SEKALI
+            }
+        });
+
+
 
         navView.setNavigationItemSelectedListener(item -> {
             int id = item.getItemId(); // Dapatkan ID dari item yang di-klik
@@ -249,11 +293,38 @@ public class TransaksiActivity extends AppCompatActivity {
         });
 
         // button simpan
+        // button simpan
         btnSimpan.setOnClickListener(v -> {
+            // Ambil data TERKINI dari ViewModel
+            Double totalTagihan = transaksiViewModel.getTotalTagihan().getValue();
+            List<CartItem> cartItemList = transaksiViewModel.getCartList().getValue();
+
+            // Lakukan validasi data
+            if (totalTagihan == null || cartItemList == null || cartItemList.isEmpty()) {
+                Toast.makeText(TransaksiActivity.this, "Tidak ada item untuk disimpan!", Toast.LENGTH_SHORT).show();
+                return; // Hentikan jika tidak ada data
+            }
+
+            // Konversi List<CartItem> menjadi ArrayList<Product> yang Serializable
+            ArrayList<Product> produkUntukDikirim = new ArrayList<>();
+            for (CartItem item : cartItemList) {
+                Product produk = item.getProduct();
+                if (produk != null) {
+                    produk.setQuantity(item.getQuantity()); // Pastikan kuantitas terbaru ikut
+                    produkUntukDikirim.add(produk);
+                }
+            }
+
+            // Buat Intent dan kirimkan data yang sudah valid
             Intent intent = new Intent(TransaksiActivity.this, CartActivity.class);
+            intent.putParcelableArrayListExtra("EXTRA_KERANJANG", produkUntukDikirim);
+            intent.putExtra("EXTRA_TOTAL", totalTagihan); // Kirim total tagihan
+
+            // Gunakan startActivityForResult agar bisa menerima hasil (misal: "transaksi sukses")
             startActivityForResult(intent, 100);
-            dialog.dismiss();
+            dialog.dismiss(); // Tutup bottom sheet
         });
+
 
 
         dialog.show();

@@ -1,0 +1,99 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:background="@color/white"
+    tools:context=".ui.kasir.transaksi.CartActivity">
+
+    <!-- HEADER -->
+    <LinearLayout
+        android:id="@+id/headerLayout"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:padding="16dp"
+        android:gravity="center_vertical"
+        android:orientation="horizontal">
+
+        <ImageView
+            android:id="@+id/btnBack"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:src="@drawable/ic_arrow_back_black"
+            app:tint="@color/dark_teal_sage"
+            android:contentDescription="Kembali" />
+
+        <TextView
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_weight="1"
+            android:text="Keranjang Saya"
+            android:textColor="@color/dark_teal_sage"
+            android:textSize="18sp"
+            android:gravity="center"
+            android:textStyle="bold" />
+    </LinearLayout>
+
+    <!-- DAFTAR PRODUK (RecyclerView) -->
+    <androidx.recyclerview.widget.RecyclerView
+        android:id="@+id/recyclerCartList"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:layout_below="@id/headerLayout"
+        android:layout_above="@id/checkoutLayout"
+        android:padding="12dp"
+        tools:listitem="@layout/item_cart_product"
+        android:clipToPadding="false" />
+
+    <!-- BAGIAN CHECKOUT BAWAH -->
+    <LinearLayout
+        android:id="@+id/checkoutLayout"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_alignParentBottom="true"
+        android:background="@color/white"
+        android:orientation="horizontal"
+        android:padding="12dp"
+        android:elevation="8dp"
+        android:gravity="center_vertical">
+
+        <!-- TOTAL -->
+        <LinearLayout
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_weight="1"
+            android:orientation="vertical">
+
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="Total Tagihan"
+                android:textSize="14sp"
+                android:textColor="@android:color/darker_gray" />
+
+            <TextView
+                android:id="@+id/textTotalHarga"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="Rp0"
+                android:textSize="20sp"
+                android:textStyle="bold"
+                android:textColor="@color/dark_teal_sage" />
+        </LinearLayout>
+
+        <!-- TOMBOL CHECKOUT -->
+        <Button
+            android:id="@+id/btnCheckout"
+            android:layout_width="wrap_content"
+            android:layout_height="50dp"
+            android:minWidth="140dp"
+            android:paddingHorizontal="20dp"
+            android:text="Checkout"
+            android:textStyle="bold"
+            android:textColor="@color/white"
+            android:backgroundTint="@color/dark_teal_sage"
+            android:background="@drawable/rounded_button_primary" />
+    </LinearLayout>
+
+</RelativeLayout>
