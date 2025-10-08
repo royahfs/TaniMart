@@ -71,8 +71,15 @@ public class CartActivity extends AppCompatActivity {
 
         // --- 5. Tombol Kembali ---
         if (btnBack != null) {
-            btnBack.setOnClickListener(v -> finish());
+            btnBack.setOnClickListener(v -> {
+                Intent resultIntent = new Intent();
+                resultIntent.putExtra("EXTRA_KERANJANG", keranjangDiterima);
+                resultIntent.putExtra("EXTRA_TOTAL", totalDiterima);
+                setResult(RESULT_OK, resultIntent);
+                finish();
+            });
         }
+
 
         // --- 6. Tombol Checkout ---
         if (btnCheckout != null) {
@@ -101,15 +108,25 @@ public class CartActivity extends AppCompatActivity {
 
         db.collection("transaksi")
                 .add(transaksi)
+                // DENGAN KODE BARU INI:
                 .addOnSuccessListener(documentReference -> {
-                    Log.d("Firebase", "Transaksi berhasil disimpan. ID: " + documentReference.getId());
-                    Toast.makeText(CartActivity.this, "Checkout berhasil!", Toast.LENGTH_SHORT).show();
+                    // Ambil ID unik dari transaksi yang baru saja dibuat
+                    String idTransaksiBaru = documentReference.getId();
+                    Log.d("Firebase", "Transaksi berhasil disimpan. ID: " + idTransaksiBaru);
+                    Toast.makeText(CartActivity.this, "Checkout berhasil! Lanjut ke pembayaran...", Toast.LENGTH_SHORT).show();
+                    //Beri tahu TransaksiActivity bahwa checkout sukses agar keranjang dikosongkan
+                    setResult(RESULT_OK);
 
-                    // Kirim kembali status sukses
-                    Intent resultIntent = new Intent();
-                    setResult(RESULT_OK, resultIntent);
+                    // Buat Intent untuk memulai PembayaranActivity
+                    Intent intentKePembayaran = new Intent(CartActivity.this, PembayaranActivity.class);
+
+                    // Kirim informasi penting ke PembayaranActivity
+                    intentKePembayaran.putExtra("EXTRA_TRANSACTION_ID", idTransaksiBaru);
+                    intentKePembayaran.putExtra("EXTRA_TRANSACTION_TOTAL", totalDiterima);
+                    startActivity(intentKePembayaran);
                     finish();
                 })
+
                 .addOnFailureListener(e -> {
                     Log.e("Firebase", "Gagal menyimpan transaksi", e);
                     Toast.makeText(CartActivity.this, "Gagal: " + e.getMessage(), Toast.LENGTH_LONG).show();

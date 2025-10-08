@@ -106,47 +106,35 @@ public class TransaksiActivity extends AppCompatActivity {
             }
         });
 
-        // Di dalam file TransaksiActivity.java
 
-// ... (kode lainnya tetap sama)
+        btnCart.setOnClickListener(v -> {
+            Log.d("TransaksiActivity", "Tombol Keranjang (btnCart) diklik!");
 
-        btnCart.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                Log.d("TransaksiActivity", "Tombol Keranjang (btnCart) diklik!");
+            Double totalTagihan = transaksiViewModel.getTotalTagihan().getValue();
+            List<CartItem> cartItemList = transaksiViewModel.getCartList().getValue();
 
-                // 1. Ambil data TERKINI dari ViewModel
-                Double totalTagihan = transaksiViewModel.getTotalTagihan().getValue();
-                List<CartItem> cartItemList = transaksiViewModel.getCartList().getValue();
-
-                // 2. Lakukan validasi data
-                if (totalTagihan == null || cartItemList == null || cartItemList.isEmpty()) {
-                    Toast.makeText(TransaksiActivity.this, "Keranjang Anda masih kosong!", Toast.LENGTH_SHORT).show();
-                    return; // Hentikan eksekusi jika keranjang kosong
-                }
-
-                // 3. Konversi List<CartItem> menjadi ArrayList<Product>
-                // Ini PENTING karena CartActivity mengharapkan ArrayList<Product> yang Serializable
-                ArrayList<Product> produkUntukDikirim = new ArrayList<>();
+            // Tambahkan ini: biar cart tetap bisa dibuka walau kosong
+            ArrayList<Product> produkUntukDikirim = new ArrayList<>();
+            if (cartItemList != null) {
                 for (CartItem item : cartItemList) {
                     Product produk = item.getProduct();
                     if (produk != null) {
-                        produk.setQuantity(item.getQuantity()); // Pastikan kuantitas terbaru ikut terbawa
+                        produk.setQuantity(item.getQuantity());
                         produkUntukDikirim.add(produk);
                     }
                 }
-
-                Toast.makeText(TransaksiActivity.this, "Membuka keranjang...", Toast.LENGTH_SHORT).show();
-
-                // 4. Buat Intent dan kirimkan data yang sudah valid
-                Intent intent = new Intent(TransaksiActivity.this, CartActivity.class);
-                intent.putExtra("EXTRA_KERANJANG", produkUntukDikirim); // Kirim ArrayList<Product>
-                intent.putExtra("EXTRA_TOTAL", totalTagihan); // Kirim total tagihan
-
-                startActivity(intent); // Cukup panggil SEKALI
             }
-        });
 
+            if (cartItemList == null || cartItemList.isEmpty()) {
+                Toast.makeText(TransaksiActivity.this, "Keranjang masih kosong, tambahkan produk!", Toast.LENGTH_SHORT).show();
+            }
+
+            Intent intent = new Intent(TransaksiActivity.this, CartActivity.class);
+            intent.putParcelableArrayListExtra("EXTRA_KERANJANG", produkUntukDikirim);
+            intent.putExtra("EXTRA_TOTAL", totalTagihan != null ? totalTagihan : 0.0);
+            startActivityForResult(intent, 100);
+
+        });
 
 
         navView.setNavigationItemSelectedListener(item -> {
@@ -236,6 +224,12 @@ public class TransaksiActivity extends AppCompatActivity {
         bottomSheetConnect.setOnClickListener(v -> showBottomSheet());
     }
 
+    private void updateTotalTagihan() {
+        Double total = transaksiViewModel.getTotalTagihan().getValue();
+        if (tvTagih != null) {
+            tvTagih.setText("Tagih = " + CurrencyHelper.formatRupiah(total != null ? total : 0.0));
+        }
+    }
     private void showBottomSheet() {
         final Dialog dialog = new Dialog(this);
         dialog.setContentView(R.layout.bottom_sheet_layout);
@@ -323,6 +317,7 @@ public class TransaksiActivity extends AppCompatActivity {
             // Gunakan startActivityForResult agar bisa menerima hasil (misal: "transaksi sukses")
             startActivityForResult(intent, 100);
             dialog.dismiss(); // Tutup bottom sheet
+            transaksiViewModel.clearCart(); // Clear cart setelah disimpan
         });
 
 
@@ -337,12 +332,17 @@ public class TransaksiActivity extends AppCompatActivity {
     @Override
     protected void onActivityResult(int requestCode, int resultCode, Intent data) {
         super.onActivityResult(requestCode, resultCode, data);
+
         if (requestCode == 100 && resultCode == RESULT_OK && data != null) {
-            String cartId = data.getStringExtra("SELECTED_CART_ID");
-            // buka kembali bottom sheet sesuai cart ID
-            showBottomSheet();
+            ArrayList<Product> updatedCart = data.getParcelableArrayListExtra("EXTRA_KERANJANG");
+            double total = data.getDoubleExtra("EXTRA_TOTAL", 0.0);
+
+            if (updatedCart != null) {
+                transaksiViewModel.setCartListFromProducts(updatedCart);
+            }
         }
     }
+
 
 
     @Override
