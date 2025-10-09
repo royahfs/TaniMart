@@ -40,12 +40,11 @@
             android:textSize="16sp"
             android:textStyle="bold"
             android:textColor="@color/dark_teal_sage"
-            android:maxLines="1"
-            android:ellipsize="end"
             app:layout_constraintStart_toEndOf="@id/itemImage"
             app:layout_constraintTop_toTopOf="@id/itemImage"
             app:layout_constraintHorizontal_bias="0"
-            android:layout_marginStart="12dp" />
+            android:layout_marginStart="12dp"
+            app:layout_constraintEnd_toEndOf="parent"/>
 
         <!-- Harga Produk -->
         <TextView
@@ -78,9 +77,7 @@
                 android:layout_height="wrap_content"
                 android:text="Merek"
                 android:textSize="12sp"
-                android:textColor="@color/black"
-                android:maxLines="1"
-                android:ellipsize="end" />
+                android:textColor="@color/black" />
 
             <TextView
                 android:id="@+id/itemKategori"
@@ -88,9 +85,7 @@
                 android:layout_height="wrap_content"
                 android:text="Kategori"
                 android:textSize="12sp"
-                android:textColor="@color/black"
-                android:maxLines="1"
-                android:ellipsize="end" />
+                android:textColor="@color/black" />
         </LinearLayout>
 
     </androidx.constraintlayout.widget.ConstraintLayout>

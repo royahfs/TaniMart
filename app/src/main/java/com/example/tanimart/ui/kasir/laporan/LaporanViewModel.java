@@ -32,11 +32,8 @@ public class LaporanViewModel extends ViewModel {
 
     // --- PERBAIKAN UTAMA ADA DI SINI ---
     public LaporanViewModel() {
-        // Panggil filterData dengan "Harian" sebagai default saat ViewModel dibuat.
-        // Argumen startDate dan endDate bisa null karena akan di-generate di dalam method.
         filterData("Harian", null, null);
     }
-    // ------------------------------------
 
     // filter data berdasarkan pilihan
     public void filterData(String type, Date startDate, Date endDate) {
