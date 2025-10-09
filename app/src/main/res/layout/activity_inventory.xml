@@ -5,14 +5,14 @@
     android:id="@+id/mainInventory"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:background="#636F42"
+    android:background="#78874C"
     tools:context=".ui.common.inventory.InventoryActivity">
 
     <androidx.appcompat.widget.Toolbar
         android:id="@+id/toolbar_inventory"
         android:layout_width="match_parent"
-        android:layout_height="?attr/actionBarSize"
-        android:background="#3C452A"
+        android:layout_height="48dp"
+        android:background="@color/dark_teal_sage"
         android:theme="@style/ThemeOverlay.AppCompat.Dark.ActionBar"
         app:popupTheme="@style/Theme.AppCompat.Light"
         app:layout_constraintEnd_toEndOf="parent"

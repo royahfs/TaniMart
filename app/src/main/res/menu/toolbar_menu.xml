@@ -10,7 +10,7 @@
         app:actionViewClass="androidx.appcompat.widget.SearchView"
         app:showAsAction="ifRoom" />
     <item
-        android:id="@+id/menu_kelola_produk"
+        android:id="@+id/profile_menu_kelola_produk"
         android:title="Profil"
         android:icon="@drawable/profile_1"
         app:showAsAction="ifRoom|collapseActionView" />

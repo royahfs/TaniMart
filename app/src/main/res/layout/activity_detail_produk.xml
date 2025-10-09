@@ -8,7 +8,6 @@
     android:background="@color/white"
     tools:context=".ui.common.inventory.DetailProdukActivity">
 
-    <!-- BAGIAN 1: Tombol Bawah (Statis) -->
     <!-- Diletakkan di bawah dan diberi ID agar konten lain bisa menghindarinya -->
     <androidx.constraintlayout.widget.ConstraintLayout
         android:id="@+id/bottomBar"

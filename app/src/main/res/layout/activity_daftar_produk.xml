@@ -14,8 +14,8 @@
     <androidx.appcompat.widget.Toolbar
         android:id="@+id/toolbar_daftarProduk"
         android:layout_width="0dp"
-        android:layout_height="?attr/actionBarSize"
-        android:background="#3C452A"
+        android:layout_height="40dp"
+        android:background="@color/dark_teal_sage"
         android:theme="@style/ThemeOverlay.AppCompat.Dark.ActionBar"
         app:popupTheme="@style/Theme.AppCompat.Light"
         app:layout_constraintTop_toTopOf="parent"

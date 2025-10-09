@@ -1,143 +1,153 @@
 package com.example.tanimart.ui.common.inventory;
 
 import android.content.Intent;
+import android.graphics.drawable.Drawable;
 import android.os.Bundle;
+import android.util.Log;
 import android.view.Menu;
+import android.view.MenuItem;
 import android.view.View;
 import android.widget.Button;
-//import android.widget.Toolbar;
-import android.view.MenuItem;
 import android.widget.ImageButton;
 import android.widget.Toast;
 
-import androidx.activity.EdgeToEdge;
-import androidx.activity.OnBackPressedCallback;
-import androidx.appcompat.widget.Toolbar;
+import androidx.annotation.NonNull;
+import androidx.annotation.Nullable;
 import androidx.appcompat.app.AppCompatActivity;
-import androidx.core.graphics.Insets;
-import androidx.core.view.ViewCompat;
-import androidx.core.view.WindowInsetsCompat;
+import androidx.appcompat.widget.Toolbar;
 
+import com.bumptech.glide.Glide;
+import com.bumptech.glide.request.RequestOptions;
+import com.bumptech.glide.request.target.CustomTarget;
+import com.bumptech.glide.request.transition.Transition;
 import com.example.tanimart.R;
-import com.example.tanimart.ui.common.profile.EditProfileActivity;
+
+import com.example.tanimart.data.repository.UserRepository;
 import com.example.tanimart.ui.common.SplashActivity;
+import com.example.tanimart.ui.common.profile.EditProfileActivity;
+import com.example.tanimart.utils.PrefsUtil;
+
+import com.google.firebase.auth.FirebaseAuth;
+import com.google.firebase.auth.FirebaseUser;
+
+import java.io.File;
 
 public class InventoryActivity extends AppCompatActivity {
-//    private InventoryViewModel viewModel;
-
-    Button buttonDaftarProduk;
-    Button buttonKategoriProduk;
-    Button buttonKelolaProdukMasuk;
-    Button buttonProdukKeluar;
+    Button buttonDaftarProduk, buttonKategoriProduk, buttonKelolaProdukMasuk, buttonProdukKeluar;
     ImageButton floatingTambah;
+    // Hapus variabel optionsMenu, kita tidak membutuhkannya lagi
+    // private Menu optionsMenu;
+    private UserRepository userRepository;
+    private static final String TAG = "InventoryActivity";
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        EdgeToEdge.enable(this);
         setContentView(R.layout.activity_inventory);
-        ViewCompat.setOnApplyWindowInsetsListener(findViewById(R.id.mainInventory), (v, insets) -> {
-            Insets systemBars = insets.getInsets(WindowInsetsCompat.Type.systemBars());
-            v.setPadding(systemBars.left,systemBars.top, systemBars.right, systemBars.bottom);
-            return insets;
-        });
 
-        //Setup Toolbar
+        userRepository = new UserRepository();
+
         Toolbar toolbar = findViewById(R.id.toolbar_inventory);
         setSupportActionBar(toolbar);
         if (getSupportActionBar() != null) {
-            getSupportActionBar().setDisplayHomeAsUpEnabled(true); // tampilkan tombil back
-            getSupportActionBar().setTitle("Inventory"); // set judul
+            getSupportActionBar().setDisplayHomeAsUpEnabled(true);
+            getSupportActionBar().setTitle("Inventory");
         }
 
+        initViewsAndListeners();
+    }
 
-        // back button override pakai OnBackPressedCallback
-        OnBackPressedCallback callback = new OnBackPressedCallback(true) {
-            @Override
-            public void handleOnBackPressed() {
-                finish();
-            }
-        };
-        getOnBackPressedDispatcher().addCallback(this, callback);
-
-        // init button
+    private void initViewsAndListeners() {
         buttonDaftarProduk = findViewById(R.id.btnDaftarProduk);
         buttonKategoriProduk = findViewById(R.id.btnKategoriProduk);
         buttonKelolaProdukMasuk = findViewById(R.id.btnKelolaProdukMasuk);
         buttonProdukKeluar = findViewById(R.id.btnProdukKeluar);
         floatingTambah = findViewById(R.id.floatingTambah);
 
-        // listener floatingTambah → pindah ke KelolaProdukMasukActivity
-        floatingTambah.setOnClickListener(v -> {
-            Intent intent = new Intent(InventoryActivity.this, KelolaProdukMasukActivity.class);
-            startActivity(intent);
-        });
-
-        // set listener button
-        buttonDaftarProduk.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                Intent intent = new Intent(InventoryActivity.this, DaftarProdukActivity.class);
-                startActivity(intent);
-            }
-        });
-
-        buttonKategoriProduk.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                Intent intent = new Intent(InventoryActivity.this, KategoriProdukActivity.class);
-                startActivity(intent);
-            }
-        });
-
-        buttonKelolaProdukMasuk.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                Intent intent = new Intent(InventoryActivity.this, KelolaProdukMasukActivity.class);
-                startActivity(intent);
-            }
-        });
-
-        buttonProdukKeluar.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                Intent intent = new Intent(InventoryActivity.this, ProdukKeluarActivity.class);
-                startActivity(intent);
-            }
-        });
-
+        floatingTambah.setOnClickListener(v -> startActivity(new Intent(InventoryActivity.this, KelolaProdukMasukActivity.class)));
+        buttonDaftarProduk.setOnClickListener(v -> startActivity(new Intent(InventoryActivity.this, DaftarProdukActivity.class)));
+        buttonKategoriProduk.setOnClickListener(v -> startActivity(new Intent(InventoryActivity.this, KategoriProdukActivity.class)));
+        buttonKelolaProdukMasuk.setOnClickListener(v -> startActivity(new Intent(InventoryActivity.this, KelolaProdukMasukActivity.class)));
+        buttonProdukKeluar.setOnClickListener(v -> startActivity(new Intent(InventoryActivity.this, ProdukKeluarActivity.class)));
     }
 
-    //Outside onCreate
-
-    // handle toolbar yang di sebelah kanan
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {
         getMenuInflater().inflate(R.menu.toolbar_inventory, menu);
         return true;
     }
 
-    // handle toolbar back (arrow) dan tolbar yang di sebelah kanan
+    // HAPUS METODE onResume() DARI SINI
+
+    // ======================================================================================
+    // == INI CARA PALING TEPAT: Gunakan onPrepareOptionsMenu
+    // ======================================================================================
+    @Override
+    public boolean onPrepareOptionsMenu(Menu menu) {
+        Log.d(TAG, "onPrepareOptionsMenu called. Preparing to update profile icon.");
+
+        MenuItem profileMenuItem = menu.findItem(R.id.profile_menu_kelola_produk);
+
+        if (profileMenuItem != null) {
+            // Panggil fungsi untuk memuat gambar ke item yang benar
+            fetchProfileImageAndSetIcon(profileMenuItem);
+        } else {
+            // Log ini seharusnya tidak akan muncul lagi
+            Log.e(TAG, "MenuItem R.id.profile_menu_kelola_produk NOT FOUND in onPrepareOptionsMenu");
+        }
+        return super.onPrepareOptionsMenu(menu);
+    }
+
+
+    private void fetchProfileImageAndSetIcon(MenuItem menuItem) {
+        FirebaseUser currentUser = FirebaseAuth.getInstance().getCurrentUser();
+        if (currentUser != null) {
+            String uid = currentUser.getUid();
+            String localPath = PrefsUtil.getPhotoPath(this, uid);
+
+            if (localPath != null && new File(localPath).exists()) {
+                Log.d(TAG, "Local image path found: " + localPath);
+                // Langsung load gambar ke MenuItem yang diberikan
+                Glide.with(this)
+                        .load(new File(localPath))
+                        .apply(RequestOptions.circleCropTransform())
+                        .placeholder(R.drawable.profile_1)
+                        .error(R.drawable.profile_1)
+                        .into(new CustomTarget<Drawable>() {
+                            @Override
+                            public void onResourceReady(@NonNull Drawable resource, @Nullable Transition<? super Drawable> transition) {
+                                menuItem.setIcon(resource);
+                                Log.d(TAG, "Profile icon updated successfully in onPrepareOptionsMenu.");
+                            }
+                            @Override
+                            public void onLoadCleared(@Nullable Drawable placeholder) {}
+                        });
+            } else {
+                Log.w(TAG, "Local image path not found. Using default icon.");
+                menuItem.setIcon(R.drawable.profile_1); // Set ke default jika tidak ada
+            }
+        } else {
+            Log.w(TAG, "Current user is null. Using default icon.");
+            menuItem.setIcon(R.drawable.profile_1); // Set ke default jika user null
+        }
+    }
+
+    // Fungsi updateMenuIconWithLocalFile dan fetchProfileImageFromLocal sudah tidak diperlukan lagi
+    // karena logikanya sudah digabung ke fetchProfileImageAndSetIcon
+
     @Override
     public boolean onOptionsItemSelected(MenuItem item) {
         int id = item.getItemId();
-        if (id == R.id.logout) {
-            Intent intent = new Intent(InventoryActivity.this, SplashActivity.class);
-
-            // 2. Tambahkan Flag untuk membersihkan semua Activity sebelumnya
-            intent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK | Intent.FLAG_ACTIVITY_CLEAR_TASK);
-
-            // 3. Mulai Activity baru
-            startActivity(intent);
-
-            // Tampilkan pesan bahwa logout berhasil
-            Toast.makeText(this, "Berhasil logout", Toast.LENGTH_SHORT).show();
-
-            return true; // Tandakan event sudah ditangani
-        }
         if (id == R.id.settings) {
-            Intent intent = new Intent(InventoryActivity.this, EditProfileActivity.class);
+            startActivity(new Intent(InventoryActivity.this, EditProfileActivity.class));
+            return true;
+        }
+        if (id == R.id.logout) {
+            FirebaseAuth.getInstance().signOut();
+            Intent intent = new Intent(InventoryActivity.this, SplashActivity.class);
+            intent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK | Intent.FLAG_ACTIVITY_CLEAR_TASK);
             startActivity(intent);
+            Toast.makeText(this, "Berhasil logout", Toast.LENGTH_SHORT).show();
             return true;
         }
         if (item.getItemId() == android.R.id.home) {
@@ -146,5 +156,4 @@ public class InventoryActivity extends AppCompatActivity {
         }
         return super.onOptionsItemSelected(item);
     }
-
 }
