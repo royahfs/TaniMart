@@ -50,7 +50,7 @@ public class ProfileFragment extends Fragment {
         tvEmail = v.findViewById(R.id.tvEmail);
         tvRole = v.findViewById(R.id.tvRole);
         btnEdit = v.findViewById(R.id.btnEdit);
-        btnLogout = v.findViewById(R.id.btnLogout);
+        btnLogout = v.findViewById(R.id.btnKeluar);
 
         viewModel = new ViewModelProvider(this).get(ProfileViewModel.class);
 
