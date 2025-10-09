@@ -1,23 +1,89 @@
 <?xml version="1.0" encoding="utf-8"?>
-<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<androidx.constraintlayout.widget.ConstraintLayout
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:orientation="vertical"
-    android:padding="8dp">
+    android:background="@color/white"
+    tools:context=".ui.common.inventory.ProdukKeluarActivity">
 
-    <TextView
-        android:id="@+id/txtTitle"
-        android:layout_width="match_parent"
+    <!-- Toolbar -->
+    <LinearLayout
+        android:id="@+id/toolbarProdukKeluar"
+        android:layout_width="0dp"
         android:layout_height="wrap_content"
-        android:text="Daftar Produk Keluar"
-        android:textStyle="bold"
-        android:textSize="18sp"
-        android:padding="8dp"
-        android:gravity="center" />
+        android:orientation="horizontal"
+        android:gravity="center_vertical"
+        android:padding="12dp"
+        android:background="#3C452A"
+        app:layout_constraintTop_toTopOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintEnd_toEndOf="parent">
 
+        <ImageView
+            android:id="@+id/btnBack"
+            android:layout_width="24dp"
+            android:layout_height="24dp"
+            android:src="@drawable/ic_arrow_back"
+            app:tint="@color/white"
+            android:contentDescription="Kembali" />
+
+        <TextView
+            android:id="@+id/txtTitle"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:text="Daftar Produk Keluar"
+            android:textStyle="bold"
+            android:textSize="18sp"
+            android:textColor="@color/white"
+            android:gravity="center"
+            android:layout_marginStart="12dp"
+            android:layout_weight="1" />
+    </LinearLayout>
+
+    <!-- Ringkasan -->
+    <com.google.android.material.card.MaterialCardView
+        android:id="@+id/cardSummary"
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        android:layout_margin="12dp"
+        app:cardCornerRadius="12dp"
+        app:cardElevation="4dp"
+        app:layout_constraintTop_toBottomOf="@id/toolbarProdukKeluar"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintEnd_toEndOf="parent">
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="horizontal"
+            android:gravity="center"
+            android:padding="12dp">
+
+            <TextView
+                android:id="@+id/txtTotalProdukKeluar"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="Total Produk Keluar: 0"
+                android:textSize="14sp"
+                android:textStyle="bold"
+                android:textColor="@color/black" />
+
+        </LinearLayout>
+    </com.google.android.material.card.MaterialCardView>
+
+    <!-- RecyclerView -->
     <androidx.recyclerview.widget.RecyclerView
         android:id="@+id/recyclerProdukKeluar"
-        android:layout_width="match_parent"
-        android:layout_height="match_parent"
-        android:paddingTop="4dp"/>
-</LinearLayout>
+        android:layout_width="0dp"
+        android:layout_height="0dp"
+        android:padding="8dp"
+        android:clipToPadding="false"
+        app:layout_constraintTop_toBottomOf="@id/cardSummary"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        tools:listitem="@layout/item_produk_keluar" />
+
+</androidx.constraintlayout.widget.ConstraintLayout>
