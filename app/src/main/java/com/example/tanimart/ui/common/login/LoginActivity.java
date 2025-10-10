@@ -19,6 +19,7 @@ import com.example.tanimart.ui.karyawan.dashboard.KaryawanDashboardActivity;
 import com.example.tanimart.ui.kasir.dashboard.KasirDashboardActivity;
 
 public class LoginActivity extends AppCompatActivity {
+    private EditText emailEt, passwordEt;
     private LoginViewModel loginViewModel;
 
     @Override
@@ -27,8 +28,8 @@ public class LoginActivity extends AppCompatActivity {
         EdgeToEdge.enable(this);
         setContentView(R.layout.activity_login);
 
-        EditText emailEt = findViewById(R.id.etEmail_login);
-        EditText passwordEt = findViewById(R.id.etPassword_login);
+        emailEt = findViewById(R.id.etEmail_login);
+        passwordEt = findViewById(R.id.etPassword_login);
         Button loginBtn = findViewById(R.id.login_button);
         TextView redirectLoginToSignUp= findViewById(R.id.redirectLoginToSignup);
 

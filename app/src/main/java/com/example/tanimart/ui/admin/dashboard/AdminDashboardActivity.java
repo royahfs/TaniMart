@@ -1,6 +1,8 @@
 package com.example.tanimart.ui.admin.dashboard;
 
 import android.content.Intent;
+import android.content.pm.PackageManager;
+import android.os.Build;
 import android.os.Bundle;
 import android.view.View;
 
@@ -17,6 +19,8 @@ import com.example.tanimart.ui.common.profile.ProfileActivity;
 import com.example.tanimart.ui.common.profile.ProfileFragment;
 import com.example.tanimart.ui.kasir.laporan.LaporanActivity;
 import com.example.tanimart.ui.kasir.transaksi.TransaksiActivity;
+import com.example.tanimart.utils.StockNotifier;
+
 ;
 
 public class AdminDashboardActivity extends AppCompatActivity {
@@ -34,6 +38,16 @@ public class AdminDashboardActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         EdgeToEdge.enable(this);
         setContentView(R.layout.activity_dashboard_admin);
+
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.TIRAMISU) {
+            if (checkSelfPermission(android.Manifest.permission.POST_NOTIFICATIONS)
+                    != PackageManager.PERMISSION_GRANTED) {
+                requestPermissions(new String[]{android.Manifest.permission.POST_NOTIFICATIONS}, 1);
+            }
+        }
+
+        StockNotifier stockNotifier = new StockNotifier(this);
+        stockNotifier.checkLowStockProducts();
 
         inventoryMenu = findViewById(R.id.inventoryCard);
         infoProdukMenu = findViewById(R.id.infoProdukCard);

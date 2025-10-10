@@ -25,6 +25,9 @@ public class DaftarProdukViewModel extends ViewModel {
     private final MutableLiveData<List<Product>> produkList = new MutableLiveData<>(new ArrayList<>());
     private final FirebaseFirestore db;
     private List<Product> allProdukCache = new ArrayList<>();
+    private final MutableLiveData<Integer> lowStockCount = new MutableLiveData<>(0);
+    private static final double MINIMUM_STOK = 5; // ambang batas stok menipis
+
 
     public DaftarProdukViewModel() {
         db = FirebaseFirestore.getInstance();
@@ -32,32 +35,82 @@ public class DaftarProdukViewModel extends ViewModel {
     }
 
     public void loadDaftarProduk() {
-        // Mengambil data dari koleksi "inventory"
-        db.collection("inventory").addSnapshotListener((QuerySnapshot snapshots, FirebaseFirestoreException e) -> {
+        db.collection("inventory").addSnapshotListener((snapshots, e) -> {
             if (e != null) {
                 Log.e(TAG, "Firestore error saat load daftar", e);
                 return;
             }
+
             List<Product> temp = new ArrayList<>();
+            int lowStockCounter = 0; // counter stok menipis
+
             if (snapshots != null) {
                 for (DocumentSnapshot doc : snapshots.getDocuments()) {
                     Product p = doc.toObject(Product.class);
                     if (p != null) {
-                        // Pastikan ID terisi dari dokumen jika di objeknya null
                         if (p.getId() == null || p.getId().isEmpty()) {
                             p.setId(doc.getId());
                         }
+
                         temp.add(p);
-                    } else {
-                        Log.w(TAG, "Dokumen " + doc.getId() + " gagal dikonversi ke objek Product.");
+
+                        // === CEK STOK MENIPIS ===
+                        if (p.getStok() <= MINIMUM_STOK) {
+                            lowStockCounter++;
+                            showLowStockNotification(p);
+                        }
                     }
                 }
             }
+
             Log.d(TAG, "Daftar produk berhasil dimuat: " + temp.size() + " item.");
             allProdukCache = temp;
             produkList.setValue(new ArrayList<>(temp));
+
+            // update LiveData stok menipis
+            lowStockCount.setValue(lowStockCounter);
         });
     }
+
+
+    private void showLowStockNotification(Product product) {
+        // Gunakan ApplicationContext, karena ViewModel tidak punya context langsung
+        android.content.Context context =
+                androidx.lifecycle.ProcessLifecycleOwner.get().getLifecycle().getCurrentState().isAtLeast(
+                        androidx.lifecycle.Lifecycle.State.CREATED
+                ) ?
+                        com.google.firebase.FirebaseApp.getInstance().getApplicationContext() :
+                        null;
+
+        if (context == null) return;
+
+        String channelId = "low_stock_channel";
+        android.app.NotificationManager notificationManager =
+                (android.app.NotificationManager) context.getSystemService(android.content.Context.NOTIFICATION_SERVICE);
+
+        if (android.os.Build.VERSION.SDK_INT >= android.os.Build.VERSION_CODES.O) {
+            android.app.NotificationChannel channel = new android.app.NotificationChannel(
+                    channelId,
+                    "Stok Menipis",
+                    android.app.NotificationManager.IMPORTANCE_HIGH
+            );
+            channel.setDescription("Notifikasi untuk produk dengan stok menipis");
+            notificationManager.createNotificationChannel(channel);
+        }
+
+        android.app.Notification notification = new androidx.core.app.NotificationCompat.Builder(context, channelId)
+                .setSmallIcon(android.R.drawable.ic_dialog_alert)
+                .setContentTitle("Stok Menipis")
+                .setContentText("Produk \"" + product.getNamaProduk() + "\" tersisa " + product.getStok() + " " + product.getSatuan())
+                .setPriority(androidx.core.app.NotificationCompat.PRIORITY_HIGH)
+                .setAutoCancel(true)
+                .build();
+
+        // ID notifikasi bisa unik per produk
+        int notificationId = product.getId().hashCode();
+        notificationManager.notify(notificationId, notification);
+    }
+
 
     public void checkoutProdukList(List<Product> cartList, String idTransaksi) {
         for (Product p : cartList) {
