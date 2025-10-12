@@ -1,0 +1,75 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:background="@color/white"
+    android:orientation="vertical"
+    android:padding="20dp"
+    android:gravity="center_horizontal">
+
+    <!-- Tombol Back -->
+    <ImageView
+        android:id="@+id/btnBack"
+        android:layout_width="32dp"
+        android:layout_height="32dp"
+        android:layout_gravity="start"
+        android:src="@drawable/ic_arrow_back_black"
+        android:contentDescription="Kembali"
+        android:padding="4dp" />
+
+    <!-- Judul -->
+    <TextView
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="Pembayaran QRIS"
+        android:textColor="@color/black"
+        android:textStyle="bold"
+        android:textSize="20sp"
+        android:layout_marginTop="12dp"
+        android:layout_marginBottom="8dp" />
+
+    <!-- Total Tagihan -->
+    <TextView
+        android:id="@+id/tvTotalTagihan"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="Rp0"
+        android:textSize="22sp"
+        android:textStyle="bold"
+        android:textColor="@color/orange"
+        android:layout_marginBottom="16dp" />
+
+    <!-- Gambar QR Code -->
+    <ImageView
+        android:id="@+id/imgQrisCode"
+        android:layout_width="249dp"
+        android:layout_height="214dp"
+        android:layout_marginBottom="16dp"
+        android:contentDescription="QRIS Code"
+        android:src="@drawable/qris" />
+
+    <!-- Petunjuk -->
+    <TextView
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:text="Silakan scan QRIS di atas menggunakan aplikasi e-wallet Anda (DANA, OVO, GoPay, ShopeePay, dsb)"
+        android:textAlignment="center"
+        android:textColor="@color/darkGrey"
+        android:textSize="14sp"
+        android:layout_marginBottom="30dp" />
+
+    <!-- Tombol Konfirmasi -->
+    <TextView
+        android:id="@+id/btnKonfirmasiPembayaran"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:text="Konfirmasi Pembayaran"
+        android:gravity="center"
+        android:padding="12dp"
+        android:textStyle="bold"
+        android:textColor="@color/white"
+        android:backgroundTint="@color/orange"
+        android:background="@drawable/bg_button_primary"
+        android:layout_marginTop="10dp" />
+
+</LinearLayout>

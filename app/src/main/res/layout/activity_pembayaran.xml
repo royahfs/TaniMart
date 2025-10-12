@@ -134,23 +134,6 @@
             android:layout_height="1dp"
             android:background="#E0E0E0"/>
 
-        <TextView
-            android:id="@+id/debitPay"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:text="Debit"
-            android:padding="16dp"
-            android:textSize="16sp"/>
-
-        <View
-            android:layout_width="match_parent"
-            android:layout_height="1dp"
-            android:background="#E0E0E0"/>
-
-        <View
-            android:layout_width="match_parent"
-            android:layout_height="1dp"
-            android:background="#E0E0E0"/>
 
     </LinearLayout>
 

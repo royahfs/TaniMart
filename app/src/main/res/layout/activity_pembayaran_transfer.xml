@@ -1,0 +1,66 @@
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:orientation="vertical"
+    android:padding="20dp"
+    android:gravity="center_horizontal">
+
+
+    <ImageView
+        android:id="@+id/btnBack"
+        android:layout_width="32dp"
+        android:layout_height="32dp"
+        android:layout_gravity="start"
+        android:clickable="true"
+        android:contentDescription="Kembali"
+        android:focusable="true"
+        android:src="@drawable/ic_arrow_back_black"
+        tools:ignore="TouchTargetSizeCheck" />
+
+
+    <ImageView
+        android:id="@+id/imgTransferLogo"
+        android:layout_width="120dp"
+        android:layout_height="120dp"
+        android:src="@drawable/ic_bank_transfer"
+        android:contentDescription="Logo Transfer" />
+
+    <TextView
+        android:id="@+id/tvNamaBank"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="Bank BCA"
+        android:textSize="20sp"
+        android:layout_marginTop="16dp"
+        android:textStyle="bold" />
+
+    <TextView
+        android:id="@+id/tvNoRekening"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="1234567890 a.n. TaniMart"
+        android:textSize="16sp"
+        android:layout_marginTop="8dp" />
+
+    <TextView
+        android:id="@+id/tvTotalTagihan"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="Rp0"
+        android:textSize="22sp"
+        android:layout_marginTop="24dp"
+        android:textStyle="bold" />
+
+    <TextView
+        android:id="@+id/btnKonfirmasiPembayaran"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:background="@drawable/bg_button_primary"
+        android:text="Konfirmasi Pembayaran"
+        android:textColor="@android:color/white"
+        android:padding="12dp"
+        android:gravity="center"
+        android:layout_marginTop="32dp" />
+
+</LinearLayout>

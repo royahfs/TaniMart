@@ -13,6 +13,8 @@ import com.example.tanimart.R;
 import com.example.tanimart.data.model.Product;
 import com.example.tanimart.ui.common.inventory.DaftarProdukViewModel;
 import com.example.tanimart.ui.kasir.transaksi.pembayaran.DialogTransaksiBerhasilActivity;
+import com.example.tanimart.ui.kasir.transaksi.pembayaran.PembayaranQrisActivity;
+import com.example.tanimart.ui.kasir.transaksi.pembayaran.PembayaranTransferActivity;
 import com.example.tanimart.ui.kasir.transaksi.pembayaran.PembayaranTunaiActivity;
 
 import java.text.NumberFormat;
@@ -30,7 +32,7 @@ public class PembayaranActivity extends AppCompatActivity {
 
     private ImageView btnBack;
     private TextView tvTotalTagihan;
-    private TextView tunaiPay, transferPay, qrisPay, debitPay;
+    private TextView tunaiPay, transferPay, qrisPay;
 
     private DaftarProdukViewModel daftarProdukViewModel;
 
@@ -56,7 +58,6 @@ public class PembayaranActivity extends AppCompatActivity {
         tunaiPay = findViewById(R.id.tunaiPay);
         transferPay = findViewById(R.id.transferPay);
         qrisPay = findViewById(R.id.qrisPay);
-        debitPay = findViewById(R.id.debitPay);
 
         // Tampilkan total tagihan
         NumberFormat formatter = NumberFormat.getNumberInstance(new Locale("id", "ID"));
@@ -78,9 +79,21 @@ public class PembayaranActivity extends AppCompatActivity {
             // Tutup halaman ini agar alurnya lebih rapi
             finish();
         });
-        transferPay.setOnClickListener(v -> checkoutProduk("Transfer"));
-        qrisPay.setOnClickListener(v -> checkoutProduk("QRIS"));
-        debitPay.setOnClickListener(v -> checkoutProduk("Debit"));
+        transferPay.setOnClickListener(v -> {
+            Intent transferIntent = new Intent(this, PembayaranTransferActivity.class);
+            transferIntent.putExtra("TOTAL_TAGIHAN", totalTagihan);
+            transferIntent.putParcelableArrayListExtra("CART_LIST", productList);
+            startActivity(transferIntent);
+            finish();
+        });
+        qrisPay.setOnClickListener(v -> {
+            Intent qrisIntent = new Intent(this, PembayaranQrisActivity.class);
+            qrisIntent.putExtra("TOTAL_TAGIHAN", totalTagihan);
+            qrisIntent.putParcelableArrayListExtra("CART_LIST", productList);
+            startActivity(qrisIntent);
+            finish();
+        });
+
     }
 
     /**

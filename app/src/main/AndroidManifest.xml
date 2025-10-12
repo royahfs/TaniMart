@@ -61,6 +61,8 @@
         <activity android:name=".ui.kasir.transaksi.pembayaran.ReceiptPrintActivity" android:exported="false" />
         <activity android:name=".ui.kasir.laporan.LaporanActivity" android:exported="true" />
         <activity android:name=".ui.kasir.transaksi.CartActivity" android:exported="false" />
+        <activity android:name=".ui.kasir.transaksi.pembayaran.PembayaranQrisActivity" android:exported="false"/>
+        <activity android:name=".ui.kasir.transaksi.pembayaran.PembayaranTransferActivity" android:exported="false"/>
 
         <!-- Kalkulator -->
         <activity android:name=".ui.common.kalkulator.KalkulatorActivity" android:exported="true" />
