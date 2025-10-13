@@ -34,62 +34,38 @@ android {
 }
 
 dependencies {
+    // --- DEPENDENSI BAWAAN & FIREBASE (Tidak diubah) ---
     implementation platform(libs.firebase.bom)
     implementation libs.firebase.auth
     implementation libs.firebase.database
     implementation libs.firebase.functions
     implementation(libs.firebase.firestore)
     implementation libs.firebase.storage
-    implementation libs.play.services.analytics.impl
-    implementation libs.firebase.crashlytics.buildtools
-    implementation libs.androidx.media3.common
-
-
-    def lifecycle_version = "2.6.2"
-    def arch_version = "2.2.0"
-
     implementation libs.appcompat
     implementation libs.material
     implementation libs.activity
     implementation libs.constraintlayout
+    implementation libs.glide
+    annotationProcessor libs.compiler
     testImplementation libs.junit
     androidTestImplementation libs.ext.junit
     androidTestImplementation libs.espresso.core
-//    implementation libs.chip.navigation.bar
 
+    // =======================================================================
+    // PERBAIKAN DI SINI: Menyatukan semua versi lifecycle ke versi STABIL
+    // =======================================================================
+    def lifecycle_version_stable = "2.6.2" // Gunakan versi ini untuk semua
+    implementation "androidx.lifecycle:lifecycle-viewmodel:$lifecycle_version_stable"
+    implementation "androidx.lifecycle:lifecycle-livedata:$lifecycle_version_stable"
+    implementation "androidx.lifecycle:lifecycle-runtime:$lifecycle_version_stable"
+    implementation "androidx.lifecycle:lifecycle-common-java8:$lifecycle_version_stable"
+    implementation "androidx.lifecycle:lifecycle-viewmodel-savedstate:$lifecycle_version_stable"
+    // Hapus versi tidak stabil seperti 2.9.3, dll.
 
-
-    // ViewModel
-    implementation "androidx.lifecycle:lifecycle-viewmodel:$lifecycle_version"
-    // LiveData
-    implementation libs.androidx.lifecycle.livedata
-    // Lifecycles only (without ViewModel or LiveData)
-    implementation "androidx.lifecycle:lifecycle-runtime:$lifecycle_version"
-
-    // Saved state module for ViewModel
-    implementation "androidx.lifecycle:lifecycle-viewmodel-savedstate:$lifecycle_version"
-
-    // Annotation processor
-//    annotationProcessor "androidx.lifecycle:lifecycle-compiler:$lifecycle_version"
-    // alternately - if using Java8, use the following instead of lifecycle-compiler
-    implementation libs.androidx.lifecycle.common.java8
-
-    // optional - helpers for implementing LifecycleOwner in a Service
-    implementation libs.androidx.lifecycle.service
-
-    // optional - ProcessLifecycleOwner provides a lifecycle for the whole application process
-    implementation libs.androidx.lifecycle.process
-
-    // optional - ReactiveStreams support for LiveData
-    implementation libs.lifecycle.reactivestreams
-
-    // optional - Test helpers for LiveData
-    testImplementation libs.core.testing
-
-    // optional - Test helpers for Lifecycle runtime
-    testImplementation "androidx.lifecycle:lifecycle-runtime-testing:$lifecycle_version"
-
-    implementation libs.glide
-    annotationProcessor libs.compiler
-
+    // --- DEPENDENSI iTEXT PDF (Sudah Benar) ---
+    implementation 'com.itextpdf:itext-core:9.3.0'
+    implementation 'com.itextpdf:kernel:9.3.0'
+    implementation 'com.itextpdf:layout:9.3.0'
+    implementation 'com.itextpdf:io:9.3.0'
+    implementation 'org.slf4j:slf4j-android:1.7.32'
 }

@@ -1,6 +1,6 @@
 <resources xmlns:tools="http://schemas.android.com/tools">
 
-    <!-- Base Theme -->
+    <!-- Base Theme (Sudah Benar) -->
     <style name="Base.Theme.TaniMart" parent="Theme.Material3.DayNight.NoActionBar">
         <item name="colorPrimary">@color/dark_teal_sage</item>
         <item name="colorPrimaryVariant">@color/dark_teal_sage</item>
@@ -22,8 +22,9 @@
         <item name="android:windowExitAnimation">@anim/slide_out_bottom</item>
     </style>
 
+    <!-- ================== PERBAIKAN DI SINI ================== -->
     <!-- Kalkulator button (outlined) -->
-    <style name="CalcButton.Normal" parent="Widget.MaterialComponents.Button.OutlinedButton">
+    <style name="CalcButton.Normal" parent="Widget.Material3.Button.OutlinedButton"> <!-- DIUBAH dari MaterialComponents -->
         <item name="android:layout_width">0dp</item>
         <item name="android:layout_height">90dp</item>
         <item name="android:layout_columnWeight">1</item>
@@ -37,7 +38,7 @@
     </style>
 
     <!-- Kalkulator button (filled) -->
-    <style name="CalcButton.Colored" parent="Widget.MaterialComponents.Button">
+    <style name="CalcButton.Colored" parent="Widget.Material3.Button"> <!-- DIUBAH dari MaterialComponents -->
         <item name="android:layout_width">0dp</item>
         <item name="android:layout_height">90dp</item>
         <item name="android:layout_columnWeight">1</item>
@@ -47,11 +48,11 @@
         <item name="android:insetLeft">0dp</item>
         <item name="android:insetRight">0dp</item>
     </style>
+    <!-- ======================================================= -->
 
     <style name="CircularImage" parent="">
         <item name="cornerFamily">rounded</item>
         <item name="cornerSize">50%</item>
     </style>
-
 
 </resources>
