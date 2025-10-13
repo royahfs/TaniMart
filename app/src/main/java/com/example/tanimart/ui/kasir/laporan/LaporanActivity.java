@@ -48,8 +48,6 @@ public class LaporanActivity extends AppCompatActivity {
                 ((TextView) findViewById(R.id.txtTotalPendapatan)).setText("Rp " + val));
         viewModel.getJumlahTransaksi().observe(this, val ->
                 ((TextView) findViewById(R.id.txtJumlahTransaksi)).setText(String.valueOf(val)));
-        viewModel.getProdukTerjual().observe(this, val ->
-                ((TextView) findViewById(R.id.txtProdukTerjual)).setText(String.valueOf(val)));
 
         // Spinner event
         spinnerFilter.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
