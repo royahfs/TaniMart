@@ -22,7 +22,6 @@
         <item name="android:windowExitAnimation">@anim/slide_out_bottom</item>
     </style>
 
-    <!-- ================== PERBAIKAN DI SINI ================== -->
     <!-- Kalkulator button (outlined) -->
     <style name="CalcButton.Normal" parent="Widget.Material3.Button.OutlinedButton"> <!-- DIUBAH dari MaterialComponents -->
         <item name="android:layout_width">0dp</item>
