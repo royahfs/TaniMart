@@ -5,6 +5,9 @@ import android.os.Bundle;
 import android.os.Environment;
 import android.print.PrintManager;
 import android.util.Log;
+import android.view.View;
+import android.widget.AdapterView;
+import android.widget.ArrayAdapter;
 import android.widget.Button;
 import android.widget.ImageButton;
 import android.widget.Spinner;
@@ -20,18 +23,16 @@ import com.example.tanimart.R;
 import com.example.tanimart.data.model.Transaksi;
 import com.example.tanimart.ui.adapter.LaporanTransaksiAdapter;
 import com.example.tanimart.ui.adapter.PdfDocumentAdapter;
-
-// Import iText7
+import com.google.android.material.datepicker.MaterialDatePicker;
+import com.google.android.material.datepicker.MaterialPickerOnPositiveButtonClickListener;
 import com.itextpdf.kernel.pdf.PdfDocument;
 import com.itextpdf.kernel.pdf.PdfWriter;
 import com.itextpdf.layout.Document;
 import com.itextpdf.layout.element.Cell;
 import com.itextpdf.layout.element.Paragraph;
 import com.itextpdf.layout.element.Table;
-
-// PERBAIKAN FINAL: Import untuk iText versi 9.x
-import com.itextpdf.kernel.properties.TextAlignment;
-import com.itextpdf.kernel.properties.UnitValue;
+import com.itextpdf.layout.property.TextAlignment;
+import com.itextpdf.layout.property.UnitValue;
 
 import java.io.File;
 import java.io.IOException;
@@ -41,6 +42,8 @@ import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
 import java.util.Locale;
+import androidx.core.util.Pair;
+import com.google.android.material.datepicker.MaterialDatePicker;
 
 public class LaporanActivity extends AppCompatActivity {
 
@@ -58,7 +61,7 @@ public class LaporanActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_laporan);
 
-        // Inisialisasi semua view Anda...
+        // Inisialisasi Views (pastikan ID sama dengan activity_laporan.xml)
         tvHeaderTitle = findViewById(R.id.tvHeaderTitle);
         txtTotalPendapatan = findViewById(R.id.txtTotalPendapatan);
         txtJumlahTransaksi = findViewById(R.id.txtJumlahTransaksi);
@@ -67,10 +70,15 @@ public class LaporanActivity extends AppCompatActivity {
         recyclerLaporan = findViewById(R.id.recyclerLaporan);
         btnExportPdf = findViewById(R.id.btnExportPdf);
 
-        // Setup ViewModel
-        laporanViewModel = new ViewModelProvider(this).get(LaporanViewModel.class);
+        // Setup spinner (pastikan string sesuai dengan ViewModel)
+        String[] filters = {"Hari Ini", "Minggu Ini", "Bulan Ini", "Custom"};
+        ArrayAdapter<String> spinnerAdapter = new ArrayAdapter<>(this,
+                android.R.layout.simple_spinner_item, filters);
+        spinnerAdapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
+        spinnerFilter.setAdapter(spinnerAdapter);
 
-        // Setup RecyclerView
+        // Setup ViewModel & RecyclerView
+        laporanViewModel = new ViewModelProvider(this).get(LaporanViewModel.class);
         recyclerLaporan.setLayoutManager(new LinearLayoutManager(this));
         laporanAdapter = new LaporanTransaksiAdapter(new ArrayList<>());
         recyclerLaporan.setAdapter(laporanAdapter);
@@ -78,7 +86,9 @@ public class LaporanActivity extends AppCompatActivity {
         setupObservers();
         setupListeners();
 
-        laporanViewModel.loadLaporanHariIni();
+        // Default: "Hari Ini"
+        spinnerFilter.setSelection(0);
+        laporanViewModel.filterData("Hari Ini", null, null);
     }
 
     private void setupObservers() {
@@ -99,8 +109,41 @@ public class LaporanActivity extends AppCompatActivity {
 
     private void setupListeners() {
         btnExportPdf.setOnClickListener(v -> exportAndPrintPdf());
+
+        spinnerFilter.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
+            @Override public void onItemSelected(AdapterView<?> parent, View view, int position, long id) {
+                String filter = parent.getItemAtPosition(position).toString();
+                if (filter.equals("Custom")) {
+                    btnCustomDate.setVisibility(View.VISIBLE);
+                } else {
+                    btnCustomDate.setVisibility(View.GONE);
+                    laporanViewModel.filterData(filter, null, null);
+                }
+            }
+            @Override public void onNothingSelected(AdapterView<?> parent) {}
+        });
+
+        btnCustomDate.setOnClickListener(v -> {
+            // Build date range picker dengan Pair<Long, Long>
+            MaterialDatePicker.Builder<Pair<Long, Long>> builder = MaterialDatePicker.Builder.dateRangePicker();
+            builder.setTitleText("Pilih Rentang Tanggal");
+            MaterialDatePicker<Pair<Long, Long>> picker = builder.build();
+
+            picker.show(getSupportFragmentManager(), "DATE_RANGE_PICKER");
+
+            // selection datang sebagai Object, jadi cast ke Pair<Long, Long>
+            picker.addOnPositiveButtonClickListener(selection -> {
+                Pair<Long, Long> range = (Pair<Long, Long>) selection;
+                if (range != null && range.first != null && range.second != null) {
+                    Date start = new Date(range.first);
+                    Date end = new Date(range.second);
+                    laporanViewModel.filterData("Custom", start, end);
+                }
+            });
+        });
     }
 
+    // ---------------- PDF export & print ----------------
     private void exportAndPrintPdf() {
         List<Transaksi> transaksiList = laporanViewModel.getTransaksiList().getValue();
         Double totalPendapatan = laporanViewModel.getTotalPendapatan().getValue();
@@ -141,15 +184,12 @@ public class LaporanActivity extends AppCompatActivity {
                 .setFontSize(10));
 
         document.add(new Paragraph("\n"));
-
         document.add(new Paragraph("Total Pendapatan: " + formatRupiah(totalPendapatan)));
         document.add(new Paragraph("Jumlah Transaksi: " + jumlahTransaksi));
-
         document.add(new Paragraph("\n\n"));
-
         document.add(new Paragraph("Detail Transaksi").setBold());
 
-        float[] columnWidths = {2, 4, 3};
+        float[] columnWidths = {3, 4, 3};
         Table table = new Table(UnitValue.createPercentArray(columnWidths));
         table.setWidth(UnitValue.createPercentValue(100));
 

@@ -4,6 +4,7 @@ import com.example.tanimart.data.model.Inventory;
 import com.google.android.gms.tasks.OnCompleteListener;
 import com.google.firebase.firestore.CollectionReference;
 import com.google.firebase.firestore.FirebaseFirestore;
+import com.google.firebase.firestore.ListenerRegistration;
 import com.google.firebase.firestore.QuerySnapshot;
 
 public class InventoryRepository {
@@ -34,6 +35,9 @@ public class InventoryRepository {
     // DELETE
     public void deleteInventory(String id, OnCompleteListener<Void> listener) {
         inventoryRef.document(id).delete().addOnCompleteListener(listener);
+    }
+    public ListenerRegistration listenToAllInventory(com.google.firebase.firestore.EventListener<QuerySnapshot> eventListener) {
+        return inventoryRef.addSnapshotListener(eventListener);
     }
 }
 

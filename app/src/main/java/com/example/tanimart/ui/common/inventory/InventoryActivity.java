@@ -33,10 +33,9 @@ import com.google.firebase.auth.FirebaseUser;
 import java.io.File;
 
 public class InventoryActivity extends AppCompatActivity {
-    Button buttonDaftarProduk, buttonKategoriProduk, buttonKelolaProdukMasuk, buttonProdukKeluar;
+    Button buttonDaftarProduk, buttonKategoriProduk, buttonKelolaProdukMasuk, buttonProdukKeluar, buttonEditProduk;
     ImageButton floatingTambah;
-    // Hapus variabel optionsMenu, kita tidak membutuhkannya lagi
-    // private Menu optionsMenu;
+
     private UserRepository userRepository;
     private static final String TAG = "InventoryActivity";
 
@@ -61,6 +60,7 @@ public class InventoryActivity extends AppCompatActivity {
         buttonDaftarProduk = findViewById(R.id.btnDaftarProduk);
         buttonKategoriProduk = findViewById(R.id.btnKategoriProduk);
         buttonKelolaProdukMasuk = findViewById(R.id.btnKelolaProdukMasuk);
+        buttonEditProduk = findViewById(R.id.btnEditProduk);
         buttonProdukKeluar = findViewById(R.id.btnProdukKeluar);
         floatingTambah = findViewById(R.id.floatingTambah);
 
@@ -68,6 +68,7 @@ public class InventoryActivity extends AppCompatActivity {
         buttonDaftarProduk.setOnClickListener(v -> startActivity(new Intent(InventoryActivity.this, DaftarProdukActivity.class)));
         buttonKategoriProduk.setOnClickListener(v -> startActivity(new Intent(InventoryActivity.this, KategoriProdukActivity.class)));
         buttonKelolaProdukMasuk.setOnClickListener(v -> startActivity(new Intent(InventoryActivity.this, KelolaProdukMasukActivity.class)));
+        buttonEditProduk.setOnClickListener(v -> startActivity(new Intent(InventoryActivity.this, PilihProdukEditActivity.class)));
         buttonProdukKeluar.setOnClickListener(v -> startActivity(new Intent(InventoryActivity.this, ProdukKeluarActivity.class)));
     }
 
@@ -77,11 +78,6 @@ public class InventoryActivity extends AppCompatActivity {
         return true;
     }
 
-    // HAPUS METODE onResume() DARI SINI
-
-    // ======================================================================================
-    // == INI CARA PALING TEPAT: Gunakan onPrepareOptionsMenu
-    // ======================================================================================
     @Override
     public boolean onPrepareOptionsMenu(Menu menu) {
         Log.d(TAG, "onPrepareOptionsMenu called. Preparing to update profile icon.");
@@ -132,8 +128,6 @@ public class InventoryActivity extends AppCompatActivity {
         }
     }
 
-    // Fungsi updateMenuIconWithLocalFile dan fetchProfileImageFromLocal sudah tidak diperlukan lagi
-    // karena logikanya sudah digabung ke fetchProfileImageAndSetIcon
 
     @Override
     public boolean onOptionsItemSelected(MenuItem item) {

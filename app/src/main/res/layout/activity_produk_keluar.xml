@@ -58,19 +58,30 @@
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:orientation="horizontal"
-            android:gravity="center"
+            android:gravity="center_vertical"
             android:padding="12dp">
 
             <TextView
                 android:id="@+id/txtTotalProdukKeluar"
-                android:layout_width="wrap_content"
+                android:layout_width="0dp"
                 android:layout_height="wrap_content"
+                android:layout_weight="1"
                 android:text="Total Produk Keluar: 0"
                 android:textSize="14sp"
                 android:textStyle="bold"
                 android:textColor="@color/black" />
 
+            <ImageView
+                android:id="@+id/btnSort"
+                android:layout_width="32dp"
+                android:layout_height="32dp"
+                android:background="?attr/selectableItemBackgroundBorderless"
+                android:contentDescription="Urutkan"
+                android:src="@drawable/ic_sort"
+                app:tint="#5D684C" />
+
         </LinearLayout>
+
     </com.google.android.material.card.MaterialCardView>
 
     <!-- RecyclerView -->

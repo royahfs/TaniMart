@@ -47,10 +47,14 @@ public class InventoryAdapter extends RecyclerView.Adapter<InventoryAdapter.View
     }
 
     public void setInventoryList(List<Inventory> list) {
-        this.inventoryList = list;
-        this.inventoryListFull = new ArrayList<>(list);
+        this.inventoryList.clear();
+        this.inventoryListFull.clear();
+        this.inventoryList.addAll(list);
+        this.inventoryListFull.addAll(list);
+
         notifyDataSetChanged();
     }
+
 
     @NonNull
     @Override

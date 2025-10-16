@@ -20,6 +20,7 @@ public class TransaksiViewModel extends ViewModel {
     private final MutableLiveData<List<Product>> produkList = new MutableLiveData<>(new ArrayList<>());
     private final MutableLiveData<List<CartItem>> cartList = new MutableLiveData<>(new ArrayList<>());
     private final MutableLiveData<Double> totalTagihan = new MutableLiveData<>(0.0);
+    private String lastSearchKeyword = "";
 
     private final FirebaseFirestore db;
     private List<Product> allProdukCache = new ArrayList<>();
@@ -48,16 +49,51 @@ public class TransaksiViewModel extends ViewModel {
                 }
             }
             allProdukCache = temp;
-            produkList.setValue(new ArrayList<>(temp));
+
+
+            syncCartWithCache();
+
+
+            cariProduk(lastSearchKeyword);
         });
     }
 
-    // --- Getters LiveData ---
+    private void syncCartWithCache() {
+        List<CartItem> currentCart = cartList.getValue();
+        // Jika keranjang atau cache kosong, tidak ada yang perlu disinkronkan.
+        if (currentCart == null || currentCart.isEmpty() || allProdukCache.isEmpty()) {
+            return;
+        }
+
+        boolean hasChanges = false;
+        // Loop untuk setiap item di dalam keranjang
+        for (CartItem item : currentCart) {
+            // Loop untuk setiap produk di cache (data terbaru dari Firestore)
+            for (Product freshProduct : allProdukCache) {
+                // Jika ID produknya cocok...
+                if (item.getProduct().getId().equals(freshProduct.getId())) {
+                    // Ganti objek produk LAMA di dalam CartItem dengan objek produk BARU.
+                    item.setProduct(freshProduct);
+                    hasChanges = true; // Tandai bahwa ada perubahan data di dalam keranjang.
+                    break; // Hemat proses, lanjut ke item keranjang berikutnya.
+                }
+            }
+        }
+
+
+        if (hasChanges) {
+            cartList.setValue(currentCart);
+            hitungTotal(currentCart);
+        }
+    }
+
+
+    // --- Getters LiveData (Tidak Berubah) ---
     public LiveData<List<Product>> getProdukList() { return produkList; }
     public LiveData<List<CartItem>> getCartList() { return cartList; }
     public LiveData<Double> getTotalTagihan() { return totalTagihan; }
 
-    // --- Operasi cart ---
+    // --- Operasi cart (Tidak Berubah) ---
     public void tambahKeCart(Product produk) {
         List<CartItem> current = cartList.getValue();
         if (current == null) current = new ArrayList<>();
@@ -107,11 +143,14 @@ public class TransaksiViewModel extends ViewModel {
     }
 
     public void cariProduk(String keyword) {
-        if (keyword == null || keyword.trim().isEmpty()) {
+        // Simpan keyword yang baru untuk digunakan lagi nanti
+        lastSearchKeyword = (keyword != null) ? keyword : "";
+
+        if (lastSearchKeyword.trim().isEmpty()) {
             produkList.setValue(new ArrayList<>(allProdukCache));
             return;
         }
-        String k = keyword.toLowerCase().trim();
+        String k = lastSearchKeyword.toLowerCase().trim();
         List<Product> hasil = new ArrayList<>();
         for (Product p : allProdukCache) {
             if (p.getNamaProduk() != null && p.getNamaProduk().toLowerCase().contains(k)) {
@@ -135,20 +174,20 @@ public class TransaksiViewModel extends ViewModel {
         hitungTotal(current);
     }
 
-    // --- Clear cart ---
+    // --- Clear cart (Tidak Berubah) ---
     public void clearCart() {
         cartList.setValue(new ArrayList<>());
         totalTagihan.setValue(0.0);
     }
 
-    // --- Set cart dari CartItem langsung ---
+    // --- Set cart dari CartItem langsung (Tidak Berubah) ---
     public void setCartList(List<CartItem> list) {
         if (list == null) list = new ArrayList<>();
         cartList.setValue(list);
         hitungTotal(list);
     }
 
-    // --- Set cart dari daftar Product (konversi Product -> CartItem) ---
+    // --- Set cart dari daftar Product (konversi Product -> CartItem) (Tidak Berubah) ---
     public void setCartListFromProducts(List<Product> products) {
         List<CartItem> newCart = new ArrayList<>();
         if (products != null) {
@@ -168,7 +207,7 @@ public class TransaksiViewModel extends ViewModel {
         hitungTotal(newCart);
     }
 
-    // --- Set total tagihan langsung (jika diperlukan) ---
+    // --- Set total tagihan langsung (jika diperlukan) (Tidak Berubah) ---
     public void setTotalTagihan(Double total) {
         totalTagihan.setValue(total != null ? total : 0.0);
     }

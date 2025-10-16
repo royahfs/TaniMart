@@ -56,6 +56,8 @@ public class TransaksiActivity extends AppCompatActivity {
     private ImageView btnMenu, btnCart, bottomSheetConnect;
     private TextView tvTagih;
 
+    private NavigationView navView;
+
     @Override
     protected void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -66,6 +68,8 @@ public class TransaksiActivity extends AppCompatActivity {
         btnMenu = findViewById(R.id.btnMenu);
         btnCart = findViewById(R.id.btnCart);
         bottomSheetConnect = findViewById(R.id.bottomSheetConnect);
+
+        navView = findViewById(R.id.nav_view);
 
         NavigationView navView = findViewById(R.id.nav_view);
         View headerView = navView.getHeaderView(0);

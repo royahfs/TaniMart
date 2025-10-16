@@ -34,7 +34,6 @@ android {
 }
 
 dependencies {
-    // --- DEPENDENSI BAWAAN & FIREBASE (Tidak diubah) ---
     implementation platform(libs.firebase.bom)
     implementation libs.firebase.auth
     implementation libs.firebase.database
@@ -51,21 +50,19 @@ dependencies {
     androidTestImplementation libs.ext.junit
     androidTestImplementation libs.espresso.core
 
-    // =======================================================================
-    // PERBAIKAN DI SINI: Menyatukan semua versi lifecycle ke versi STABIL
-    // =======================================================================
     def lifecycle_version_stable = "2.6.2" // Gunakan versi ini untuk semua
     implementation "androidx.lifecycle:lifecycle-viewmodel:$lifecycle_version_stable"
     implementation "androidx.lifecycle:lifecycle-livedata:$lifecycle_version_stable"
     implementation "androidx.lifecycle:lifecycle-runtime:$lifecycle_version_stable"
     implementation "androidx.lifecycle:lifecycle-common-java8:$lifecycle_version_stable"
     implementation "androidx.lifecycle:lifecycle-viewmodel-savedstate:$lifecycle_version_stable"
-    // Hapus versi tidak stabil seperti 2.9.3, dll.
+    implementation "androidx.lifecycle:lifecycle-process:$lifecycle_version_stable"
 
-    // --- DEPENDENSI iTEXT PDF (Sudah Benar) ---
-    implementation 'com.itextpdf:itext-core:9.3.0'
-    implementation 'com.itextpdf:kernel:9.3.0'
-    implementation 'com.itextpdf:layout:9.3.0'
-    implementation 'com.itextpdf:io:9.3.0'
+    def itext_version = "7.1.17"
+    implementation "com.itextpdf:kernel:$itext_version"
+    implementation "com.itextpdf:io:$itext_version"
+    implementation "com.itextpdf:layout:$itext_version"
+    implementation 'org.slf4j:slf4j-android:1.7.32'
+
     implementation 'org.slf4j:slf4j-android:1.7.32'
 }

@@ -27,7 +27,6 @@ public class LaporanTransaksiAdapter extends RecyclerView.Adapter<LaporanTransak
         this.transaksiList = new ArrayList<>();
     }
 
-    // Constructor dengan initial data
     public LaporanTransaksiAdapter(List<Transaksi> initialList) {
         this.transaksiList = initialList != null ? new ArrayList<>(initialList) : new ArrayList<>();
     }

@@ -74,15 +74,6 @@
 
         </com.google.android.material.tabs.TabLayout>
 
-        <!-- Dropdown Kategori -->
-        <TextView
-            android:id="@+id/listKategori_Transaksi"
-            android:layout_width="match_parent"
-            android:layout_height="35dp"
-            android:layout_margin="8dp"
-            android:background="@drawable/sage_border"
-            android:drawableEnd="@drawable/baseline_arrow_drop_down_24"/>
-
         <!-- RecyclerView Produk -->
         <androidx.recyclerview.widget.RecyclerView
             android:id="@+id/rvProduk"
