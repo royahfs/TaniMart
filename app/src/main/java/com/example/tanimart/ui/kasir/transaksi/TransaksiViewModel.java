@@ -60,7 +60,7 @@ public class TransaksiViewModel extends ViewModel {
 
     private void syncCartWithCache() {
         List<CartItem> currentCart = cartList.getValue();
-        // Jika keranjang atau cache kosong, tidak ada yang perlu disinkronkan.
+
         if (currentCart == null || currentCart.isEmpty() || allProdukCache.isEmpty()) {
             return;
         }

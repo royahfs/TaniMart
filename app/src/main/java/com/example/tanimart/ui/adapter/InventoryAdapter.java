@@ -23,10 +23,11 @@ import java.util.List;
 import java.util.Locale;
 
 public class InventoryAdapter extends RecyclerView.Adapter<InventoryAdapter.ViewHolder> implements Filterable {
-    private List<Inventory> inventoryList;
-    private List<Inventory> inventoryListFull; // salinan data asli
+    private final List<Inventory> inventoryList; // List yang ditampilkan saat ini
+    private List<Inventory> inventoryListFull; // Salinan data asli untuk filtering
     private final OnItemClickListener listener;
     private final OnDeleteClickListener deleteClickListener;
+    private CharSequence latestFilterConstraint = ""; // Menyimpan keyword pencarian terakhir
 
     // Listener untuk klik item
     public interface OnItemClickListener {
@@ -40,21 +41,30 @@ public class InventoryAdapter extends RecyclerView.Adapter<InventoryAdapter.View
     public InventoryAdapter(List<Inventory> inventoryList,
                             OnItemClickListener listener,
                             OnDeleteClickListener deleteClickListener) {
-        this.inventoryList = inventoryList;
+        // Penting: Inisialisasi list di sini agar tidak pernah null
+        this.inventoryList = new ArrayList<>();
+        this.inventoryListFull = new ArrayList<>();
         this.listener = listener;
         this.deleteClickListener = deleteClickListener;
-        this.inventoryListFull = new ArrayList<>(inventoryList); // copy data
+        // Panggil metode setInventoryList untuk pengisian data awal yang konsisten
+        setInventoryList(inventoryList);
     }
 
-    public void setInventoryList(List<Inventory> list) {
-        this.inventoryList.clear();
-        this.inventoryListFull.clear();
-        this.inventoryList.addAll(list);
-        this.inventoryListFull.addAll(list);
+    /**
+     * Metode ini sekarang menjadi satu-satunya sumber kebenaran untuk memperbarui data adapter.
+     * Ia akan memperbarui data master (inventoryListFull) dan secara otomatis memicu ulang
+     * filter yang sedang aktif untuk memastikan tampilan selalu sinkron.
+     */
+    public void setInventoryList(List<Inventory> newList) {
+        // 1. Ganti data master yang digunakan untuk filtering dengan data baru.
+        this.inventoryListFull = new ArrayList<>(newList);
 
-        notifyDataSetChanged();
+        // 2. Panggil ulang filter dengan keyword pencarian terakhir.
+        //    - Jika tidak ada pencarian (kosong), filter akan menampilkan semua data baru.
+        //    - Jika ada pencarian (misal "apel"), filter akan mencari "apel" di dalam data baru.
+        //    Ini memastikan tampilan selalu konsisten.
+        getFilter().filter(latestFilterConstraint);
     }
-
 
     @NonNull
     @Override
@@ -113,41 +123,51 @@ public class InventoryAdapter extends RecyclerView.Adapter<InventoryAdapter.View
         holder.btnDelete.setOnClickListener(v -> deleteClickListener.onDeleteClick(item));
     }
 
+    // Ubah Filter untuk menyimpan keyword terakhir
     @Override
     public Filter getFilter() {
-        return filter;
-    }
+        return new Filter() {
+            @Override
+            protected FilterResults performFiltering(CharSequence constraint) {
+                // Simpan keyword pencarian untuk digunakan lagi nanti oleh setInventoryList
+                latestFilterConstraint = constraint;
 
-    private final Filter filter = new Filter() {
-        @Override
-        protected FilterResults performFiltering(CharSequence constraint) {
-            List<Inventory> filteredList = new ArrayList<>();
-            if (constraint == null || constraint.length() == 0) {
-                filteredList.addAll(inventoryListFull);
-            } else {
-                String filterPattern = constraint.toString().toLowerCase().trim();
-                for (Inventory item : inventoryListFull) {
-                    if (item.getNamaProduk().toLowerCase().contains(filterPattern)) {
-                        filteredList.add(item);
+                List<Inventory> filteredList = new ArrayList<>();
+                if (constraint == null || constraint.length() == 0) {
+                    // Jika tidak ada filter, tampilkan semua data dari master list
+                    filteredList.addAll(inventoryListFull);
+                } else {
+                    String filterPattern = constraint.toString().toLowerCase().trim();
+                    for (Inventory item : inventoryListFull) {
+                        if (item.getNamaProduk().toLowerCase().contains(filterPattern)) {
+                            filteredList.add(item);
+                        }
                     }
                 }
+                FilterResults results = new FilterResults();
+                results.values = filteredList;
+                return results;
             }
-            FilterResults results = new FilterResults();
-            results.values = filteredList;
-            return results;
-        }
 
-        @Override
-        protected void publishResults(CharSequence constraint, FilterResults results) {
-            inventoryList.clear();
-            inventoryList.addAll((List<Inventory>) results.values);
-            notifyDataSetChanged();
-        }
-    };
+            @Override
+            protected void publishResults(CharSequence constraint, FilterResults results) {
+                inventoryList.clear();
+                // Pastikan results.values tidak null sebelum di-cast
+                if (results.values instanceof List) {
+                    // Supress warning karena kita sudah cek tipenya
+                    @SuppressWarnings("unchecked")
+                    List<Inventory> newValues = (List<Inventory>) results.values;
+                    inventoryList.addAll(newValues);
+                }
+                notifyDataSetChanged();
+            }
+        };
+    }
 
     @Override
     public int getItemCount() {
-        return inventoryList.size();
+        // Cek null untuk keamanan tambahan
+        return inventoryList != null ? inventoryList.size() : 0;
     }
 
     private String formatRupiah(double number) {
