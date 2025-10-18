@@ -234,7 +234,7 @@
                 android:layout_marginHorizontal="20dp"
                 android:layout_marginBottom="20dp"
                 android:nestedScrollingEnabled="false"
-                tools:listitem="@layout/item_inventory" />
+                tools:listitem="@layout/item_kelola_produk_masuk" />
 
         </LinearLayout>
     </androidx.core.widget.NestedScrollView>

@@ -1,5 +1,8 @@
 package com.example.tanimart.ui.common.inventory;
 
+import static com.itextpdf.kernel.pdf.PdfName.Intent;
+
+import android.content.Intent;
 import android.os.Bundle;
 import android.widget.ImageView;
 import android.widget.TextView;
@@ -12,13 +15,14 @@ import androidx.lifecycle.ViewModelProvider;
 import com.bumptech.glide.Glide;
 import com.example.tanimart.R;
 import com.example.tanimart.data.model.Product;
+import com.example.tanimart.ui.kasir.transaksi.CartActivity;
 
 import java.text.NumberFormat;
 import java.util.Locale;
 
 public class DetailProdukActivity extends AppCompatActivity {
 
-    private ImageView backBtn, faveBtn, pic;
+    private ImageView backBtn, pic;
     // Saya sesuaikan nama variabel agar konsisten dengan layout detail_produk.xml Anda
     private TextView namaBarangDetail, priceTxt, descriptionTxt, stokBarangDetail;
     private Button addBtn;
@@ -31,7 +35,6 @@ public class DetailProdukActivity extends AppCompatActivity {
 
         // Inisialisasi semua view
         backBtn = findViewById(R.id.backBtn);
-        faveBtn = findViewById(R.id.faveBtn);
         pic = findViewById(R.id.pic);
         namaBarangDetail = findViewById(R.id.namaBarangDetail);
         priceTxt = findViewById(R.id.priceTxt);
@@ -56,11 +59,8 @@ public class DetailProdukActivity extends AppCompatActivity {
                     stokBarangDetail.setText(String.valueOf(product.getStok()));
                     descriptionTxt.setText(product.getDeskripsi() != null ? product.getDeskripsi() : "Tidak ada deskripsi");
 
-                    // =================== BLOK GAMBAR YANG SUDAH DIPERBAIKI ===================
-                    // Cerdas memuat gambar: bisa dari URL (http) atau dari string Base64
                     String imageUrl = product.getImageUrl();
                     if (imageUrl != null && !imageUrl.isEmpty()) {
-                        // Cek apakah ini Base64 (tidak dimulai dengan http) atau URL biasa
                         if (imageUrl.startsWith("http")) {
                             // Jika ini URL, muat seperti biasa
                             Glide.with(this)
@@ -69,7 +69,7 @@ public class DetailProdukActivity extends AppCompatActivity {
                                     .error(R.drawable.upload)      // Error image yang lebih sesuai
                                     .into(pic);
                         } else {
-                            // Jika ini BUKAN URL, kita anggap ini adalah Base64
+
                             try {
                                 byte[] imageBytes = android.util.Base64.decode(imageUrl, android.util.Base64.DEFAULT);
                                 Glide.with(this)
@@ -79,7 +79,6 @@ public class DetailProdukActivity extends AppCompatActivity {
                                         .error(R.drawable.upload)
                                         .into(pic);
                             } catch (IllegalArgumentException e) {
-                                // Ini terjadi jika string bukan Base64 yang valid
                                 android.util.Log.e("DetailProdukActivity", "Gagal decode Base64: " + e.getMessage());
                                 pic.setImageResource(R.drawable.upload); // Tampilkan gambar error
                             }

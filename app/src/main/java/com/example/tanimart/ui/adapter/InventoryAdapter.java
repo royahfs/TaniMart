@@ -1,7 +1,5 @@
 package com.example.tanimart.ui.adapter;
 
-import android.util.Base64;
-import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -15,7 +13,7 @@ import androidx.recyclerview.widget.RecyclerView;
 
 import com.bumptech.glide.Glide;
 import com.example.tanimart.R;
-import com.example.tanimart.data.model.Inventory;
+import com.example.tanimart.data.model.Product;
 
 import java.text.NumberFormat;
 import java.util.ArrayList;
@@ -23,46 +21,38 @@ import java.util.List;
 import java.util.Locale;
 
 public class InventoryAdapter extends RecyclerView.Adapter<InventoryAdapter.ViewHolder> implements Filterable {
-    private final List<Inventory> inventoryList; // List yang ditampilkan saat ini
-    private List<Inventory> inventoryListFull; // Salinan data asli untuk filtering
+    private final List<Product> productList; // List yang ditampilkan saat ini
+    private List<Product> productListFull; // Salinan data asli untuk filtering
     private final OnItemClickListener listener;
     private final OnDeleteClickListener deleteClickListener;
     private CharSequence latestFilterConstraint = ""; // Menyimpan keyword pencarian terakhir
 
     // Listener untuk klik item
     public interface OnItemClickListener {
-        void onItemClick(Inventory inventory);
+        void onItemClick(Product product);
     }
 
     public interface OnDeleteClickListener {
-        void onDeleteClick(Inventory inventory);
+        void onDeleteClick(Product product);
     }
 
-    public InventoryAdapter(List<Inventory> inventoryList,
+    public InventoryAdapter(List<Product> productList,
                             OnItemClickListener listener,
                             OnDeleteClickListener deleteClickListener) {
         // Penting: Inisialisasi list di sini agar tidak pernah null
-        this.inventoryList = new ArrayList<>();
-        this.inventoryListFull = new ArrayList<>();
+        this.productList = new ArrayList<>();
+        this.productListFull = new ArrayList<>();
         this.listener = listener;
         this.deleteClickListener = deleteClickListener;
         // Panggil metode setInventoryList untuk pengisian data awal yang konsisten
-        setInventoryList(inventoryList);
+        setInventoryList(productList);
     }
 
-    /**
-     * Metode ini sekarang menjadi satu-satunya sumber kebenaran untuk memperbarui data adapter.
-     * Ia akan memperbarui data master (inventoryListFull) dan secara otomatis memicu ulang
-     * filter yang sedang aktif untuk memastikan tampilan selalu sinkron.
-     */
-    public void setInventoryList(List<Inventory> newList) {
-        // 1. Ganti data master yang digunakan untuk filtering dengan data baru.
-        this.inventoryListFull = new ArrayList<>(newList);
+    public void setInventoryList(List<Product> newList) {
+        // Ganti data master yang digunakan untuk filtering dengan data baru.
+        this.productListFull = new ArrayList<>(newList);
 
-        // 2. Panggil ulang filter dengan keyword pencarian terakhir.
-        //    - Jika tidak ada pencarian (kosong), filter akan menampilkan semua data baru.
-        //    - Jika ada pencarian (misal "apel"), filter akan mencari "apel" di dalam data baru.
-        //    Ini memastikan tampilan selalu konsisten.
+
         getFilter().filter(latestFilterConstraint);
     }
 
@@ -70,13 +60,13 @@ public class InventoryAdapter extends RecyclerView.Adapter<InventoryAdapter.View
     @Override
     public ViewHolder onCreateViewHolder(@NonNull ViewGroup parent, int viewType) {
         View view = LayoutInflater.from(parent.getContext())
-                .inflate(R.layout.item_inventory, parent, false);
+                .inflate(R.layout.item_kelola_produk_masuk, parent, false);
         return new ViewHolder(view);
     }
 
     @Override
     public void onBindViewHolder(@NonNull ViewHolder holder, int position) {
-        Inventory item = inventoryList.get(position);
+        Product item = productList.get(position);
 
         // set text
         holder.nama.setText(item.getNamaProduk());
@@ -132,13 +122,13 @@ public class InventoryAdapter extends RecyclerView.Adapter<InventoryAdapter.View
                 // Simpan keyword pencarian untuk digunakan lagi nanti oleh setInventoryList
                 latestFilterConstraint = constraint;
 
-                List<Inventory> filteredList = new ArrayList<>();
+                List<Product> filteredList = new ArrayList<>();
                 if (constraint == null || constraint.length() == 0) {
                     // Jika tidak ada filter, tampilkan semua data dari master list
-                    filteredList.addAll(inventoryListFull);
+                    filteredList.addAll(productListFull);
                 } else {
                     String filterPattern = constraint.toString().toLowerCase().trim();
-                    for (Inventory item : inventoryListFull) {
+                    for (Product item : productListFull) {
                         if (item.getNamaProduk().toLowerCase().contains(filterPattern)) {
                             filteredList.add(item);
                         }
@@ -151,13 +141,13 @@ public class InventoryAdapter extends RecyclerView.Adapter<InventoryAdapter.View
 
             @Override
             protected void publishResults(CharSequence constraint, FilterResults results) {
-                inventoryList.clear();
+                productList.clear();
                 // Pastikan results.values tidak null sebelum di-cast
                 if (results.values instanceof List) {
                     // Supress warning karena kita sudah cek tipenya
                     @SuppressWarnings("unchecked")
-                    List<Inventory> newValues = (List<Inventory>) results.values;
-                    inventoryList.addAll(newValues);
+                    List<Product> newValues = (List<Product>) results.values;
+                    productList.addAll(newValues);
                 }
                 notifyDataSetChanged();
             }
@@ -167,7 +157,7 @@ public class InventoryAdapter extends RecyclerView.Adapter<InventoryAdapter.View
     @Override
     public int getItemCount() {
         // Cek null untuk keamanan tambahan
-        return inventoryList != null ? inventoryList.size() : 0;
+        return productList != null ? productList.size() : 0;
     }
 
     private String formatRupiah(double number) {

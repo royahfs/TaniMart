@@ -36,13 +36,13 @@ public class CartActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_cart_checkout);
 
-        // --- 1. Inisialisasi View ---
+        // --- Inisialisasi View ---
         ImageView btnBack = findViewById(R.id.btnBack);
         recyclerCartList = findViewById(R.id.recyclerCartList);
         textTotalHarga = findViewById(R.id.textTotalHarga);
         btnCheckout = findViewById(R.id.btnCheckout);
 
-        // --- 2. Ambil Data dari Intent ---
+        // ---  Ambil Data dari Intent ---
         Intent intent = getIntent();
         if (intent != null && intent.hasExtra("EXTRA_KERANJANG")) {
             keranjangDiterima = intent.getParcelableArrayListExtra("EXTRA_KERANJANG");
@@ -58,18 +58,17 @@ public class CartActivity extends AppCompatActivity {
             Log.d("CartActivity", "Tidak ada data keranjang diterima dari Intent.");
             Toast.makeText(this, "Keranjang kosong!", Toast.LENGTH_SHORT).show();
         }
-
-        // --- 3. Set RecyclerView ---
+        // --- set RecyclerView ---
         adapter = new CartAdapter(keranjangDiterima);
         recyclerCartList.setLayoutManager(new LinearLayoutManager(this));
         recyclerCartList.setAdapter(adapter);
 
-        // --- 4. Tampilkan Total Harga ---
+        // --- Tampilkan Total Harga ---
         if (textTotalHarga != null) {
             textTotalHarga.setText(CurrencyHelper.formatRupiah(totalDiterima));
         }
 
-        // --- 5. Tombol Kembali ---
+        // --- Tombol Kembali ---
         if (btnBack != null) {
             btnBack.setOnClickListener(v -> {
                 Intent resultIntent = new Intent();
@@ -81,7 +80,7 @@ public class CartActivity extends AppCompatActivity {
         }
 
 
-        // --- 6. Tombol Checkout ---
+        // --- Tombol Checkout ---
         if (btnCheckout != null) {
             btnCheckout.setOnClickListener(v -> {
                 if (!keranjangDiterima.isEmpty()) {
@@ -108,19 +107,15 @@ public class CartActivity extends AppCompatActivity {
 
         db.collection("transaksi")
                 .add(transaksi)
-                // DENGAN KODE BARU INI:
                 .addOnSuccessListener(documentReference -> {
-                    // Ambil ID unik dari transaksi yang baru saja dibuat
                     String idTransaksiBaru = documentReference.getId();
                     Log.d("Firebase", "Transaksi berhasil disimpan. ID: " + idTransaksiBaru);
                     Toast.makeText(CartActivity.this, "Checkout berhasil! Lanjut ke pembayaran...", Toast.LENGTH_SHORT).show();
                     //Beri tahu TransaksiActivity bahwa checkout sukses agar keranjang dikosongkan
                     setResult(RESULT_OK);
 
-                    // Buat Intent untuk memulai PembayaranActivity
                     Intent intentKePembayaran = new Intent(CartActivity.this, PembayaranActivity.class);
 
-                    // Kirim informasi penting ke PembayaranActivity
                     intentKePembayaran.putExtra("EXTRA_TRANSACTION_ID", idTransaksiBaru);
                     intentKePembayaran.putExtra("EXTRA_TRANSACTION_TOTAL", totalDiterima);
                     startActivity(intentKePembayaran);
@@ -133,6 +128,8 @@ public class CartActivity extends AppCompatActivity {
 
                     btnCheckout.setEnabled(true);
                     btnCheckout.setText("Checkout");
+                    btnCheckout.setOnClickListener(v-> startActivity(new Intent(CartActivity.this, PembayaranActivity.class)));
+
                 });
     }
 }

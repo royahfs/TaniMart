@@ -33,7 +33,7 @@
 
         <!-- Nama Produk -->
         <TextView
-            android:id="@+id/itemNama"
+            android:id="@+id/itemNamaKPM"
             android:layout_width="0dp"
             android:layout_height="wrap_content"
             android:text="Nama Produk"
@@ -58,9 +58,9 @@
             android:textColor="@color/teal_sage"
             android:maxLines="1"
             android:ellipsize="end"
-            app:layout_constraintStart_toStartOf="@id/itemNama"
-            app:layout_constraintTop_toBottomOf="@id/itemNama"
-            app:layout_constraintEnd_toEndOf="@id/itemNama" />
+            app:layout_constraintStart_toStartOf="@id/itemNamaKPM"
+            app:layout_constraintTop_toBottomOf="@id/itemNamaKPM"
+            app:layout_constraintEnd_toEndOf="@id/itemNamaKPM" />
 
         <!-- Merek + Kategori -->
         <LinearLayout

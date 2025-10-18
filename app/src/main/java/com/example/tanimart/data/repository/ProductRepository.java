@@ -2,7 +2,7 @@ package com.example.tanimart.data.repository;
 
 import androidx.annotation.NonNull;
 
-import com.example.tanimart.data.model.Inventory;
+import com.example.tanimart.data.model.Product;
 import com.google.firebase.database.DataSnapshot;
 import com.google.firebase.database.DatabaseError;
 import com.google.firebase.database.DatabaseReference;
@@ -23,13 +23,13 @@ public class ProductRepository {
     }
 
     // Ambil semua produk
-    public void getAllProduk(Consumer<List<Inventory>> callback) {
+    public void getAllProduk(Consumer<List<Product>> callback) {
         productRef.addValueEventListener(new ValueEventListener() {
             @Override
             public void onDataChange(@NonNull DataSnapshot snapshot) {
-                List<Inventory> produkList = new ArrayList<>();
+                List<Product> produkList = new ArrayList<>();
                 for (DataSnapshot data : snapshot.getChildren()) {
-                    Inventory produk = data.getValue(Inventory.class);
+                    Product produk = data.getValue(Product.class);
                     if (produk != null) {
                         produk.setId(data.getKey()); // ambil ID dari key
                         produkList.add(produk);
@@ -46,13 +46,13 @@ public class ProductRepository {
     }
 
     // Cari produk berdasarkan nama
-    public void searchProduk(String keyword, Consumer<List<Inventory>> callback) {
+    public void searchProduk(String keyword, Consumer<List<Product>> callback) {
         productRef.addListenerForSingleValueEvent(new ValueEventListener() {
             @Override
             public void onDataChange(@NonNull DataSnapshot snapshot) {
-                List<Inventory> hasil = new ArrayList<>();
+                List<Product> hasil = new ArrayList<>();
                 for (DataSnapshot data : snapshot.getChildren()) {
-                    Inventory produk = data.getValue(Inventory.class);
+                    Product produk = data.getValue(Product.class);
                     if (produk != null && produk.getNamaProduk().toLowerCase().contains(keyword.toLowerCase())) {
                         hasil.add(produk);
                     }
@@ -68,7 +68,7 @@ public class ProductRepository {
     }
 
     // Tambah produk ke database
-    public void tambahProduk(Inventory produk) {
+    public void tambahProduk(Product produk) {
         String key = productRef.push().getKey();
         if (key != null) {
             produk.setId(key);
@@ -77,7 +77,7 @@ public class ProductRepository {
     }
 
     // Update produk
-    public void updateProduk(Inventory produk) {
+    public void updateProduk(Product produk) {
         if (produk.getId() != null) {
             productRef.child(produk.getId()).setValue(produk);
         }

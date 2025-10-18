@@ -1,5 +1,6 @@
 package com.example.tanimart.ui.common.inventory;
 
+import android.app.Activity;
 import android.os.Bundle;
 import android.text.Editable;
 import android.text.TextWatcher;
@@ -14,13 +15,16 @@ import androidx.appcompat.widget.Toolbar;
 
 import com.example.tanimart.R;
 import com.example.tanimart.data.model.Product;
+import com.example.tanimart.data.repository.InventoryRepository;
 import com.google.android.gms.tasks.OnFailureListener;
 import com.google.android.gms.tasks.OnSuccessListener;
+import com.google.android.gms.tasks.Task;
+import com.google.android.gms.tasks.OnCompleteListener;
 import com.google.android.material.textfield.TextInputEditText;
 import com.google.firebase.firestore.FirebaseFirestore;
 
-import java.text.NumberFormat; // <-- IMPORT BARU
-import java.util.Locale;      // <-- IMPORT BARU
+import java.text.NumberFormat;
+import java.util.Locale;
 
 public class EditProdukActivity extends AppCompatActivity {
 
@@ -34,7 +38,7 @@ public class EditProdukActivity extends AppCompatActivity {
     private Button btnUpdateProduk;
     private TextView textHargaSetelahDiskon;
 
-    private FirebaseFirestore db;
+    private InventoryRepository inventoryRepository;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -51,13 +55,13 @@ public class EditProdukActivity extends AppCompatActivity {
             return;
         }
 
-        db = FirebaseFirestore.getInstance();
+        inventoryRepository = InventoryRepository.getInstance();
+
         initViews();
         setupToolbar();
         populateData();
         setupListeners();
-
-        calculateAndUpdateFinalPrice(); // <-- PANGGILAN AWAL
+        calculateAndUpdateFinalPrice();
     }
 
     private void initViews() {
@@ -139,7 +143,7 @@ public class EditProdukActivity extends AppCompatActivity {
         editDiskonPersen.addTextChangedListener(priceCalculatorWatcher);
         editDiskonNominal.addTextChangedListener(priceCalculatorWatcher);
 
-        // Logika agar hanya salah satu field diskon yang bisa diisi
+
         editDiskonPersen.addTextChangedListener(new TextWatcher() {
             @Override public void beforeTextChanged(CharSequence s, int start, int count, int after) {}
             @Override
@@ -189,15 +193,18 @@ public class EditProdukActivity extends AppCompatActivity {
 
         Toast.makeText(this, "Mengupdate produk...", Toast.LENGTH_SHORT).show();
 
-        db.collection("inventory").document(productToEdit.getId())
-                .set(productToEdit)
-                .addOnSuccessListener(aVoid -> {
+        inventoryRepository.updateProduct(productToEdit, new OnCompleteListener<Void>() {
+            @Override
+            public void onComplete(@NonNull Task<Void> task) {
+                if (task.isSuccessful()) {
                     Toast.makeText(EditProdukActivity.this, "Produk berhasil diupdate", Toast.LENGTH_LONG).show();
-                    finish();
-                })
-                .addOnFailureListener(e -> {
-                    Toast.makeText(EditProdukActivity.this, "Gagal mengupdate produk: " + e.getMessage(), Toast.LENGTH_LONG).show();
-                    Log.e("EditProdukActivity", "Error updating document", e);
-                });
+                    setResult(Activity.RESULT_OK);
+                    finish(); // Tutup halaman jika berhasil
+                } else {
+                    Toast.makeText(EditProdukActivity.this, "Gagal mengupdate produk: " + task.getException().getMessage(), Toast.LENGTH_LONG).show();
+                    Log.e("EditProdukActivity", "Error updating document", task.getException());
+                }
+            }
+        });
     }
 }

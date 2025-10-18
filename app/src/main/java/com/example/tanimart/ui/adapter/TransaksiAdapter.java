@@ -11,14 +11,16 @@ import androidx.recyclerview.widget.RecyclerView;
 
 import com.example.tanimart.R;
 import com.example.tanimart.data.model.CartItem;
+import com.example.tanimart.data.model.Product;
 import com.example.tanimart.ui.kasir.transaksi.TransaksiViewModel;
-import com.example.tanimart.utils.CurrencyHelper; // <--- tambahin import ini
+import com.example.tanimart.utils.CurrencyHelper;
 
 import java.util.List;
 
 public class TransaksiAdapter extends RecyclerView.Adapter<TransaksiAdapter.ViewHolder> {
 
     private List<CartItem> cartList;
+    private List<Product> productList;
     private final TransaksiViewModel viewModel;
 
     public TransaksiAdapter(List<CartItem> cartList, TransaksiViewModel viewModel) {
@@ -41,11 +43,25 @@ public class TransaksiAdapter extends RecyclerView.Adapter<TransaksiAdapter.View
     @Override
     public void onBindViewHolder(@NonNull TransaksiAdapter.ViewHolder holder, int position) {
         CartItem item = cartList.get(position);
+        Product itemProduct = item.getProduct();
+
+        double hargaAwal = itemProduct.getHargaJual();
+        double diskonPersen = itemProduct.getDiskonPersen();
+        double diskonNominal = itemProduct.getDiskonNominal();
+        double hargaAkhir = hargaAwal;
+
+        if (diskonPersen > 0) {
+            hargaAkhir = hargaAwal - (hargaAwal * diskonPersen / 100);
+        } else if (diskonNominal > 0) {
+            hargaAkhir = hargaAwal - diskonNominal;
+        }
+        if (hargaAkhir < 0) hargaAkhir = 0;
 
         holder.title.setText(item.getProduct().getNamaProduk());
 
         // Format harga jadi Rupiah
-        holder.feeEachItem.setText(CurrencyHelper.formatRupiah(item.getProduct().getHargaJual()));
+        holder.feeEachItem.setText(CurrencyHelper.formatRupiah(hargaAkhir));
+//        holder.feeEachItem.setText(CurrencyHelper.formatRupiah(item.getProduct().getHargaJual()));
 
         holder.numberItemTxt.setText(String.valueOf(item.getQuantity()));
 

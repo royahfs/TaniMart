@@ -1,82 +1,60 @@
-// File: KelolaProdukMasukViewModel.java (VERSI REVISI)
-
 package com.example.tanimart.ui.common.inventory;
 
+import android.util.Log;
 import androidx.lifecycle.LiveData;
-import androidx.lifecycle.MutableLiveData;
 import androidx.lifecycle.ViewModel;
-import com.example.tanimart.data.model.Inventory;
+import com.example.tanimart.data.model.Product;
 import com.example.tanimart.data.repository.InventoryRepository;
-import com.google.firebase.firestore.ListenerRegistration; // <-- Import
-import com.google.firebase.firestore.QueryDocumentSnapshot;
-import java.util.ArrayList;
+import com.google.firebase.firestore.FirebaseFirestore;
+
 import java.util.List;
 
 public class KelolaProdukMasukViewModel extends ViewModel {
-    private final InventoryRepository repository;
-    private final MutableLiveData<List<Inventory>> inventoryList = new MutableLiveData<>();
-    private ListenerRegistration inventoryListener; // <-- Tambahkan ini untuk menyimpan referensi listener
+    private static final String TAG = "KelolaProdukMasukVM";
+    private final InventoryRepository inventoryRepository;
+    private final LiveData<List<Product>> produkList;
 
     public KelolaProdukMasukViewModel() {
-        repository = new InventoryRepository();
-        // Ganti pemanggilan method lama dengan yang baru
-        setupInventoryListener();
+        inventoryRepository = InventoryRepository.getInstance(); // Ambil instance tunggal
+        produkList = inventoryRepository.getAllProducts(); // Cukup ambil LiveData dari repository
     }
 
-    public LiveData<List<Inventory>> getInventoryList() {
-        return inventoryList;
+    public LiveData<List<Product>> getProdukList() {
+        return produkList;
     }
 
-    // Method LAMA, sudah tidak dipakai lagi. Bisa dihapus atau biarkan saja.
-    /*
-    public void loadInventory() {
-        repository.getAllInventory(task -> { ... });
-    }
-    */
-
-    // --- METODE BARU UNTUK MENDENGARKAN PERUBAHAN ---
-    private void setupInventoryListener() {
-        inventoryListener = repository.listenToAllInventory((snapshots, error) -> {
-            if (error != null) {
-                // Handle error, misalnya dengan menampilkan log
-                System.err.println("Listen failed: " + error);
-                return;
-            }
-
-            if (snapshots != null) {
-                List<Inventory> list = new ArrayList<>();
-                for (QueryDocumentSnapshot doc : snapshots) {
-                    Inventory inventory = doc.toObject(Inventory.class);
-                    // Pastikan ID dokumen tersimpan, ini praktik yang baik
-                    inventory.setId(doc.getId());
-                    list.add(inventory);
-                }
-                // Kirim daftar yang sudah diperbarui ke LiveData
-                inventoryList.setValue(list);
-            }
-        });
+    // 3. Delegasikan semua operasi CUD (Create, Update, Delete) ke Repository
+    public void addProduct(Product product) {
+        // Panggil metode yang sesuai di Repository
+        inventoryRepository.addProduct(product,
+                task -> {
+                    if (task.isSuccessful()) {
+                        Log.d(TAG, "Produk berhasil ditambahkan via repository.");
+                    } else {
+                        Log.e(TAG, "Gagal menambahkan produk.", task.getException());
+                    }
+                });
     }
 
-    // Metode add, update, delete tidak perlu memanggil loadInventory() lagi
-    // karena listener akan menangani pembaruan secara otomatis.
-    public void addInventory(Inventory inventory) {
-        repository.addInventory(inventory, task -> { /* Tidak perlu melakukan apa-apa di sini */ });
+    public void updateProduct(Product product) {
+        inventoryRepository.updateProduct(product,
+                task -> {
+                    if (task.isSuccessful()) {
+                        Log.d(TAG, "Produk berhasil diupdate via repository.");
+                    } else {
+                        Log.e(TAG, "Gagal mengupdate produk.", task.getException());
+                    }
+                });
     }
 
-    public void updateInventory(Inventory inventory) {
-        repository.updateInventory(inventory, task -> { /* Tidak perlu melakukan apa-apa di sini */ });
-    }
-
-    public void deleteInventory(String id) {
-        repository.deleteInventory(id, task -> { /* Tidak perlu melakukan apa-apa di sini */ });
-    }
-
-    // --- PENTING: Lepas listener saat ViewModel dihancurkan ---
-    @Override
-    protected void onCleared() {
-        super.onCleared();
-        if (inventoryListener != null) {
-            inventoryListener.remove(); // Hentikan listener untuk mencegah memory leak
-        }
+    public void deleteProduct(String id) {
+        inventoryRepository.deleteProduct(id,
+                task -> {
+                    if (task.isSuccessful()) {
+                        Log.d(TAG, "Produk berhasil dihapus via repository.");
+                    } else {
+                        Log.e(TAG, "Gagal menghapus produk.", task.getException());
+                    }
+                });
     }
 }

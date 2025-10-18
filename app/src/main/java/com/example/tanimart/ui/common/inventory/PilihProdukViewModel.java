@@ -28,8 +28,7 @@ public class PilihProdukViewModel extends ViewModel {
     }
 
     private void loadProducts() {
-        // Mengambil dari koleksi "products" atau "inventory" sesuai dengan database Anda.
-        // Berdasarkan ViewModel Anda sebelumnya, sepertinya Anda memakai "inventory".
+
         db.collection("inventory")
                 .orderBy("namaProduk", Query.Direction.ASCENDING)
                 .addSnapshotListener((snapshots, error) -> {

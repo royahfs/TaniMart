@@ -8,51 +8,57 @@ import androidx.appcompat.app.AppCompatActivity;
 import androidx.appcompat.widget.Toolbar;
 import androidx.lifecycle.ViewModelProvider;
 import androidx.recyclerview.widget.RecyclerView;
-import androidx.recyclerview.widget.GridLayoutManager; // Jika ingin grid
+import androidx.recyclerview.widget.LinearLayoutManager; // Menggunakan LinearLayoutManager
 
 import com.example.tanimart.R;
 import com.example.tanimart.data.model.Product;
 import com.example.tanimart.ui.adapter.DaftarProdukAdapter;
+import com.example.tanimart.ui.kasir.transaksi.TransaksiViewModel; // **PERUBAHAN 1**
 
 import java.util.ArrayList;
 
 public class PilihProdukEditActivity extends AppCompatActivity {
 
-    private PilihProdukViewModel viewModel;
-    private DaftarProdukAdapter adapter;
-    private RecyclerView recyclerPilihProduk;
+    // Tidak perlu deklarasi di sini, cukup di dalam onCreate
 
     @Override
     protected void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_pilih_produk_edit);
 
-        // Setup Toolbar
+        // Setup Toolbar - Logika Anda sudah benar
         Toolbar toolbar = findViewById(R.id.toolbarPilihProduk);
         setSupportActionBar(toolbar);
-        getSupportActionBar().setDisplayHomeAsUpEnabled(true);
-        toolbar.setNavigationOnClickListener(v -> onBackPressed());
+        if (getSupportActionBar() != null){
+            getSupportActionBar().setDisplayHomeAsUpEnabled(true);
+            getSupportActionBar().setTitle("Pilih Produk untuk Diedit");
+        }
+        toolbar.setNavigationOnClickListener(v -> finish()); // finish() sedikit lebih baik dari onBackPressed()
 
-        recyclerPilihProduk = findViewById(R.id.recyclerPilihProduk);
-        recyclerPilihProduk.setLayoutManager(new GridLayoutManager(this, 2)); // Atau LinearLayoutManager
+        // Setup RecyclerView
+        RecyclerView recyclerPilihProduk = findViewById(R.id.recyclerPilihProduk);
+        recyclerPilihProduk.setLayoutManager(new LinearLayoutManager(this));
 
-        // Setup Adapter dengan Aksi Klik yang Baru
-        adapter = new DaftarProdukAdapter(new ArrayList<>(), product -> {
-            // SAAT ITEM DIKLIK, BUKA EditProdukActivity
-            Intent intent = new Intent(PilihProdukEditActivity.this, EditProdukActivity.class);
-
-            // Kirim seluruh objek Product (yang sudah Parcelable)
-            intent.putExtra(EditProdukActivity.EXTRA_PRODUCT, product);
-
-            startActivity(intent);
-        });
+        // Setup Adapter - Logika klik Anda dipertahankan, hanya ditambah argumen ke-3
+        DaftarProdukAdapter adapter = new DaftarProdukAdapter(
+                new ArrayList<>(),
+                product -> {
+                    // Logika Utama Anda: SAAT ITEM DIKLIK, BUKA EditProdukActivity
+                    Intent intent = new Intent(PilihProdukEditActivity.this, EditProdukActivity.class);
+                    // Kirim seluruh objek Product
+                    intent.putExtra(EditProdukActivity.EXTRA_PRODUCT, product);
+                    startActivity(intent);
+                },
+                DaftarProdukAdapter.TIPE_TRANSAKSI // **PERUBAHAN 2**
+        );
         recyclerPilihProduk.setAdapter(adapter);
 
         // Setup ViewModel untuk mengambil data
-        viewModel = new ViewModelProvider(this).get(PilihProdukViewModel.class);
-        viewModel.getProducts().observe(this, productList -> {
+        // Gunakan ViewModel terpusat yang sudah ada
+        TransaksiViewModel viewModel = new ViewModelProvider(this).get(TransaksiViewModel.class); // **PERUBAHAN 1**
+        viewModel.getProdukList().observe(this, productList -> { // observe dari getProdukList()
             if (productList != null) {
-                adapter.updateData(productList);
+                adapter.setProductList(productList); // **PERUBAHAN 3**
             }
         });
     }

@@ -131,14 +131,38 @@ public class TransaksiViewModel extends ViewModel {
         cartList.setValue(current);
         hitungTotal(current);
     }
+    private double getHargaAkhir(Product product) {
+        if (product == null) {
+            return 0.0;
+        }
+
+        double hargaAwal = product.getHargaJual();
+        double diskonPersen = product.getDiskonPersen();
+        double diskonNominal = product.getDiskonNominal();
+        double hargaAkhir = hargaAwal;
+
+        if (diskonPersen > 0) {
+            hargaAkhir = hargaAwal - (hargaAwal * diskonPersen / 100);
+        } else if (diskonNominal > 0) {
+            hargaAkhir = hargaAwal - diskonNominal;
+        }
+
+        // Pastikan harga tidak menjadi negatif
+        return Math.max(hargaAkhir, 0);
+    }
 
     private void hitungTotal(List<CartItem> list) {
         double total = 0.0;
         if (list != null) {
             for (CartItem item : list) {
-                total += item.getSubtotal();
+                //Ambil harga akhir produk (setelah diskon)
+                double hargaProdukSetelahDiskon = getHargaAkhir(item.getProduct());
+
+                // Kalikan dengan kuantitas item tersebut
+                total += hargaProdukSetelahDiskon * item.getQuantity();
             }
         }
+        // Baris ini sekarang akan menerima total yang sudah dihitung dengan benar
         totalTagihan.setValue(total);
     }
 

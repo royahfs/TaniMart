@@ -27,12 +27,11 @@ import androidx.recyclerview.widget.RecyclerView;
 
 import com.bumptech.glide.Glide;
 import com.example.tanimart.R;
-// =================== IMPORT YANG DIPERBAIKI ===================
 // Ganti import yang salah dengan import kelas Product dari model Anda
 import com.example.tanimart.data.model.CartItem;
 import com.example.tanimart.data.model.Product; // Pastikan path ini sesuai
 import com.example.tanimart.data.repository.UserRepository;
-import com.example.tanimart.ui.adapter.ProductAdapter;
+import com.example.tanimart.ui.adapter.DaftarProdukAdapter;
 import com.example.tanimart.ui.adapter.TransaksiAdapter;
 import com.example.tanimart.ui.common.SplashActivity;
 import com.example.tanimart.ui.common.kalkulator.KalkulatorActivity;
@@ -50,7 +49,7 @@ import java.util.List;
 public class TransaksiActivity extends AppCompatActivity {
 
     private TabLayout tabLayout;
-    private ProductAdapter productAdapter;
+    private DaftarProdukAdapter daftarProdukAdapter;
     private TransaksiViewModel transaksiViewModel;
     private EditText searchProduk;
     private ImageView btnMenu, btnCart, bottomSheetConnect;
@@ -68,6 +67,7 @@ public class TransaksiActivity extends AppCompatActivity {
         btnMenu = findViewById(R.id.btnMenu);
         btnCart = findViewById(R.id.btnCart);
         bottomSheetConnect = findViewById(R.id.bottomSheetConnect);
+
 
         navView = findViewById(R.id.nav_view);
 
@@ -168,10 +168,20 @@ public class TransaksiActivity extends AppCompatActivity {
 
         RecyclerView rvProduk = findViewById(R.id.rvProduk);
         rvProduk.setLayoutManager(new LinearLayoutManager(this));
-        productAdapter = new ProductAdapter(new ArrayList<>(), produk -> {
-            transaksiViewModel.tambahKeCart(produk);
-        });
-        rvProduk.setAdapter(productAdapter);
+        daftarProdukAdapter = new DaftarProdukAdapter(
+                new ArrayList<>(),
+                produk -> {
+                    // 1. Panggil metode ViewModel untuk menambahkan produk ke keranjang
+                    transaksiViewModel.tambahKeCart(produk);
+
+                    // 2. Tampilkan Toast dengan nama produk
+                    String message = produk.getNamaProduk() + " berhasil ditambahkan";
+                    Toast.makeText(TransaksiActivity.this, message, Toast.LENGTH_SHORT).show();
+                    // --- AKHIR MODIFIKASI ---
+                },
+                DaftarProdukAdapter.TIPE_TRANSAKSI
+        );
+        rvProduk.setAdapter(daftarProdukAdapter);
 
 
         tabLayout = findViewById(R.id.tabLayout);
@@ -214,14 +224,20 @@ public class TransaksiActivity extends AppCompatActivity {
         });
 
         transaksiViewModel.getProdukList().observe(this, produkList -> {
-            productAdapter.setProductList(produkList);
+            daftarProdukAdapter.setProductList(produkList);
         });
 
         // Format total tagihan pakai CurrencyHelper
         transaksiViewModel.getTotalTagihan().observe(this, total -> {
-            // Inisialisasi TextView di sini untuk menghindari NullPointerException jika dipanggil sebelum onResume
-            TextView tvTagih = findViewById(R.id.tvTagih);
-            tvTagih.setText("Tagih = " + CurrencyHelper.formatRupiah(total));
+            if (tvTagih != null) {
+                tvTagih.setText("Tagih = " + CurrencyHelper.formatRupiah(total));
+                // Tambahkan Log untuk debugging
+                Log.d("ObserverTagihan", "Total diperbarui: " + total);
+            } else {
+                // Log jika tvTagih ternyata null
+                Log.e("ObserverTagihan", "tvTagih adalah null, tidak dapat memperbarui UI.");
+            }
+
         });
 
         tvTagih.setOnClickListener(v -> showBottomSheet());

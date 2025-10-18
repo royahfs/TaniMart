@@ -3,6 +3,8 @@ package com.example.tanimart.data.model;
 import android.os.Parcel;
 import android.os.Parcelable;
 
+import java.util.Date;
+
 public class Product implements Parcelable {
     // TIDAK DIUBAH, tetap 'id'
     private String id;
@@ -14,7 +16,7 @@ public class Product implements Parcelable {
     private String imageUrl;
     private int stok;
     private String satuan;
-    private String tanggal;
+    private Date tanggal;
 
     private double diskonPersen;
     private double diskonNominal;
@@ -25,7 +27,7 @@ public class Product implements Parcelable {
 
     // Constructor lengkap
     public Product(String id, String namaProduk, double hargaJual, String deskripsi, String kategori,
-                   String merek, String imageUrl, int stok, String satuan, String tanggal) {
+                   String merek, String imageUrl, int stok, String satuan, Date tanggal) {
         this.id = id;
         this.namaProduk = namaProduk;
         this.hargaJual = hargaJual;
@@ -46,9 +48,10 @@ public class Product implements Parcelable {
         kategori = in.readString();
         merek = in.readString();
         imageUrl = in.readString();
-        stok = in.readInt(); // Diubah menjadi readInt()
+        stok = in.readInt();
         satuan = in.readString();
-        tanggal = in.readString();
+        long tmpTanggal = in.readLong();
+        this.tanggal = tmpTanggal == -1 ? null : new Date(tmpTanggal);
         quantity = in.readInt();
         diskonPersen = in.readDouble();
         diskonNominal = in.readDouble();
@@ -65,9 +68,8 @@ public class Product implements Parcelable {
         dest.writeString(imageUrl);
         dest.writeInt(stok); // Diubah menjadi writeInt()
         dest.writeString(satuan);
-        dest.writeString(tanggal);
+        dest.writeLong(tanggal != null ? tanggal.getTime() : -1);
         dest.writeInt(quantity);
-        // 3. PERUBAHAN PENTING: Menulis data diskon
         dest.writeDouble(diskonPersen);
         dest.writeDouble(diskonNominal);
     }
@@ -99,8 +101,8 @@ public class Product implements Parcelable {
     public void setImageUrl(String imageUrl) { this.imageUrl = imageUrl; }
     public String getSatuan() { return satuan; }
     public void setSatuan(String satuan) { this.satuan = satuan; }
-    public String getTanggal() { return tanggal; }
-    public void setTanggal(String tanggal) { this.tanggal = tanggal; }
+    public Date getTanggal() { return tanggal; }
+    public void setTanggal(Date tanggal) { this.tanggal = tanggal; }
     public int getQuantity() { return quantity; }
     public void setQuantity(int quantity) { this.quantity = quantity; }
     public String getDeskripsi() { return deskripsi; }

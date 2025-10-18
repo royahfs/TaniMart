@@ -2,9 +2,7 @@ package com.example.tanimart.ui.common.inventory;
 
 import android.app.AlertDialog;
 import android.app.Dialog;
-import android.content.Context;
 import android.content.Intent;
-import android.content.SharedPreferences;
 import android.graphics.Bitmap;
 import android.net.Uri;
 import android.os.Bundle;
@@ -19,7 +17,7 @@ import android.widget.ImageView;
 import android.widget.ListView;
 import android.widget.TextView;
 import android.widget.Toast;
-
+// ... import lainnya
 import androidx.activity.EdgeToEdge;
 import androidx.activity.OnBackPressedCallback;
 import androidx.activity.result.ActivityResultLauncher;
@@ -34,25 +32,28 @@ import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
 import com.example.tanimart.R;
-import com.example.tanimart.data.model.Inventory;
-import com.example.tanimart.ui.adapter.InventoryAdapter;
-import com.google.firebase.firestore.CollectionReference;
+import com.example.tanimart.data.model.Product;
+import com.example.tanimart.ui.adapter.DaftarProdukAdapter;
 import com.google.firebase.firestore.DocumentSnapshot;
 import com.google.firebase.firestore.FirebaseFirestore;
 
 import java.io.ByteArrayOutputStream;
 import java.io.IOException;
 import java.util.ArrayList;
-import java.util.HashSet;
-import java.util.Set;
+import java.util.Date; // Import java.util.Date
+import java.util.List;
 
 public class KelolaProdukMasukActivity extends AppCompatActivity {
-    // Definisikan TAG untuk logging
+
     private static final String TAG = "KelolaProdukMasuk";
 
-    private KelolaProdukMasukViewModel viewModel;
+    private KelolaProdukMasukViewModel kelolaProdukMasukViewModel;
     private RecyclerView recyclerView;
-    private InventoryAdapter adapter;
+    private DaftarProdukAdapter daftarProdukAdapter;
+
+    private ActivityResultLauncher<Intent> editProductLauncher;
+
+    // --- Akhir Perubahan 2 ---
     ImageView uploadImage;
     Button saveBtnKPM;
     EditText uploadNB, uploadHJ, uploadStokBarangMasuk, deskripsiProduk;
@@ -63,6 +64,7 @@ public class KelolaProdukMasukActivity extends AppCompatActivity {
     private ArrayList<String> merekList = new ArrayList<>();
     private ArrayList<String> kategoriList = new ArrayList<>();
     private ArrayList<String> satuanList = new ArrayList<>();
+    private List<Product> semuaProduk = new ArrayList<>();
 
     private String selectedMerek = "";
     private String selectedKategori = "";
@@ -73,15 +75,13 @@ public class KelolaProdukMasukActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_kelola_produk_masuk);
 
+        // ... (kode EdgeToEdge, OnBackPressed, Toolbar tetap sama)
         EdgeToEdge.enable(this);
         ViewCompat.setOnApplyWindowInsetsListener(findViewById(R.id.mainKelolaProduk), (v, insets) -> {
             Insets systemBars = insets.getInsets(WindowInsetsCompat.Type.systemBars());
             v.setPadding(systemBars.left, systemBars.top, systemBars.right, systemBars.bottom);
             return insets;
         });
-
-        FirebaseFirestore db = FirebaseFirestore.getInstance();
-        CollectionReference kategoriRef = db.collection("kategori_produk");
 
         OnBackPressedCallback callback = new OnBackPressedCallback(true) {
             @Override
@@ -99,10 +99,27 @@ public class KelolaProdukMasukActivity extends AppCompatActivity {
         }
 
         initViews();
-        viewModel = new ViewModelProvider(this).get(KelolaProdukMasukViewModel.class);
         populateDefaultLists();
+
+        editProductLauncher = registerForActivityResult(
+                new ActivityResultContracts.StartActivityForResult(),
+                result -> {
+                    // Cek jika sinyalnya "OK"
+                    if (result.getResultCode() == AppCompatActivity.RESULT_OK) {
+                        Toast.makeText(this, "Memeriksa pembaruan data...", Toast.LENGTH_SHORT).show();
+                    }
+                }
+        );
+
+        // inisialisasi view model
+        kelolaProdukMasukViewModel = new ViewModelProvider(this).get(KelolaProdukMasukViewModel.class);
         setupRecyclerView();
-        viewModel.getInventoryList().observe(this, inventories -> adapter.setInventoryList(inventories));
+
+        kelolaProdukMasukViewModel.getProdukList().observe(this, productList -> {
+            semuaProduk.clear();
+            semuaProduk.addAll(productList);
+            daftarProdukAdapter.setProductList(productList);
+        });
 
         ActivityResultLauncher<Intent> activityResultLauncher = registerForActivityResult(
                 new ActivityResultContracts.StartActivityForResult(),
@@ -119,6 +136,7 @@ public class KelolaProdukMasukActivity extends AppCompatActivity {
     }
 
     private void initViews() {
+        // ... (kode initViews() tidak berubah)
         uploadImage = findViewById(R.id.uploadImage);
         saveBtnKPM = findViewById(R.id.saveBtnKPM);
         uploadNB = findViewById(R.id.uploadNB);
@@ -132,7 +150,7 @@ public class KelolaProdukMasukActivity extends AppCompatActivity {
     }
 
     private void populateDefaultLists() {
-        // merek & satuan tetap statis
+        // ... (kode populateDefaultLists() tidak berubah)
         merekList.clear();
         merekList.add("Umum");
         merekList.add("Pupuk");
@@ -142,7 +160,6 @@ public class KelolaProdukMasukActivity extends AppCompatActivity {
         satuanList.add("Kg");
         satuanList.add("Liter");
 
-        // Ambil kategori dari Firestore (realtime sekali ambil)
         FirebaseFirestore db = FirebaseFirestore.getInstance();
         db.collection("kategori_produk").get()
                 .addOnSuccessListener(queryDocumentSnapshots -> {
@@ -153,16 +170,8 @@ public class KelolaProdukMasukActivity extends AppCompatActivity {
                             if (nama != null) kategoriList.add(nama);
                         }
                     }
-                    // tidak perlu kategoriAdapter.notify... karena showDialog() membuat adapter baru saat dipanggil
-                    // jika kamu ingin langsung men-set default text, bisa:
-                    if (!kategoriList.isEmpty() && (selectedKategori == null || selectedKategori.isEmpty())) {
-                        // tidak otomatis memilih apa-apa; kalau mau set default:
-                        // selectedKategori = kategoriList.get(0);
-                        // pilihKategori.setText(selectedKategori);
-                    }
                 })
                 .addOnFailureListener(e -> {
-                    // fallback kalau gagal, isi default
                     if (kategoriList.isEmpty()) {
                         kategoriList.add("Pupuk");
                         kategoriList.add("Bibit");
@@ -172,16 +181,43 @@ public class KelolaProdukMasukActivity extends AppCompatActivity {
     }
 
 
-
-
     private void setupRecyclerView() {
         recyclerView.setLayoutManager(new LinearLayoutManager(this));
-        adapter = new InventoryAdapter(
+
+        // Buat adapter dengan tipe TIPE_KELOLA_PRODUK
+        daftarProdukAdapter = new DaftarProdukAdapter(
                 new ArrayList<>(),
-                inventory -> Toast.makeText(this, "Klik: " + inventory.getNamaProduk(), Toast.LENGTH_SHORT).show(),
-                inventory -> viewModel.deleteInventory(inventory.getId())
+                product -> {
+
+                    // Tampilkan dialog dengan pilihan Edit atau Hapus
+                    final CharSequence[] options = {"Edit Produk", "Hapus Produk", "Batal"};
+
+                    AlertDialog.Builder builder = new AlertDialog.Builder(KelolaProdukMasukActivity.this);
+                    builder.setTitle("Pilih Aksi untuk " + product.getNamaProduk());
+                    builder.setItems(options, (dialog, item) -> {
+                        if (options[item].equals("Edit Produk")) {
+                            // Aksi untuk Edit
+                            Intent intent = new Intent(KelolaProdukMasukActivity.this, EditProdukActivity.class);
+                            intent.putExtra("product", product);
+                            editProductLauncher.launch(intent);
+                        } else if (options[item].equals("Hapus Produk")) {
+                            // Aksi untuk Hapus
+                            new AlertDialog.Builder(KelolaProdukMasukActivity.this)
+                                    .setTitle("Konfirmasi Hapus")
+                                    .setMessage("Anda yakin ingin menghapus produk ini?")
+                                    .setPositiveButton("Hapus", (d, w) -> kelolaProdukMasukViewModel.deleteProduct(product.getId()))
+                                    .setNegativeButton("Batal", null)
+                                    .show();
+                        } else if (options[item].equals("Batal")) {
+                            dialog.dismiss();
+                        }
+                    });
+                    builder.show();
+                },
+                DaftarProdukAdapter.TIPE_KELOLA_PRODUK // <-- Memberi tahu tipe layoutnya
         );
-        recyclerView.setAdapter(adapter);
+
+        recyclerView.setAdapter(daftarProdukAdapter);
     }
 
     private void setupListeners(ActivityResultLauncher<Intent> launcher) {
@@ -206,6 +242,7 @@ public class KelolaProdukMasukActivity extends AppCompatActivity {
 
         saveBtnKPM.setOnClickListener(view -> saveData());
     }
+
     public void saveData() {
         String namaProduk = uploadNB.getText().toString().trim();
         String hargaStr = uploadHJ.getText().toString().trim();
@@ -224,10 +261,8 @@ public class KelolaProdukMasukActivity extends AppCompatActivity {
                 .show();
 
         if (uri != null) {
-            // Jika ada gambar, konversi ke Base64, lalu simpan
             convertImageToBase64AndSave(loadingDialog);
         } else {
-            // Jika tidak ada gambar, langsung simpan dengan string kosong
             saveProductToFirestore("", loadingDialog);
         }
     }
@@ -235,22 +270,16 @@ public class KelolaProdukMasukActivity extends AppCompatActivity {
     private void convertImageToBase64AndSave(AlertDialog loadingDialog) {
         try {
             Bitmap bitmap = MediaStore.Images.Media.getBitmap(this.getContentResolver(), uri);
-
-            // Kompres gambar agar ukurannya tidak melebihi batas 1MB Firestore
             int originalWidth = bitmap.getWidth();
             int originalHeight = bitmap.getHeight();
-            int targetWidth = 480; // Target lebar 480px sudah cukup jelas
+            int targetWidth = 480;
             int targetHeight = (int) (originalHeight * ((float) targetWidth / (float) originalWidth));
-
             Bitmap resizedBitmap = Bitmap.createScaledBitmap(bitmap, targetWidth, targetHeight, true);
-
             ByteArrayOutputStream byteArrayOutputStream = new ByteArrayOutputStream();
             resizedBitmap.compress(Bitmap.CompressFormat.JPEG, 75, byteArrayOutputStream);
             byte[] byteArray = byteArrayOutputStream.toByteArray();
             String base64Image = Base64.encodeToString(byteArray, Base64.DEFAULT);
-
             saveProductToFirestore(base64Image, loadingDialog);
-
         } catch (IOException e) {
             loadingDialog.dismiss();
             Log.e(TAG, "Gagal memproses gambar", e);
@@ -265,31 +294,32 @@ public class KelolaProdukMasukActivity extends AppCompatActivity {
         String deskripsi = deskripsiProduk.getText().toString().trim();
 
         double hargaJual;
+        int stok;
+
         try {
             hargaJual = Double.parseDouble(hargaStr);
+            stok = Integer.parseInt(stokStr);
         } catch (NumberFormatException e) {
             loadingDialog.dismiss();
-            Toast.makeText(this, "Harga jual harus angka", Toast.LENGTH_SHORT).show();
+            Toast.makeText(this, "Harga dan Stok harus berupa angka", Toast.LENGTH_SHORT).show();
             return;
         }
 
-        double stok;
-        try {
-            stok = Double.parseDouble(stokStr);
-        } catch (NumberFormatException e) {
-            loadingDialog.dismiss();
-            Toast.makeText(this, "Stok harus angka", Toast.LENGTH_SHORT).show();
-            return;
-        }
+        // Buat objek Product
+        Product product = new Product();
+        product.setNamaProduk(namaProduk);
+        product.setHargaJual(hargaJual);
+        product.setMerek(selectedMerek);
+        product.setKategori(selectedKategori);
+        product.setStok(stok);
+        product.setSatuan(selectedSatuan);
+        product.setTanggal(new Date());
+        product.setImageUrl(imageString);
+        product.setDeskripsi(deskripsi);
 
-        String tanggal = java.text.DateFormat.getDateInstance().format(new java.util.Date());
+        // Panggil metode addProduct dari ViewModel
+        kelolaProdukMasukViewModel.addProduct(product);
 
-        // Buat objek Inventory dengan imageUrl berisi string Base64
-        Inventory inventory = new Inventory(
-                null, namaProduk, hargaJual, selectedMerek, selectedKategori,
-                stok, selectedSatuan, tanggal, imageString, deskripsi);
-
-        viewModel.addInventory(inventory);
         loadingDialog.dismiss();
         Toast.makeText(this, "Produk berhasil disimpan", Toast.LENGTH_SHORT).show();
         resetForm();
@@ -310,29 +340,21 @@ public class KelolaProdukMasukActivity extends AppCompatActivity {
         uploadImage.setImageResource(R.drawable.upload);
     }
 
-    // =========================================================================
-    // BAGIAN DIALOG (Tidak ada perubahan di sini)
-    // =========================================================================
 
     private void showDialog(ArrayList<String> dataList, String title, DialogCallback callback) {
         Dialog dialog = new Dialog(this);
         dialog.setContentView(R.layout.dialog_generic_list);
-
         TextView dialogTitle = dialog.findViewById(R.id.dialogTitle);
         ListView listView = dialog.findViewById(R.id.genericListView);
         TextView btnTambah = dialog.findViewById(R.id.btnTambahItem);
-
         dialogTitle.setText(title);
-
         ArrayAdapter<String> arrayAdapter = new ArrayAdapter<>(this, android.R.layout.simple_list_item_1, dataList);
         listView.setAdapter(arrayAdapter);
-
         listView.setOnItemClickListener((parent, view, position, id) -> {
             String selectedItem = dataList.get(position);
             callback.onItemSelected(selectedItem);
             dialog.dismiss();
         });
-
         btnTambah.setOnClickListener(v -> {
             EditText input = new EditText(this);
             new AlertDialog.Builder(this)
@@ -343,8 +365,6 @@ public class KelolaProdukMasukActivity extends AppCompatActivity {
                         if (!newItem.isEmpty() && !dataList.contains(newItem)) {
                             dataList.add(newItem);
                             arrayAdapter.notifyDataSetChanged();
-
-                            // Tambahkan ke Firestore agar sinkron dengan KategoriProdukActivity
                             if (title.equals("Pilih Kategori")) {
                                 FirebaseFirestore.getInstance()
                                         .collection("kategori_produk")
@@ -359,7 +379,6 @@ public class KelolaProdukMasukActivity extends AppCompatActivity {
                     .setNegativeButton("Batal", null)
                     .show();
         });
-
         dialog.show();
     }
 

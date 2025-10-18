@@ -86,6 +86,7 @@
                 android:text="Kategori"
                 android:textSize="12sp"
                 android:textColor="@color/black" />
+
         </LinearLayout>
 
     </androidx.constraintlayout.widget.ConstraintLayout>
