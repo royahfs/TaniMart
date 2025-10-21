@@ -159,7 +159,7 @@
                         android:id="@+id/namaBarangDetail"
                         android:layout_width="0dp"
                         android:layout_height="wrap_content"
-                        android:layout_weight="1"
+                        android:layout_weight="2"
                         android:text="Nama Barang"
                         android:textColor="@color/black"
                         android:textSize="20sp"
@@ -175,6 +175,15 @@
                         android:textSize="20sp"
                         android:textStyle="bold" />
                 </LinearLayout>
+
+                <TextView
+                    android:id="@+id/merekDetail"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_weight="1"
+                    android:text="Merek"
+                    android:textColor="@color/black"
+                    android:textSize="20sp"/>
 
                 <TextView
                     android:id="@+id/textView8"
