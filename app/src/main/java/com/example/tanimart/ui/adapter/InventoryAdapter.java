@@ -109,8 +109,8 @@ public class InventoryAdapter extends RecyclerView.Adapter<InventoryAdapter.View
         // event klik item biasa
         holder.itemView.setOnClickListener(v -> listener.onItemClick(item));
 
-        // event klik tombol delete
-        holder.btnDelete.setOnClickListener(v -> deleteClickListener.onDeleteClick(item));
+//        // event klik tombol delete
+//        holder.btnDelete.setOnClickListener(v -> deleteClickListener.onDeleteClick(item));
     }
 
     // Ubah Filter untuk menyimpan keyword terakhir
@@ -170,7 +170,7 @@ public class InventoryAdapter extends RecyclerView.Adapter<InventoryAdapter.View
 
     // ====== ViewHolder ======
     public static class ViewHolder extends RecyclerView.ViewHolder {
-        ImageView image, btnDelete;
+        ImageView image; //btnDelete;
         TextView nama, harga, kategori, merek;
 
         public ViewHolder(View itemView) {
@@ -180,7 +180,7 @@ public class InventoryAdapter extends RecyclerView.Adapter<InventoryAdapter.View
             harga = itemView.findViewById(R.id.itemHarga);
             kategori = itemView.findViewById(R.id.itemKategori);
             merek = itemView.findViewById(R.id.itemMerek);
-            btnDelete = itemView.findViewById(R.id.itemDelete);
+//            btnDelete = itemView.findViewById(R.id.itemDelete);
         }
     }
 }

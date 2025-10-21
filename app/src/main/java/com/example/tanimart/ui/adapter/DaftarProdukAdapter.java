@@ -209,7 +209,7 @@ public class DaftarProdukAdapter extends RecyclerView.Adapter<RecyclerView.ViewH
 
     public static class KelolaProdukViewHolder extends RecyclerView.ViewHolder {
         TextView nama, merek, kategori, harga;
-        ImageView image, imgDelete;
+        ImageView image; // imgDelete;
         public KelolaProdukViewHolder(View itemView) {
             super(itemView);
             nama = itemView.findViewById(R.id.itemNamaKPM);
@@ -217,7 +217,7 @@ public class DaftarProdukAdapter extends RecyclerView.Adapter<RecyclerView.ViewH
             image = itemView.findViewById(R.id.itemImage);
             harga = itemView.findViewById(R.id.itemHarga);
             kategori = itemView.findViewById(R.id.itemKategori);
-            imgDelete = itemView.findViewById(R.id.itemDelete);
+//            imgDelete = itemView.findViewById(R.id.itemDelete);
         }
     }
 

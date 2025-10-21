@@ -17,7 +17,7 @@ public class KalkulatorActivity extends AppCompatActivity {
     private static final char SUBTRACTION = '-';
     private static final char MULTIPLICATION = '*';
     private static final char DIVISION = '/';
-    private static final char PERCENT = '%';
+//    private static final char PERCENT = '%';
 
     private char currentSymbol;
 

@@ -190,17 +190,18 @@ public class KelolaProdukMasukActivity extends AppCompatActivity {
                 product -> {
 
                     // Tampilkan dialog dengan pilihan Edit atau Hapus
-                    final CharSequence[] options = {"Edit Produk", "Hapus Produk", "Batal"};
+                    final CharSequence[] options = {"Hapus Produk", "Batal"}; // "Edit Produk"
 
                     AlertDialog.Builder builder = new AlertDialog.Builder(KelolaProdukMasukActivity.this);
                     builder.setTitle("Pilih Aksi untuk " + product.getNamaProduk());
                     builder.setItems(options, (dialog, item) -> {
-                        if (options[item].equals("Edit Produk")) {
-                            // Aksi untuk Edit
-                            Intent intent = new Intent(KelolaProdukMasukActivity.this, EditProdukActivity.class);
-                            intent.putExtra("product", product);
-                            editProductLauncher.launch(intent);
-                        } else if (options[item].equals("Hapus Produk")) {
+//                        if (options[item].equals("Edit Produk")) {
+//                            // Aksi untuk Edit
+//                            Intent intent = new Intent(KelolaProdukMasukActivity.this, EditProdukActivity.class);
+//                            intent.putExtra("product", product);
+//                            editProductLauncher.launch(intent);
+//                        } else
+                            if (options[item].equals("Hapus Produk")) {
                             // Aksi untuk Hapus
                             new AlertDialog.Builder(KelolaProdukMasukActivity.this)
                                     .setTitle("Konfirmasi Hapus")
