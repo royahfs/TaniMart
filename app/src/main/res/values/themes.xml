@@ -23,7 +23,7 @@
     </style>
 
     <!-- Kalkulator button (outlined) -->
-    <style name="CalcButton.Normal" parent="Widget.Material3.Button.OutlinedButton"> <!-- DIUBAH dari MaterialComponents -->
+    <style name="CalcButton.Normal" parent="Widget.MaterialComponents.Button.OutlinedButton"> <!-- DIUBAH dari MaterialComponents -->
         <item name="android:layout_width">0dp</item>
         <item name="android:layout_height">90dp</item>
         <item name="android:layout_columnWeight">1</item>
@@ -37,7 +37,7 @@
     </style>
 
     <!-- Kalkulator button (filled) -->
-    <style name="CalcButton.Colored" parent="Widget.Material3.Button"> <!-- DIUBAH dari MaterialComponents -->
+    <style name="CalcButton.Colored" parent="Widget.MaterialComponents.Button"> <!-- DIUBAH dari MaterialComponents -->
         <item name="android:layout_width">0dp</item>
         <item name="android:layout_height">90dp</item>
         <item name="android:layout_columnWeight">1</item>
