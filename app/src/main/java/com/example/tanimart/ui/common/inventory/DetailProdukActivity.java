@@ -25,7 +25,7 @@ public class DetailProdukActivity extends AppCompatActivity {
     private ImageView backBtn, pic;
     // Saya sesuaikan nama variabel agar konsisten dengan layout detail_produk.xml Anda
     private TextView namaBarangDetail, priceTxt, descriptionTxt, stokBarangDetail;
-    private Button addBtn;
+//    private Button addBtn;
     private DaftarProdukViewModel viewModel;
 
     @Override
@@ -40,7 +40,7 @@ public class DetailProdukActivity extends AppCompatActivity {
         priceTxt = findViewById(R.id.priceTxt);
         descriptionTxt = findViewById(R.id.descriptionTxt);
         stokBarangDetail = findViewById(R.id.stokBarangDetail);
-        addBtn = findViewById(R.id.addBtn);
+//        addBtn = findViewById(R.id.addBtn);
 
         // Setup ViewModel
         viewModel = new ViewModelProvider(this).get(DaftarProdukViewModel.class);
@@ -89,9 +89,9 @@ public class DetailProdukActivity extends AppCompatActivity {
                     }
 
 
-                    addBtn.setOnClickListener(v ->
-                            Toast.makeText(this, product.getNamaProduk() + " ditambahkan ke keranjang!", Toast.LENGTH_SHORT).show()
-                    );
+//                    addBtn.setOnClickListener(v ->
+//                            Toast.makeText(this, product.getNamaProduk() + " ditambahkan ke keranjang!", Toast.LENGTH_SHORT).show()
+//                    );
 
                 } else {
                     Toast.makeText(this, "Produk tidak ditemukan.", Toast.LENGTH_SHORT).show();

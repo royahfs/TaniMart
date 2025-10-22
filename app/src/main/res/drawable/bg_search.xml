@@ -3,7 +3,7 @@
     android:shape="rectangle">
 
     <!-- Warna background abu muda -->
-    <solid android:color="#F5F5F5" />
+    <solid android:color="@color/grey" />
 
     <!-- Sudut melengkung -->
     <corners android:radius="12dp" />

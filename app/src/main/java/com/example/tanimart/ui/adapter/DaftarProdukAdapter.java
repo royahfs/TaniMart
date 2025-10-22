@@ -52,10 +52,17 @@ public class DaftarProdukAdapter extends RecyclerView.Adapter<RecyclerView.ViewH
     // Metode untuk mengupdate data dari ViewModel
     @SuppressLint("NotifyDataSetChanged")
     public void setProductList(List<Product> list) {
-        this.productList = list;
-        this.productListFull = new ArrayList<>(list);
+        if (list == null) return;
+        this.productList.clear();
+        this.productList.addAll(list);
+
+        // update list full hanya kalau belum ada data pencarian
+        if (productListFull == null || productListFull.isEmpty()) {
+            this.productListFull = new ArrayList<>(list);
+        }
         notifyDataSetChanged();
     }
+
 
     @Override
     public int getItemViewType(int position) {
@@ -161,7 +168,97 @@ public class DaftarProdukAdapter extends RecyclerView.Adapter<RecyclerView.ViewH
         return formatRupiah.format(number).replace("Rp", "Rp ");
     }
     @Override
-    public Filter getFilter() { return filter; }
+    public Filter getFilter() {
+        return new Filter() {
+            @Override
+            protected FilterResults performFiltering(CharSequence constraint) {
+                List<Product> filteredList = new ArrayList<>();
+
+                if (constraint == null || constraint.length() == 0) {
+                    filteredList.addAll(productListFull);
+                } else {
+                    String query = constraint.toString().toLowerCase().trim();
+                    String[] tokens = query.split("\\s+"); // pisah berdasarkan spasi
+
+                    Double hargaMin = null, hargaMax = null;
+                    Integer stokMin = null, stokMax = null;
+                    List<String> textTokens = new ArrayList<>();
+
+                    //  Pisahkan token angka (stok/harga) dari teks
+                    for (String token : tokens) {
+                        try {
+                            if (token.startsWith("harga>")) {
+                                hargaMin = Double.parseDouble(token.replace("harga>", "").trim());
+                            } else if (token.startsWith("harga<")) {
+                                hargaMax = Double.parseDouble(token.replace("harga<", "").trim());
+                            } else if (token.startsWith("stok>")) {
+                                stokMin = Integer.parseInt(token.replace("stok>", "").trim());
+                            } else if (token.startsWith("stok<")) {
+                                stokMax = Integer.parseInt(token.replace("stok<", "").trim());
+                            } else if (token.startsWith("harga=")) {
+                                double val = Double.parseDouble(token.replace("harga=", "").trim());
+                                hargaMin = val;
+                                hargaMax = val;
+                            } else if (token.startsWith("stok=")) {
+                                int val = Integer.parseInt(token.replace("stok=", "").trim());
+                                stokMin = val;
+                                stokMax = val;
+                            } else {
+                                textTokens.add(token);
+                            }
+                        } catch (NumberFormatException e) {
+                            textTokens.add(token); // kalau gagal parse, anggap sebagai teks
+                        }
+                    }
+
+                    // Lakukan pencarian berbasis teks
+                    for (Product item : productListFull) {
+                        boolean matchText = true;
+
+                        for (String token : textTokens) {
+                            boolean tokenMatch =
+                                    (item.getNamaProduk() != null && item.getNamaProduk().toLowerCase().contains(token)) ||
+                                            (item.getKategori() != null && item.getKategori().toLowerCase().contains(token)) ||
+                                            (item.getMerek() != null && item.getMerek().toLowerCase().contains(token));
+                            if (!tokenMatch) {
+                                matchText = false;
+                                break;
+                            }
+                        }
+
+                        if (!matchText) continue;
+
+                        //  Cek filter numerik
+                        double harga = item.getHargaJual();
+                        int stok = item.getStok();
+
+                        if (hargaMin != null && harga < hargaMin) continue;
+                        if (hargaMax != null && harga > hargaMax) continue;
+                        if (stokMin != null && stok < stokMin) continue;
+                        if (stokMax != null && stok > stokMax) continue;
+
+                        // Kalau semua cocok
+                        filteredList.add(item);
+                    }
+                }
+
+                FilterResults results = new FilterResults();
+                results.values = filteredList;
+                return results;
+            }
+
+            @SuppressLint("NotifyDataSetChanged")
+            @Override
+            protected void publishResults(CharSequence constraint, FilterResults results) {
+                productList.clear();
+                if (results.values != null) {
+                    productList.addAll((List<Product>) results.values);
+                }
+                notifyDataSetChanged();
+            }
+        };
+    }
+
     private final Filter filter = new Filter() {
         @Override
         protected FilterResults performFiltering(CharSequence constraint) {

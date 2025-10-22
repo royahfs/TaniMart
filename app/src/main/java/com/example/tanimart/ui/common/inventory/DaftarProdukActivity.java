@@ -5,6 +5,7 @@ import android.os.Bundle;
 
 import androidx.annotation.Nullable;
 import androidx.appcompat.app.AppCompatActivity;
+import androidx.appcompat.widget.SearchView;
 import androidx.appcompat.widget.Toolbar;
 import androidx.lifecycle.ViewModelProvider;
 import androidx.recyclerview.widget.GridLayoutManager;
@@ -23,6 +24,7 @@ public class DaftarProdukActivity extends AppCompatActivity {
     private DaftarProdukAdapter daftarProdukAdapter;
     private DaftarProdukViewModel daftarProdukViewModel;
     private List<Product> semuaProduk = new ArrayList<>();
+    private SearchView searchViewProduk;
 
     @Override
     protected void onCreate(@Nullable Bundle savedInstanceState) {
@@ -67,6 +69,22 @@ public class DaftarProdukActivity extends AppCompatActivity {
             semuaProduk.clear();
             semuaProduk.addAll(productList);
             daftarProdukAdapter.setProductList(productList);
+        });
+
+        searchViewProduk = findViewById(R.id.searchViewProduk);
+        searchViewProduk.clearFocus(); // Biar keyboard tidak langsung muncul
+        searchViewProduk.setOnQueryTextListener(new SearchView.OnQueryTextListener() {
+            @Override
+            public boolean onQueryTextSubmit(String query) {
+                daftarProdukAdapter.getFilter().filter(query);
+                return false;
+            }
+
+            @Override
+            public boolean onQueryTextChange(String newText) {
+                daftarProdukAdapter.getFilter().filter(newText);
+                return false;
+            }
         });
 
         // Load data dari ViewModel
