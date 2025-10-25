@@ -150,9 +150,6 @@ public class ReceiptPrintActivity extends AppCompatActivity {
         });
     }
 
-    // ============================
-    // Helper untuk permission
-    // ============================
     private void checkPermissionAndConnect() {
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.S) {
             if (ContextCompat.checkSelfPermission(this, Manifest.permission.BLUETOOTH_CONNECT) != PackageManager.PERMISSION_GRANTED ||
@@ -190,7 +187,7 @@ public class ReceiptPrintActivity extends AppCompatActivity {
     }
 
     private String formatCurrency(double value) {
-        NumberFormat format = NumberFormat.getCurrencyInstance(new Locale("in", "ID"));
+        NumberFormat format = NumberFormat.getCurrencyInstance(new Locale("id", "ID"));
         return format.format(value);
     }
 }

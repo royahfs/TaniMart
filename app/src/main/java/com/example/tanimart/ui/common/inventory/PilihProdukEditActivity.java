@@ -5,6 +5,7 @@ import android.os.Bundle;
 
 import androidx.annotation.Nullable;
 import androidx.appcompat.app.AppCompatActivity;
+import androidx.appcompat.widget.SearchView;
 import androidx.appcompat.widget.Toolbar;
 import androidx.lifecycle.ViewModelProvider;
 import androidx.recyclerview.widget.RecyclerView;
@@ -19,7 +20,7 @@ import java.util.ArrayList;
 
 public class PilihProdukEditActivity extends AppCompatActivity {
 
-    // Tidak perlu deklarasi di sini, cukup di dalam onCreate
+    private SearchView searchViewProduk;
 
     @Override
     protected void onCreate(@Nullable Bundle savedInstanceState) {
@@ -59,6 +60,22 @@ public class PilihProdukEditActivity extends AppCompatActivity {
         viewModel.getProdukList().observe(this, productList -> { // observe dari getProdukList()
             if (productList != null) {
                 adapter.setProductList(productList); // **PERUBAHAN 3**
+            }
+        });
+
+        searchViewProduk = findViewById(R.id.searchViewProduk);
+        searchViewProduk.clearFocus(); // Biar keyboard tidak langsung muncul
+        searchViewProduk.setOnQueryTextListener(new SearchView.OnQueryTextListener() {
+            @Override
+            public boolean onQueryTextSubmit(String query) {
+                adapter.getFilter().filter(query);
+                return false;
+            }
+
+            @Override
+            public boolean onQueryTextChange(String newText) {
+                adapter.getFilter().filter(newText);
+                return false;
             }
         });
     }
