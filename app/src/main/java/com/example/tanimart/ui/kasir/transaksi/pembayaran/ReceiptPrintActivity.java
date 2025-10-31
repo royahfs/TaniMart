@@ -75,8 +75,10 @@ public class ReceiptPrintActivity extends AppCompatActivity {
         layoutItems = findViewById(R.id.layout_items);
 
 
+
         formatter = NumberFormat.getNumberInstance(new Locale("id", "ID"));
 
+        // ambil data dari intent
         String tanggal = getIntent().getStringExtra("TANGGAL");
         double totalTagihan = getIntent().getDoubleExtra("TOTAL_TAGIHAN", 0.0);
         double uangDiterima = getIntent().getDoubleExtra("UANG_DITERIMA", 0.0);
@@ -128,13 +130,13 @@ public class ReceiptPrintActivity extends AppCompatActivity {
             receiptText.append("\n");
 
             // Ringkasan
-            receiptText.append(tvSubtotal.getText().toString()).append("\n");
-            receiptText.append(tvTotal.getText().toString()).append("\n");
-            receiptText.append(tvPay.getText().toString()).append("\n");
-            receiptText.append(tvChange.getText().toString()).append("\n\n");
-
-            receiptText.append("### LUNAS ###\n\n");
-            receiptText.append("Terima kasih\n");
+            receiptText.append("--------------------------------\n");
+            receiptText.append(tvTotal.getText()).append("\n");
+            receiptText.append(tvPay.getText()).append("\n");
+            receiptText.append(tvChange.getText()).append("\n");
+            receiptText.append("================================\n");
+            receiptText.append("Terima Kasih Telah Berbelanja!\n");
+            receiptText.append("=== TANI MART ===\n\n");
 
             // Kirim ke printer
             viewModel.printReceipt(receiptText.toString().getBytes());
@@ -165,6 +167,7 @@ public class ReceiptPrintActivity extends AppCompatActivity {
     }
 
     private void connectPrinter() {
+
         viewModel.connectPrinter(PRINTER_MAC, this);
     }
 
